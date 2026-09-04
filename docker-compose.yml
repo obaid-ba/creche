@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: creche_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-creche_mamati}
+      POSTGRES_USER: ${POSTGRES_USER:-creche}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-creche_dev_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_EXPOSED_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-creche} -d ${POSTGRES_DB:-creche_mamati}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: creche_backend
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - ./backend:/app
+      # Keep Python packages out of the NTFS bind mount (architecture.md 9.2)
+      - backend_venv:/usr/local/lib/python3.12/site-packages
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: creche_frontend
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+      - ./frontend:/app
+      # Anonymous volume: node_modules stays on the container FS, not NTFS
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      # inotify is unreliable on fuseblk - poll instead
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  backend_venv:
+  media_data:
