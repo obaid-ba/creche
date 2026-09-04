@@ -19,6 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.notifications.services import notify_day_published
 from common.mixins import ChildScopedMixin
 from common.permissions import IsStaff
 
@@ -311,7 +312,11 @@ class ChildDailyRecordPublishView(ChildScopedMixin, APIView):
             record, _ = DailyRecord.objects.get_or_create(
                 child=child, date=day, defaults={"created_by": request.user}
             )
+            was_published = record.is_published
             record.publish(by=request.user)
+            # Re-publishing a correction should not notify the family again.
+            if not was_published:
+                notify_day_published(record)
 
         events = list(
             TimelineEvent.objects.filter(child=child, local_date=day)

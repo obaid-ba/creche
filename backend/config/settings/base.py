@@ -182,6 +182,8 @@ SPECTACULAR_SETTINGS = {
         "ActivityCategoryEnum": "apps.activities.models.ActivityCategory.choices",
         "RelationshipEnum": "apps.accounts.models.Relationship.choices",
         "ComplaintStatusEnum": "apps.complaints.models.ComplaintStatus.choices",
+        "NotificationTypeEnum": "apps.notifications.models.NotificationType.choices",
+        "TimelineEventTypeEnum": "apps.care.event_types.TimelineEventType.choices",
     },
 }
 

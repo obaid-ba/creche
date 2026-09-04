@@ -2,6 +2,7 @@ import { LogOut } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { Button, Logo } from "@/components/ui";
+import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 import { useAuth } from "@/features/auth/useAuth";
 import { cn } from "@/lib/cn";
 
@@ -39,7 +40,8 @@ export function AppLayout({ area }: { area: "parent" | "staff" }) {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo size="sm" to={area === "parent" ? "/parent" : "/staff"} />
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <NotificationBell />
             <span className="hidden text-sm text-ink-600 sm:inline">
               {user?.first_name} {user?.last_name}
             </span>

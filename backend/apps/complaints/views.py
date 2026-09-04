@@ -16,6 +16,11 @@ from rest_framework.response import Response
 from apps.audit.models import AuditAction
 from apps.audit.services import record as record_audit
 from apps.children.models import Child
+from apps.notifications.services import (
+    notify_complaint_created,
+    notify_complaint_reply,
+    notify_complaint_status,
+)
 from common.permissions import IsStaff
 
 from .models import Complaint, ComplaintReply, ComplaintStatus, IllegalTransition
@@ -80,12 +85,14 @@ class ComplaintViewSet(viewsets.ModelViewSet):
                 Child.objects.visible_to(request.user), pk=child_id
             )
 
-        complaint = Complaint.objects.create(
-            parent=request.user.parent_profile,
-            child=child,
-            subject=serializer.validated_data["subject"],
-            message=serializer.validated_data["message"],
-        )
+        with transaction.atomic():
+            complaint = Complaint.objects.create(
+                parent=request.user.parent_profile,
+                child=child,
+                subject=serializer.validated_data["subject"],
+                message=serializer.validated_data["message"],
+            )
+            notify_complaint_created(complaint)
 
         return Response(
             ComplaintSerializer(complaint, context={"request": request}).data,
@@ -121,6 +128,7 @@ class ComplaintViewSet(viewsets.ModelViewSet):
                     previous=previous,
                     new=target,
                 )
+                notify_complaint_status(complaint)
         except IllegalTransition:
             # 409, not 400: the payload is a valid status, but the state
             # machine forbids this move (docs/api.md 10).
@@ -158,12 +166,15 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         if is_internal and not request.user.is_staff_member:
             raise PermissionDenied("Seul le personnel peut ajouter une note interne.")
 
-        ComplaintReply.objects.create(
-            complaint=complaint,
-            author=request.user,
-            body=serializer.validated_data["body"],
-            is_internal=is_internal,
-        )
+        with transaction.atomic():
+            reply = ComplaintReply.objects.create(
+                complaint=complaint,
+                author=request.user,
+                body=serializer.validated_data["body"],
+                is_internal=is_internal,
+            )
+            # Internal notes notify nobody.
+            notify_complaint_reply(reply)
 
         complaint.refresh_from_db()
         return Response(

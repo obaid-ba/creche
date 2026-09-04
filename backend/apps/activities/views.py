@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.children.models import Child
+from apps.notifications.services import notify_activity
 from common.images import process_upload
 from common.permissions import IsStaff
 
@@ -124,6 +125,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 ignore_conflicts=True,  # re-adding a child is a no-op
             )
             sync_timeline_events(activity)
+            notify_activity(activity, children)
 
         activity.refresh_from_db()
         return Response(

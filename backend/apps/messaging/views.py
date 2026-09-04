@@ -23,6 +23,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.children.models import Child
+from apps.notifications.services import notify_new_message
 from common.images import process_upload
 from common.pagination import MessageCursorPagination
 
@@ -108,6 +109,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             )
             conversation.last_message_at = message.created_at
             conversation.save(update_fields=["last_message_at", "updated_at"])
+            notify_new_message(message)
 
         return Response(
             ConversationSerializer(
@@ -167,6 +169,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
             )
             conversation.last_message_at = message.created_at
             conversation.save(update_fields=["last_message_at", "updated_at"])
+            notify_new_message(message)
 
         return Response(
             MessageSerializer(message, context={"request": request}).data,
