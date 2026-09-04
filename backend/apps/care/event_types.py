@@ -209,9 +209,21 @@ REGISTRY: dict[str, EventTypeSpec] = {
     ]
 }
 
+#: The order chips are presented in, per the brief (11). Declared
+#: explicitly rather than inherited from REGISTRY insertion order, so
+#: adding a type cannot silently reshuffle the parent-facing filter bar.
+CHIP_ORDER: list[str] = [
+    EventGroup.MEALS,
+    EventGroup.SLEEP,
+    EventGroup.ACTIVITIES,
+    EventGroup.HEALTH,
+    EventGroup.HYGIENE,
+    EventGroup.OTHER,
+]
+
 #: Filter chip -> the types it covers. Derived from the registry rather
 #: than written twice, so a new type joins its chip automatically.
-GROUP_TYPES: dict[str, list[str]] = {}
+GROUP_TYPES: dict[str, list[str]] = {group: [] for group in CHIP_ORDER}
 for _spec in REGISTRY.values():
     GROUP_TYPES.setdefault(_spec.group, []).append(_spec.key)
 

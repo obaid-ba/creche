@@ -41,3 +41,6 @@ npm-debug.log*
 
 # TypeScript build artifacts
 *.tsbuildinfo
+
+# Playwright / local browser drivers
+/.playwright/

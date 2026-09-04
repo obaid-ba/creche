@@ -120,3 +120,25 @@ class TestExtensibility:
             assert spec.icon
             assert spec.group in GROUP_TYPES
             assert spec.schema is not None
+
+
+class TestChipOrder:
+    """The parent-facing filter bar order is part of the spec (brief 11)."""
+
+    def test_chips_follow_the_declared_order(self):
+        from apps.care.event_types import CHIP_ORDER, GROUP_TYPES
+
+        assert list(GROUP_TYPES) == CHIP_ORDER
+
+    def test_activities_sits_between_sleep_and_health(self):
+        from apps.care.event_types import GROUP_TYPES
+
+        order = list(GROUP_TYPES)
+        assert order.index("sleep") < order.index("activities") < order.index("health")
+
+    def test_every_chip_still_has_its_types(self):
+        from apps.care.event_types import GROUP_TYPES
+
+        assert set(GROUP_TYPES["meals"]) == {"MEAL", "BOTTLE"}
+        assert set(GROUP_TYPES["hygiene"]) == {"DIAPER", "TOILET"}
+        assert GROUP_TYPES["activities"] == ["ACTIVITY"]

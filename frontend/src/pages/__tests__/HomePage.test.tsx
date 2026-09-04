@@ -33,12 +33,26 @@ describe("public site", () => {
   it("offers both parent-portal and registration calls to action", () => {
     renderAt("/");
 
+    // The portal is reachable from the header and from the hero, so scope
+    // the assertion instead of matching the name globally.
+    const main = screen.getByRole("main");
     expect(
-      screen.getByRole("link", { name: /espace parents/i }),
+      within(main).getAllByRole("link", { name: /espace parents/i })[0],
     ).toHaveAttribute("href", "/parent/login");
     expect(
-      screen.getByRole("link", { name: /dossier d'inscription/i }),
+      within(main).getByRole("link", { name: /dossier d'inscription/i }),
     ).toHaveAttribute("href", "/documents");
+  });
+
+  it("puts a working parent-portal link in the header", () => {
+    // This was a dead <Button onClick={() => undefined}> until running the
+    // app surfaced it: the header CTA navigated nowhere.
+    renderAt("/");
+
+    const header = screen.getByRole("banner");
+    expect(
+      within(header).getByRole("link", { name: /espace parents/i }),
+    ).toHaveAttribute("href", "/parent/login");
   });
 
   it("shows the values and services sections", () => {

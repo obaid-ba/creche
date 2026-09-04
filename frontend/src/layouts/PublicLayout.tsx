@@ -2,7 +2,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 
-import { Button } from "@/components/ui";
+import { LinkButton } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 const NAV_LINKS = [
@@ -61,9 +61,9 @@ export function PublicLayout() {
           </nav>
 
           <div className="hidden md:block">
-            <Button size="sm" onClick={() => undefined}>
+            <LinkButton to="/parent/login" size="sm">
               Espace parents
-            </Button>
+            </LinkButton>
           </div>
 
           <button
@@ -105,6 +105,10 @@ export function PublicLayout() {
                 </li>
               ))}
             </ul>
+
+            <LinkButton to="/parent/login" size="sm" className="mt-3 w-full">
+              Espace parents
+            </LinkButton>
           </nav>
         )}
       </header>

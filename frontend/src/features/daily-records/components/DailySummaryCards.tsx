@@ -19,16 +19,25 @@ function SummaryCard({
 }) {
   return (
     <Card>
-      <CardBody className="p-4">
-        <span className={`grid size-9 place-items-center rounded-card ${tone}`}>
-          <Icon aria-hidden="true" className="size-4" />
-        </span>
-        <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-ink-400">
-          {label}
+      {/* Icon sits beside the label on phones and above it from sm up:
+          five stacked full-width cards pushed the timeline - the thing a
+          parent opens the app for - almost two screens down. */}
+      <CardBody className="p-3 sm:p-4">
+        <div className="flex items-center gap-2 sm:block">
+          <span
+            className={`grid size-8 shrink-0 place-items-center rounded-card sm:size-9 ${tone}`}
+          >
+            <Icon aria-hidden="true" className="size-4" />
+          </span>
+          <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-ink-400 sm:mt-3 sm:text-xs">
+            {label}
+          </p>
+        </div>
+        <p className="mt-1 text-lg font-bold text-ink-900 sm:mt-0.5 sm:text-xl">
+          {value}
         </p>
-        <p className="mt-0.5 text-xl font-bold text-ink-900">{value}</p>
         {detail !== undefined && detail !== "" && (
-          <p className="mt-0.5 text-sm text-ink-500">{detail}</p>
+          <p className="mt-0.5 text-xs text-ink-500 sm:text-sm">{detail}</p>
         )}
       </CardBody>
     </Card>
@@ -45,7 +54,7 @@ export function DailySummaryCards({ summary }: { summary: DailySummary }) {
   const { feeding, sleep, health, hygiene, mood } = summary;
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
       <SummaryCard
         icon={UtensilsCrossed}
         label="Repas"
