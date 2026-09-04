@@ -16,6 +16,7 @@ function makeUser(role: Role): CurrentUser {
     phone: "",
     role,
     children: [],
+    can_send_messages: true,
   };
 }
 

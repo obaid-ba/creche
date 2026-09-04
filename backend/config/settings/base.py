@@ -179,6 +179,8 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "ChildStatusEnum": "apps.children.models.ChildStatus.choices",
         "DailyRecordStatusEnum": "apps.care.models.DailyRecordStatus.choices",
+        "ActivityCategoryEnum": "apps.activities.models.ActivityCategory.choices",
+        "RelationshipEnum": "apps.accounts.models.Relationship.choices",
     },
 }
 

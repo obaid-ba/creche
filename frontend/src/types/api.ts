@@ -23,6 +23,8 @@ export interface CurrentUser {
   role: Role;
   phone: string;
   children: ChildSummary[];
+  /** Presentation only - the server still enforces the rule. */
+  can_send_messages: boolean;
 }
 
 export interface ChildSummary {
