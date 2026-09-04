@@ -11,12 +11,14 @@ const NAV: Record<"parent" | "staff", readonly { to: string; label: string }[]> 
     { to: "/parent/timeline", label: "Journée" },
     { to: "/parent/activities", label: "Activités" },
     { to: "/parent/messages", label: "Messages" },
+    { to: "/parent/complaints", label: "Réclamations" },
   ],
   staff: [
     { to: "/staff", label: "Tableau de bord" },
     { to: "/staff/children", label: "Enfants" },
     { to: "/staff/activities", label: "Activités" },
     { to: "/staff/messages", label: "Messages" },
+    { to: "/staff/complaints", label: "Réclamations" },
   ],
 };
 

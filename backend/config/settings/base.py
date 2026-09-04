@@ -181,6 +181,7 @@ SPECTACULAR_SETTINGS = {
         "DailyRecordStatusEnum": "apps.care.models.DailyRecordStatus.choices",
         "ActivityCategoryEnum": "apps.activities.models.ActivityCategory.choices",
         "RelationshipEnum": "apps.accounts.models.Relationship.choices",
+        "ComplaintStatusEnum": "apps.complaints.models.ComplaintStatus.choices",
     },
 }
 
