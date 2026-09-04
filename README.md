@@ -97,6 +97,31 @@ npm run dev
 Vite proxies `/api` and `/media` to `localhost:8000`, so no CORS setup is
 needed for local work.
 
+### 4. Demo data
+
+```bash
+cd backend
+POSTGRES_HOST=127.0.0.1 POSTGRES_PORT=5433 python manage.py seed_demo
+```
+
+Creates three staff accounts, five families with children across all four
+age groups, three days of recorded care events, activities, conversations
+and complaints. It is idempotent, so it is safe to re-run.
+
+Today's day is deliberately left **unpublished** so the publish flow can be
+demonstrated. The command prints the accounts it created and refuses to run
+with `DEBUG=False` unless given `--force`, because every demo account shares
+one published password.
+
+---
+
+## Accessibility
+
+The interface is checked against WCAG 2.1 AA with axe-core across all
+public, parent and staff pages. Colour tokens are contrast-verified: white
+on `primary-500` is 4.74:1 and `ink-400` on the cream background is 5.17:1,
+both above the 4.5:1 minimum.
+
 ---
 
 ## Tests

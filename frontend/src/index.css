@@ -6,15 +6,18 @@
    built on a soft terracotta/amber primary with a calm teal secondary.
    ------------------------------------------------------------------- */
 @theme {
+  /* Colour choices here are contrast-checked against WCAG 2.1 AA:
+     white on primary-500 is 4.74:1 and ink-400 on cream is 5.17:1,
+     both above the 4.5:1 minimum for body text. */
   /* Primary — warm terracotta */
   --color-primary-50: #fdf5f0;
   --color-primary-100: #fae8dc;
   --color-primary-200: #f4cdb5;
   --color-primary-300: #ecab85;
   --color-primary-400: #e28054;
-  --color-primary-500: #d96033;
-  --color-primary-600: #c74a25;
-  --color-primary-700: #a53920;
+  --color-primary-500: #c74a25;
+  --color-primary-600: #b03f20;
+  --color-primary-700: #96361c;
   --color-primary-800: #862f20;
   --color-primary-900: #6e2a1e;
 
@@ -44,7 +47,7 @@
   --color-ink-100: #ebe7e1;
   --color-ink-200: #d8d2c9;
   --color-ink-300: #b8b0a4;
-  --color-ink-400: #8f8578;
+  --color-ink-400: #75695c;
   --color-ink-500: #6b6155;
   --color-ink-600: #524a41;
   --color-ink-700: #3d3730;

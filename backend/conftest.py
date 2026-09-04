@@ -77,3 +77,48 @@ def owned_child(parent, make_child, link_parent_to_child):
     child = make_child(first_name="Mohamed", last_name="Benali")
     link_parent_to_child(parent, child)
     return child
+
+
+@pytest.fixture
+def at_today():
+    """A timezone-aware datetime at HH:MM on the local today."""
+    from django.utils import timezone
+
+    def _at(hour: int, minute: int = 0):
+        return timezone.localtime().replace(
+            hour=hour, minute=minute, second=0, microsecond=0
+        )
+
+    return _at
+
+
+@pytest.fixture
+def make_event(db, at_today):
+    """Create a timeline event with a sensible payload for its type."""
+    from apps.care.models import TimelineEvent
+
+    DEFAULTS = {
+        "BOTTLE": {"volume_ml": 180},
+        "MEAL": {"meal": "LUNCH", "eaten": "MOST"},
+        "TEMPERATURE": {"celsius": "36.6"},
+        "MOOD": {"mood": "HAPPY"},
+        "DIAPER": {"state": "WET"},
+        "TOILET": {"success": True},
+        "SLEEP": {},
+        "NOTE": {},
+    }
+
+    def _make(child, event_type="BOTTLE", hour=8, minute=0, data=None,
+              created_by=None, published=True, ended_at=None, **extra):
+        return TimelineEvent.objects.create(
+            child=child,
+            type=event_type,
+            occurred_at=at_today(hour, minute),
+            ended_at=ended_at,
+            data=data if data is not None else DEFAULTS.get(event_type, {}),
+            created_by=created_by,
+            is_published=published,
+            **extra,
+        )
+
+    return _make

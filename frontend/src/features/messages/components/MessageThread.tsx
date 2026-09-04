@@ -20,7 +20,7 @@ function formatTime(iso: string): string {
  * so the order is reversed here for reading.
  */
 export function MessageThread({ messages }: { messages: Message[] }) {
-  const endRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLLIElement>(null);
   const ordered = [...messages].reverse();
 
   useEffect(() => {
@@ -72,7 +72,9 @@ export function MessageThread({ messages }: { messages: Message[] }) {
               dateTime={message.created_at}
               className={cn(
                 "mt-1 block text-[0.7rem]",
-                message.is_mine ? "text-white/70" : "text-ink-400",
+                // Full white, not a tint: at this size anything less
+                // than 4.5:1 on the primary bubble fails AA.
+                message.is_mine ? "text-white" : "text-ink-400",
               )}
             >
               {formatTime(message.created_at)}
@@ -80,7 +82,8 @@ export function MessageThread({ messages }: { messages: Message[] }) {
           </div>
         </li>
       ))}
-      <div ref={endRef} />
+      {/* Scroll anchor. An <ol> may only contain <li>, so it is one. */}
+      <li ref={endRef} aria-hidden="true" />
     </ol>
   );
 }
