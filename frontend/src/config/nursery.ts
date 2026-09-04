@@ -9,6 +9,9 @@
 export const NURSERY = {
   name: "Crèche Mamati",
 
+  /** Transparent PNG, so the disc reads correctly on any background. */
+  logo: "/logo-512.png",
+
   // Tunisian mobile. `tel:` needs the international form; the display
   // string keeps the local grouping people recognise.
   phone: { display: "99 389 262", href: "tel:+21699389262" },
@@ -49,7 +52,6 @@ export const GALLERY: GalleryItem[] = [
   { src: "/images/gallery/creche-10.jpg", alt: "Matériel pédagogique et jeux d'éveil" },
   { src: "/images/gallery/creche-11.jpg", alt: "Espace de motricité" },
   { src: "/images/gallery/creche-12.jpg", alt: "Aménagement intérieur de la crèche" },
-  { src: "/images/gallery/creche-13.jpg", alt: "Locaux de la Crèche Mamati" },
 ];
 
 export interface VideoItem {

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
 
-import { Card, CardBody } from "@/components/ui";
+import { Card, CardBody, Logo } from "@/components/ui";
 
 export function AuthLayout({
   title,
@@ -17,14 +16,7 @@ export function AuthLayout({
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-primary-50 to-cream">
       <header className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
-        <Link to="/" className="inline-flex items-center gap-2">
-          <span className="grid size-9 place-items-center rounded-full bg-primary-500 text-lg">
-            🧸
-          </span>
-          <span className="font-display text-lg font-bold text-ink-900">
-            Crèche Mamati
-          </span>
-        </Link>
+        <Logo />
       </header>
 
       <main className="flex flex-1 items-start justify-center px-4 pb-16 sm:items-center">

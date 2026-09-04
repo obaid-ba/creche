@@ -1,8 +1,8 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 
-import { LinkButton } from "@/components/ui";
+import { LinkButton, Logo } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 const NAV_LINKS = [
@@ -28,14 +28,7 @@ export function PublicLayout() {
 
       <header className="sticky top-0 z-40 border-b border-ink-100 bg-cream/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid size-9 place-items-center rounded-full bg-primary-500 text-lg">
-              🧸
-            </span>
-            <span className="font-display text-lg font-bold text-ink-900">
-              Crèche Mamati
-            </span>
-          </Link>
+          <Logo />
 
           <nav aria-label="Navigation principale" className="hidden md:block">
             <ul className="flex items-center gap-1">
