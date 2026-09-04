@@ -1,6 +1,7 @@
 import {
   Archive,
   ArchiveRestore,
+  CalendarClock,
   KeyRound,
   Pencil,
   ShieldAlert,
@@ -93,6 +94,11 @@ export function StaffChildDetailPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <LinkButton to={`/staff/children/${child.id}/timeline`} size="sm">
+              <CalendarClock aria-hidden="true" className="size-4" />
+              Journée
+            </LinkButton>
+
             <LinkButton
               to={`/staff/children/${child.id}/edit`}
               variant="outline"

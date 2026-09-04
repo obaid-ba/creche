@@ -173,6 +173,13 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
+    # Several models expose a field called "status" with different choice
+    # sets. Naming them explicitly keeps the generated client readable
+    # instead of leaving auto-resolved names like "StatusBbeEnum".
+    "ENUM_NAME_OVERRIDES": {
+        "ChildStatusEnum": "apps.children.models.ChildStatus.choices",
+        "DailyRecordStatusEnum": "apps.care.models.DailyRecordStatus.choices",
+    },
 }
 
 # ── JWT ─────────────────────────────────────────────────────────────────

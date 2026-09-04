@@ -6,7 +6,10 @@ import { useAuth } from "@/features/auth/useAuth";
 import { cn } from "@/lib/cn";
 
 const NAV: Record<"parent" | "staff", readonly { to: string; label: string }[]> = {
-  parent: [{ to: "/parent", label: "Accueil" }],
+  parent: [
+    { to: "/parent", label: "Accueil" },
+    { to: "/parent/timeline", label: "Journée" },
+  ],
   staff: [
     { to: "/staff", label: "Tableau de bord" },
     { to: "/staff/children", label: "Enfants" },

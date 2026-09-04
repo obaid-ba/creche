@@ -52,6 +52,16 @@ const StaffChildEditPage = lazy(() =>
     default: m.StaffChildEditPage,
   })),
 );
+const StaffChildTimelinePage = lazy(() =>
+  import("@/pages/staff/StaffChildTimelinePage").then((m) => ({
+    default: m.StaffChildTimelinePage,
+  })),
+);
+const ParentTimelinePage = lazy(() =>
+  import("@/pages/parent/ParentTimelinePage").then((m) => ({
+    default: m.ParentTimelinePage,
+  })),
+);
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<LoadingState />}>{element}</Suspense>;
@@ -95,7 +105,10 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout area="parent" />,
-        children: [{ index: true, element: withSuspense(<ParentHomePage />) }],
+        children: [
+          { index: true, element: withSuspense(<ParentHomePage />) },
+          { path: "timeline", element: withSuspense(<ParentTimelinePage />) },
+        ],
       },
     ],
   },
@@ -119,6 +132,10 @@ export const router = createBrowserRouter([
           {
             path: "children/:childId/edit",
             element: withSuspense(<StaffChildEditPage />),
+          },
+          {
+            path: "children/:childId/timeline",
+            element: withSuspense(<StaffChildTimelinePage />),
           },
         ],
       },
