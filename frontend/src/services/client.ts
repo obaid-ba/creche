@@ -20,6 +20,13 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // File uploads must not inherit the JSON default: the browser has to
+  // set multipart/form-data itself so it can append the boundary.
+  if (config.data instanceof FormData) {
+    config.headers.delete("Content-Type");
+  }
+
   return config;
 });
 

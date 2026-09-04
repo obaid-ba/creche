@@ -62,6 +62,16 @@ const ParentTimelinePage = lazy(() =>
     default: m.ParentTimelinePage,
   })),
 );
+const ParentActivitiesPage = lazy(() =>
+  import("@/pages/parent/ParentActivitiesPage").then((m) => ({
+    default: m.ParentActivitiesPage,
+  })),
+);
+const StaffActivitiesPage = lazy(() =>
+  import("@/pages/staff/StaffActivitiesPage").then((m) => ({
+    default: m.StaffActivitiesPage,
+  })),
+);
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<LoadingState />}>{element}</Suspense>;
@@ -108,6 +118,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: withSuspense(<ParentHomePage />) },
           { path: "timeline", element: withSuspense(<ParentTimelinePage />) },
+          { path: "activities", element: withSuspense(<ParentActivitiesPage />) },
         ],
       },
     ],
@@ -137,6 +148,7 @@ export const router = createBrowserRouter([
             path: "children/:childId/timeline",
             element: withSuspense(<StaffChildTimelinePage />),
           },
+          { path: "activities", element: withSuspense(<StaffActivitiesPage />) },
         ],
       },
     ],

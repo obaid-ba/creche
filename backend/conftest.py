@@ -69,3 +69,11 @@ def link_parent_to_child(db):
         )
 
     return _link
+
+
+@pytest.fixture
+def owned_child(parent, make_child, link_parent_to_child):
+    """A child the `parent` fixture is a guardian of."""
+    child = make_child(first_name="Mohamed", last_name="Benali")
+    link_parent_to_child(parent, child)
+    return child

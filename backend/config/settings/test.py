@@ -21,6 +21,12 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 ACCESS_CODE_HMAC_KEY = "test-hmac-key-deterministic"
 
+# Uploads go to a throwaway directory so a test run never leaves files in
+# the working tree (and cannot collide with a dev server's media/).
+import tempfile
+
+MEDIA_ROOT = tempfile.mkdtemp(prefix="creche-test-media-")
+
 import logging
 
 logging.disable(logging.CRITICAL)

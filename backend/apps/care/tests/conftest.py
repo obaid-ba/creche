@@ -46,9 +46,3 @@ def make_event(db, at_today):
 
     return _make
 
-
-@pytest.fixture
-def owned_child(parent, make_child, link_parent_to_child):
-    child = make_child(first_name="Mohamed", last_name="Benali")
-    link_parent_to_child(parent, child)
-    return child

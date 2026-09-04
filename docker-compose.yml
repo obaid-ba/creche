@@ -28,6 +28,9 @@ services:
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      # /app only exists inside the container, so it is set here rather
+      # than in .env, which is shared with native runs.
+      MEDIA_ROOT: /app/media
     volumes:
       - ./backend:/app
       # Keep Python packages out of the NTFS bind mount (architecture.md 9.2)
