@@ -36,9 +36,14 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               aria-label={`Agrandir : ${item.alt}`}
             >
               <img
-                src={item.src}
+                src={item.thumb}
                 alt={item.alt}
+                // Explicit dimensions reserve the tile before the image
+                // arrives, so the grid does not reflow as photos load.
+                width={600}
+                height={600}
                 loading="lazy"
+                decoding="async"
                 className="aspect-square w-full object-cover transition-transform duration-300 hover:scale-105"
               />
             </button>
@@ -66,6 +71,8 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
           <img
             src={active.src}
             alt={active.alt}
+            // Full size, fetched only when a photo is actually opened.
+            fetchPriority="high"
             className="max-h-full max-w-full rounded-card object-contain"
             onClick={(event) => event.stopPropagation()}
           />

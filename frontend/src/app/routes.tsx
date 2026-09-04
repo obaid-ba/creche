@@ -89,7 +89,21 @@ const ComplaintsPage = lazy(() =>
 );
 
 function withSuspense(element: ReactNode) {
-  return <Suspense fallback={<LoadingState />}>{element}</Suspense>;
+  // The fallback reserves a viewport of height. Without it the page
+  // collapses to a spinner, the footer paints just below the header, and
+  // then jumps when the route resolves — a 0.11 layout shift, above
+  // Google's 0.1 "good" threshold, on every first load.
+  return (
+    <Suspense
+      fallback={
+        <div className="grid min-h-screen place-items-center">
+          <LoadingState />
+        </div>
+      }
+    >
+      {element}
+    </Suspense>
+  );
 }
 
 export const router = createBrowserRouter([

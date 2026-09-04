@@ -9,8 +9,12 @@
 export const NURSERY = {
   name: "Crèche Mamati",
 
-  /** Transparent PNG, so the disc reads correctly on any background. */
-  logo: "/logo-512.png",
+  /** Header mark: 96px WebP (9 KB). The 512px PNG it came from is 269 KB
+   *  and is kept only for the favicon and og:image, where a large square
+   *  is actually needed — serving it in a 40px header slot was the single
+   *  heaviest asset on the page. */
+  logo: "/logo-96.webp",
+  logoLarge: "/logo-512.png",
 
   // Tunisian mobile. `tel:` needs the international form; the display
   // string keeps the local grouping people recognise.
@@ -31,7 +35,12 @@ export const NURSERY = {
 } as const;
 
 export interface GalleryItem {
+  /** Full-size image, shown only in the lightbox. */
   src: string;
+  /** Square WebP for the grid — half the bytes, and already cropped to
+   *  the aspect ratio the grid renders, so the browser stops downloading
+   *  height it would immediately crop away. */
+  thumb: string;
   alt: string;
 }
 
@@ -40,18 +49,18 @@ export interface GalleryItem {
  * public site carries no image requiring parental consent.
  */
 export const GALLERY: GalleryItem[] = [
-  { src: "/images/gallery/creche-01.jpg", alt: "Salle de jeux colorée avec tapis alphabet, tente et coin lecture" },
-  { src: "/images/gallery/creche-02.jpg", alt: "Espace d'activités de la crèche" },
-  { src: "/images/gallery/creche-03.jpg", alt: "Coin jeux et jouets des enfants" },
-  { src: "/images/gallery/creche-04.jpg", alt: "Salle d'éveil de la crèche" },
-  { src: "/images/gallery/creche-05.jpg", alt: "Espace intérieur aménagé pour les tout-petits" },
-  { src: "/images/gallery/creche-06.jpg", alt: "Entrée de la crèche avec cour couverte et gazon" },
-  { src: "/images/gallery/creche-07.jpg", alt: "Espace extérieur sécurisé" },
-  { src: "/images/gallery/creche-08.jpg", alt: "Salle de repos et de sieste" },
-  { src: "/images/gallery/creche-09.jpg", alt: "Coin repas des enfants" },
-  { src: "/images/gallery/creche-10.jpg", alt: "Matériel pédagogique et jeux d'éveil" },
-  { src: "/images/gallery/creche-11.jpg", alt: "Espace de motricité" },
-  { src: "/images/gallery/creche-12.jpg", alt: "Aménagement intérieur de la crèche" },
+  { src: "/images/gallery/creche-01.jpg", thumb: "/images/gallery/thumbs/creche-01.webp", alt: "Salle de jeux colorée avec tapis alphabet, tente et coin lecture" },
+  { src: "/images/gallery/creche-02.jpg", thumb: "/images/gallery/thumbs/creche-02.webp", alt: "Espace d'activités de la crèche" },
+  { src: "/images/gallery/creche-03.jpg", thumb: "/images/gallery/thumbs/creche-03.webp", alt: "Coin jeux et jouets des enfants" },
+  { src: "/images/gallery/creche-04.jpg", thumb: "/images/gallery/thumbs/creche-04.webp", alt: "Salle d'éveil de la crèche" },
+  { src: "/images/gallery/creche-05.jpg", thumb: "/images/gallery/thumbs/creche-05.webp", alt: "Espace intérieur aménagé pour les tout-petits" },
+  { src: "/images/gallery/creche-06.jpg", thumb: "/images/gallery/thumbs/creche-06.webp", alt: "Entrée de la crèche avec cour couverte et gazon" },
+  { src: "/images/gallery/creche-07.jpg", thumb: "/images/gallery/thumbs/creche-07.webp", alt: "Espace extérieur sécurisé" },
+  { src: "/images/gallery/creche-08.jpg", thumb: "/images/gallery/thumbs/creche-08.webp", alt: "Salle de repos et de sieste" },
+  { src: "/images/gallery/creche-09.jpg", thumb: "/images/gallery/thumbs/creche-09.webp", alt: "Coin repas des enfants" },
+  { src: "/images/gallery/creche-10.jpg", thumb: "/images/gallery/thumbs/creche-10.webp", alt: "Matériel pédagogique et jeux d'éveil" },
+  { src: "/images/gallery/creche-11.jpg", thumb: "/images/gallery/thumbs/creche-11.webp", alt: "Espace de motricité" },
+  { src: "/images/gallery/creche-12.jpg", thumb: "/images/gallery/thumbs/creche-12.webp", alt: "Aménagement intérieur de la crèche" },
 ];
 
 export interface VideoItem {

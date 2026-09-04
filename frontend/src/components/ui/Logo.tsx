@@ -27,6 +27,8 @@ export function Logo({
         alt=""
         width={40}
         height={40}
+        // Decorative: the nursery name sits beside it as real text.
+        aria-hidden="true"
         className={cn(dimensions, "object-contain")}
       />
       <span

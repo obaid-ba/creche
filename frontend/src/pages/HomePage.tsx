@@ -107,8 +107,12 @@ export function HomePage() {
               src={GALLERY[0]?.src ?? ""}
               alt={GALLERY[0]?.alt ?? ""}
               // The hero is the first thing painted, so it is fetched
-              // eagerly at high priority rather than lazily.
+              // eagerly at high priority rather than lazily. Dimensions
+              // match the rendered 4:3 box.
+              width={800}
+              height={600}
               fetchPriority="high"
+              decoding="async"
               className="aspect-[4/3] w-full rounded-card object-cover shadow-lifted"
             />
             <Card className="absolute -bottom-5 left-4 w-56 md:left-8">
