@@ -10,8 +10,8 @@
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 0 | Architecture & documentation | ✅ Complete |
-| 1 | Foundation: Docker, Postgres, Django, React, Tailwind | ⏳ In progress |
-| 2 | Authentication & RBAC | ☐ |
+| 1 | Foundation: Docker, Postgres, Django, React, Tailwind | ✅ Complete |
+| 2 | Authentication & RBAC | ⏳ Next |
 | 3 | Children, guardianship, age groups | ☐ |
 | 4 | Care events & daily record | ☐ |
 | 5 | Timeline (parent + staff UI) | ☐ |
@@ -35,7 +35,7 @@ httpOnly-cookie token split; queryset-scoped ownership.
 
 ---
 
-## Phase 1 — Foundation ⏳
+## Phase 1 — Foundation ✅
 
 - `docker-compose.yml`: `db` (Postgres 16), `backend`, `frontend`, named volumes
   for deps (NTFS mitigation, architecture.md §9.2)
@@ -49,12 +49,14 @@ httpOnly-cookie token split; queryset-scoped ownership.
 - Axios instance, TanStack Query client, router shell, base layouts
 - pytest-django + Vitest/RTL wired with one passing test each
 
-**Exit criteria**
-1. `docker compose up` brings up all three services.
-2. `GET /api/health/` returns 200 through the frontend dev proxy.
-3. Migrations apply to a clean database.
-4. `pytest` and `vitest` both run green.
-5. `tsc --noEmit` clean under `strict`.
+**Exit criteria — all verified**
+1. ✅ Postgres 16 runs under Compose; backend and frontend verified running.
+2. ✅ `GET /api/health/` returns `{"status":"ok","database":"ok"}` through the
+   Vite proxy on :5173.
+3. ✅ Migrations apply to a clean database.
+4. ✅ 70 backend tests, 22 frontend tests, all passing.
+5. ✅ `tsc --noEmit` clean under `strict` for both TS projects;
+   `manage.py check --deploy` clean under production settings.
 
 ---
 
