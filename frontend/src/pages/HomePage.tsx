@@ -1,9 +1,9 @@
 import {
   Baby,
   Clock,
+  Facebook,
   HeartHandshake,
   MapPin,
-  Mail,
   MessageCircle,
   Palette,
   Phone,
@@ -13,7 +13,10 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Card, CardBody } from "@/components/ui";
+import { Card, CardBody, LinkButton } from "@/components/ui";
+import { GALLERY, NURSERY, VIDEOS } from "@/config/nursery";
+import { GalleryGrid } from "@/features/public/components/GalleryGrid";
+import { VideoEmbed } from "@/features/public/components/VideoEmbed";
 
 const VALUES = [
   {
@@ -100,7 +103,14 @@ export function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="aspect-[4/3] rounded-card bg-gradient-to-br from-accent-200 via-primary-200 to-secondary-200 shadow-lifted" />
+            <img
+              src={GALLERY[0]?.src ?? ""}
+              alt={GALLERY[0]?.alt ?? ""}
+              // The hero is the first thing painted, so it is fetched
+              // eagerly at high priority rather than lazily.
+              fetchPriority="high"
+              className="aspect-[4/3] w-full rounded-card object-cover shadow-lifted"
+            />
             <Card className="absolute -bottom-5 left-4 w-56 md:left-8">
               <CardBody className="p-4">
                 <p className="text-xs font-semibold text-ink-400">
@@ -208,25 +218,94 @@ export function HomePage() {
         </Card>
       </section>
 
+      {/* ── Gallery preview ─────────────────────────────────────────── */}
+      <section className="bg-white py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="text-center text-3xl font-bold">Nos locaux</h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-ink-600">
+            Des espaces pensés pour l'éveil, le repos et la sécurité.
+          </p>
+
+          <div className="mt-10">
+            <GalleryGrid items={GALLERY.slice(0, 8)} />
+          </div>
+
+          <div className="mt-8 text-center">
+            <LinkButton to="/gallery" variant="outline">
+              Voir toute la galerie
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Videos ──────────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-20">
+        <h2 className="text-center text-3xl font-bold">En vidéo</h2>
+        <p className="mx-auto mt-3 max-w-xl text-center text-ink-600">
+          Découvrez la vie quotidienne à la Crèche Mamati.
+        </p>
+
+        <ul className="mx-auto mt-10 grid max-w-2xl gap-6 sm:grid-cols-2">
+          {VIDEOS.map((video) => (
+            <li key={video.src}>
+              <VideoEmbed video={video} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* ── Contact ─────────────────────────────────────────────────── */}
       <section className="bg-white py-16 md:py-20">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 md:grid-cols-3">
           {[
-            { icon: MapPin, title: "Adresse", lines: ["Crèche Mamati"] },
-            { icon: Phone, title: "Téléphone", lines: ["Du lundi au vendredi"] },
-            { icon: Mail, title: "E-mail", lines: ["contact@creche-mamati.com"] },
-          ].map(({ icon: Icon, title, lines }) => (
+            {
+              icon: Phone,
+              title: "Téléphone",
+              body: (
+                <a
+                  href={NURSERY.phone.href}
+                  className="text-sm font-semibold text-primary-700 underline underline-offset-2"
+                >
+                  {NURSERY.phone.display}
+                </a>
+              ),
+            },
+            {
+              icon: MapPin,
+              title: "Nous trouver",
+              body: (
+                <a
+                  href={NURSERY.location.mapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-semibold text-primary-700 underline underline-offset-2"
+                >
+                  Voir sur Google Maps
+                </a>
+              ),
+            },
+            {
+              icon: Facebook,
+              title: "Facebook",
+              body: (
+                <a
+                  href={NURSERY.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm font-semibold text-primary-700 underline underline-offset-2"
+                >
+                  Suivre notre page
+                </a>
+              ),
+            },
+          ].map(({ icon: Icon, title, body }) => (
             <div key={title} className="flex gap-4">
               <span className="grid size-11 shrink-0 place-items-center rounded-card bg-accent-100 text-accent-500">
                 <Icon aria-hidden="true" className="size-5" />
               </span>
               <div>
                 <h3 className="text-base font-bold">{title}</h3>
-                {lines.map((line) => (
-                  <p key={line} className="mt-1 text-sm text-ink-600">
-                    {line}
-                  </p>
-                ))}
+                <p className="mt-1">{body}</p>
               </div>
             </div>
           ))}

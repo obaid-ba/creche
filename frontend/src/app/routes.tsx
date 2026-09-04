@@ -15,6 +15,15 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 const HomePage = lazy(() =>
   import("@/pages/HomePage").then((m) => ({ default: m.HomePage })),
 );
+const GalleryPage = lazy(() =>
+  import("@/pages/GalleryPage").then((m) => ({ default: m.GalleryPage })),
+);
+const ContactPage = lazy(() =>
+  import("@/pages/ContactPage").then((m) => ({ default: m.ContactPage })),
+);
+const DocumentsPage = lazy(() =>
+  import("@/pages/DocumentsPage").then((m) => ({ default: m.DocumentsPage })),
+);
 const ParentLoginPage = lazy(() =>
   import("@/pages/ParentLoginPage").then((m) => ({ default: m.ParentLoginPage })),
 );
@@ -83,7 +92,12 @@ function withSuspense(element: ReactNode) {
 export const router = createBrowserRouter([
   {
     element: <PublicLayout />,
-    children: [{ path: "/", element: withSuspense(<HomePage />) }],
+    children: [
+      { path: "/", element: withSuspense(<HomePage />) },
+      { path: "/gallery", element: withSuspense(<GalleryPage />) },
+      { path: "/contact", element: withSuspense(<ContactPage />) },
+      { path: "/documents", element: withSuspense(<DocumentsPage />) },
+    ],
   },
 
   // Login pages sit outside the public shell — they have their own layout.
