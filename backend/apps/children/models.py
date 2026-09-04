@@ -141,6 +141,10 @@ class Child(BaseModel):
     def age_group_payload(self) -> dict[str, str]:
         return group_payload(self.date_of_birth)
 
+    @property
+    def is_archived(self) -> bool:
+        return self.archived_at is not None
+
     def archive(self, *, by=None) -> None:
         from django.utils import timezone
 

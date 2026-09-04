@@ -1,8 +1,17 @@
 import { LogOut } from "lucide-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 
 import { Button } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
+import { cn } from "@/lib/cn";
+
+const NAV: Record<"parent" | "staff", readonly { to: string; label: string }[]> = {
+  parent: [{ to: "/parent", label: "Accueil" }],
+  staff: [
+    { to: "/staff", label: "Tableau de bord" },
+    { to: "/staff/children", label: "Enfants" },
+  ],
+};
 
 /** Shell shared by the parent and staff spaces. */
 export function AppLayout({ area }: { area: "parent" | "staff" }) {
@@ -43,6 +52,32 @@ export function AppLayout({ area }: { area: "parent" | "staff" }) {
           </div>
         </div>
       </header>
+
+      <nav
+        aria-label="Navigation"
+        className="border-b border-ink-100 bg-white"
+      >
+        <ul className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 sm:px-6">
+          {NAV[area].map((item) => (
+            <li key={item.to}>
+              <NavLink
+                to={item.to}
+                end={item.to === "/parent" || item.to === "/staff"}
+                className={({ isActive }) =>
+                  cn(
+                    "inline-block whitespace-nowrap border-b-2 px-3 py-3 text-sm font-semibold transition-colors",
+                    isActive
+                      ? "border-primary-500 text-primary-700"
+                      : "border-transparent text-ink-500 hover:text-ink-800",
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <main id="contenu" className="flex-1">
         <Outlet />

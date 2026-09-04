@@ -32,6 +32,26 @@ const ParentHomePage = lazy(() =>
 const StaffHomePage = lazy(() =>
   import("@/pages/StaffHomePage").then((m) => ({ default: m.StaffHomePage })),
 );
+const StaffChildrenPage = lazy(() =>
+  import("@/pages/staff/StaffChildrenPage").then((m) => ({
+    default: m.StaffChildrenPage,
+  })),
+);
+const StaffChildDetailPage = lazy(() =>
+  import("@/pages/staff/StaffChildDetailPage").then((m) => ({
+    default: m.StaffChildDetailPage,
+  })),
+);
+const StaffChildCreatePage = lazy(() =>
+  import("@/pages/staff/StaffChildCreatePage").then((m) => ({
+    default: m.StaffChildCreatePage,
+  })),
+);
+const StaffChildEditPage = lazy(() =>
+  import("@/pages/staff/StaffChildEditPage").then((m) => ({
+    default: m.StaffChildEditPage,
+  })),
+);
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<LoadingState />}>{element}</Suspense>;
@@ -86,7 +106,21 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout area="staff" />,
-        children: [{ index: true, element: withSuspense(<StaffHomePage />) }],
+        children: [
+          { index: true, element: withSuspense(<StaffHomePage />) },
+          { path: "children", element: withSuspense(<StaffChildrenPage />) },
+          // `new` is declared before `:childId` so it is not swallowed by
+          // the dynamic segment.
+          { path: "children/new", element: withSuspense(<StaffChildCreatePage />) },
+          {
+            path: "children/:childId",
+            element: withSuspense(<StaffChildDetailPage />),
+          },
+          {
+            path: "children/:childId/edit",
+            element: withSuspense(<StaffChildEditPage />),
+          },
+        ],
       },
     ],
   },

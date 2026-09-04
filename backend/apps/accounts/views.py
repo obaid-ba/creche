@@ -71,6 +71,10 @@ class LoginView(APIView):
         return set_refresh_cookie(Response(body, status=status.HTTP_200_OK), refresh)
 
 
+@extend_schema(
+    request=None,
+    responses={200: OpenApiResponse(description="New access token issued")},
+)
 class RefreshView(APIView):
     """Exchange the refresh cookie for a new access token.
 
@@ -114,6 +118,10 @@ class RefreshView(APIView):
         return set_refresh_cookie(Response(body), new_refresh)
 
 
+@extend_schema(
+    request=None,
+    responses={204: OpenApiResponse(description="Signed out")},
+)
 class LogoutView(APIView):
     permission_classes = [AllowAny]
     authentication_classes: list = []
@@ -133,6 +141,10 @@ class LogoutView(APIView):
         return clear_refresh_cookie(response)
 
 
+@extend_schema(
+    request=CurrentUserSerializer,
+    responses=CurrentUserSerializer,
+)
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -151,6 +163,10 @@ class MeView(APIView):
         return Response(serializer.data)
 
 
+@extend_schema(
+    request=PasswordChangeSerializer,
+    responses={204: OpenApiResponse(description="Password changed")},
+)
 class PasswordChangeView(APIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = [ScopedRateThrottle]
@@ -169,6 +185,10 @@ class PasswordChangeView(APIView):
         return clear_refresh_cookie(response)
 
 
+@extend_schema(
+    request=ParentClaimSerializer,
+    responses={201: OpenApiResponse(description="Account activated")},
+)
 class ParentClaimView(APIView):
     """First-time parent activation with a child access code."""
 
@@ -190,6 +210,7 @@ class ParentClaimView(APIView):
         )
 
 
+@extend_schema(request=LinkChildSerializer, responses=CurrentUserSerializer)
 class LinkChildView(APIView):
     """An authenticated parent adding a second child with another code."""
 
