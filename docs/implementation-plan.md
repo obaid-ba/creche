@@ -11,8 +11,8 @@
 | --- | --- | --- |
 | 0 | Architecture & documentation | ✅ Complete |
 | 1 | Foundation: Docker, Postgres, Django, React, Tailwind | ✅ Complete |
-| 2 | Authentication & RBAC | ⏳ Next |
-| 3 | Children, guardianship, age groups | ☐ |
+| 2 | Authentication & RBAC | ✅ Complete |
+| 3 | Children, guardianship, age groups | ⏳ Next |
 | 4 | Care events & daily record | ☐ |
 | 5 | Timeline (parent + staff UI) | ☐ |
 | 6 | Activities | ☐ |
@@ -71,11 +71,18 @@ httpOnly-cookie token split; queryset-scoped ownership.
 - Frontend: auth context, memory token store, refresh interceptor, route
   guards, both login pages, claim page
 
-**Exit criteria**
-1. All of `authentication.md` §8 passes.
-2. No token is written to `localStorage` (asserted by test).
-3. A reused refresh token is rejected.
-4. Throttles return 429.
+**Exit criteria — all verified**
+1. ✅ All of `authentication.md` §8 passes (48 auth/claim tests).
+2. ✅ No token reaches `localStorage`/`sessionStorage` (asserted by test).
+3. ✅ A replayed rotated refresh token returns 401 — verified by test and
+   against the running server.
+4. ✅ Login and claim throttles return 429; verified deterministically by
+   patching `SimpleRateThrottle.THROTTLE_RATES` (`override_settings` does
+   not reach it — the class binds the dict at import time).
+
+**Also fixed in this phase:** `/api/auth/me/` returned *every* child in the
+nursery for a staff user. `children` means "my children", so it is now
+parent-only — otherwise the login payload grew with the size of the nursery.
 
 ---
 
