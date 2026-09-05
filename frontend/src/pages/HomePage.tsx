@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Palette,
   Phone,
+  Quote,
   ShieldCheck,
   Sparkles,
   Utensils,
@@ -257,6 +258,64 @@ export function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* ── Testimonials ────────────────────────────────────────────── */}
+      <section className="bg-white py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <h2 className="text-center text-3xl font-bold">
+            Ce que disent les parents
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-ink-600">
+            Les témoignages des familles seront publiés ici prochainement.
+          </p>
+
+          {/* Placeholder per the brief (§4): the layout is real, the
+              quotes are not. Nothing here is attributed to a person, so
+              no invented testimonial can be mistaken for a real one. */}
+          <ul
+            aria-label="Emplacements réservés aux témoignages"
+            className="mt-10 grid gap-5 sm:grid-cols-3"
+          >
+            {[0, 1, 2].map((slot) => (
+              <li key={slot}>
+                <Card className="h-full">
+                  <CardBody className="flex h-full flex-col gap-4">
+                    <Quote
+                      aria-hidden="true"
+                      className="size-7 shrink-0 text-primary-200"
+                    />
+                    <div className="flex-1 space-y-2" aria-hidden="true">
+                      <span className="block h-2.5 w-full rounded-pill bg-ink-100" />
+                      <span className="block h-2.5 w-11/12 rounded-pill bg-ink-100" />
+                      <span className="block h-2.5 w-4/5 rounded-pill bg-ink-100" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="size-9 rounded-full bg-ink-100"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-24 rounded-pill bg-ink-100"
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-8 text-center text-sm text-ink-500">
+            Vous êtes parent à la crèche ?{" "}
+            <a
+              href={NURSERY.phone.href}
+              className="font-semibold text-primary-700 underline underline-offset-2"
+            >
+              Partagez votre témoignage
+            </a>
+          </p>
+        </div>
       </section>
 
       {/* ── Contact ─────────────────────────────────────────────────── */}

@@ -8,6 +8,7 @@ import {
   LinkButton,
   LoadingState,
   Pagination,
+  Select,
 } from "@/components/ui";
 import { AgeGroupSection } from "@/features/children/components/AgeGroupSection";
 import { ChildCard } from "@/features/children/components/ChildCard";
@@ -92,53 +93,32 @@ export function StaffChildrenPage() {
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="filter-group"
-            className="mb-1.5 block text-sm font-semibold text-ink-700"
-          >
-            Groupe d'âge
-          </label>
-          <select
-            id="filter-group"
+        <div className="w-48">
+          <Select
+            label="Groupe d'âge"
             value={ageGroup}
+            placeholder="Tous les groupes"
+            options={(groupsQuery.data ?? []).map((group) => ({
+              value: group.key,
+              label: `${group.label} (${group.count})`,
+            }))}
             onChange={(event) => {
               setPage(1);
               setAgeGroup(event.target.value as AgeGroupKey | "");
             }}
-            className="h-11 rounded-card border border-ink-200 bg-white px-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-          >
-            <option value="">Tous les groupes</option>
-            {(groupsQuery.data ?? []).map((group) => (
-              <option key={group.key} value={group.key}>
-                {group.label} ({group.count})
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
-        <div>
-          <label
-            htmlFor="filter-status"
-            className="mb-1.5 block text-sm font-semibold text-ink-700"
-          >
-            Statut
-          </label>
-          <select
-            id="filter-status"
+        <div className="w-40">
+          <Select
+            label="Statut"
             value={status}
+            options={STATUS_FILTERS.map((o) => ({ value: o.value, label: o.label }))}
             onChange={(event) => {
               setPage(1);
               setStatus(event.target.value as ChildStatus | "");
             }}
-            className="h-11 rounded-card border border-ink-200 bg-white px-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-          >
-            {STATUS_FILTERS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
 

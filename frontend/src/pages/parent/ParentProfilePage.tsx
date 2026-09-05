@@ -10,6 +10,7 @@ import {
   CardBody,
   CardHeader,
   Input,
+  Select,
 } from "@/components/ui";
 import { ChildAvatar } from "@/features/children/components/ChildAvatar";
 import { PasswordForm } from "@/features/auth/components/PasswordForm";
@@ -65,25 +66,11 @@ function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
         {...form.register("access_code", { required: "Le code est requis." })}
       />
 
-      <div>
-        <label
-          htmlFor="link-relationship"
-          className="mb-1.5 block text-sm font-semibold text-ink-700"
-        >
-          Lien avec l'enfant
-        </label>
-        <select
-          id="link-relationship"
-          className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-          {...form.register("relationship")}
-        >
-          {RELATIONSHIPS.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        label="Lien avec l'enfant"
+        options={RELATIONSHIPS.map((r) => ({ value: r.value, label: r.label }))}
+        {...form.register("relationship")}
+      />
 
       <Button
         type="submit"

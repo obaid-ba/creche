@@ -26,6 +26,7 @@ export const NAV: Record<
     { to: "/staff/messages", label: "Messages" },
     { to: "/staff/complaints", label: "Réclamations" },
     { to: "/staff/parents", label: "Parents" },
+    { to: "/staff/notifications", label: "Notifications" },
     { to: "/staff/settings", label: "Paramètres" },
   ],
 };

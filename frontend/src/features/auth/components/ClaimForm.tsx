@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { Alert, Button, Input } from "@/components/ui";
+import { Alert, Button, Input, Select } from "@/components/ui";
 import { ApiError } from "@/services/errors";
 
 import { claimSchema, type ClaimFormValues } from "../schemas";
@@ -108,25 +108,11 @@ export function ClaimForm() {
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="relationship"
-          className="mb-1.5 block text-sm font-semibold text-ink-700"
-        >
-          Lien avec l'enfant
-        </label>
-        <select
-          id="relationship"
-          className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm text-ink-800 focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+        <Select
+          label="Lien avec l'enfant"
+          options={RELATIONSHIPS.map((r) => ({ value: r.value, label: r.label }))}
           {...form.register("relationship")}
-        >
-          {RELATIONSHIPS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        />
 
       <Input
         label="Adresse e-mail"

@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Alert, Button, Input, Modal } from "@/components/ui";
+import { Alert, Button, Input, Modal, Select } from "@/components/ui";
 import { ApiError } from "@/services/errors";
 
-import { CATEGORY_LABELS, type Activity, type ActivityCategory } from "../types";
+import { CATEGORY_LABELS, type Activity } from "../types";
 
 const schema = z
   .object({
@@ -114,25 +114,11 @@ export function ActivityFormModal({
           {...form.register("title")}
         />
 
-        <div>
-          <label
-            htmlFor="activity-category"
-            className="mb-1.5 block text-sm font-semibold text-ink-700"
-          >
-            Catégorie
-          </label>
-          <select
-            id="activity-category"
-            className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-            {...form.register("category")}
-          >
-            {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-              <option key={value} value={value as ActivityCategory}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label={"Catégorie"}
+          options={Object.entries(CATEGORY_LABELS).map(([value, label]) => ({ value, label }))}
+          {...form.register("category")}
+        />
 
         <Input
           label="Date"

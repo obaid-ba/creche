@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { Alert, Button, Input } from "@/components/ui";
+import { Alert, Button, Input, Select } from "@/components/ui";
 import { ApiError } from "@/services/errors";
 
 import { childSchema, type ChildFormValues } from "../schemas";
@@ -95,25 +95,11 @@ export function ChildForm({
           {...form.register("date_of_birth")}
         />
 
-        <div>
-          <label
-            htmlFor="gender"
-            className="mb-1.5 block text-sm font-semibold text-ink-700"
-          >
-            Genre
-          </label>
-          <select
-            id="gender"
-            className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-            {...form.register("gender")}
-          >
-            {GENDERS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Genre"
+          options={GENDERS.map((g) => ({ value: g.value, label: g.label }))}
+          {...form.register("gender")}
+        />
       </div>
 
       <Input

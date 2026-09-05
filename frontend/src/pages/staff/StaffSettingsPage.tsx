@@ -13,6 +13,7 @@ import {
   Input,
   LoadingState,
   Modal,
+  Select,
 } from "@/components/ui";
 import { PasswordForm } from "@/features/auth/components/PasswordForm";
 import { ProfileForm } from "@/features/auth/components/ProfileForm";
@@ -120,26 +121,15 @@ function NewStaffModal({
           {...form.register("password", { required: "Requis." })}
         />
 
-        <div>
-          <label
-            htmlFor="new-staff-role"
-            className="mb-1.5 block text-sm font-semibold text-ink-700"
-          >
-            Rôle
-          </label>
-          <select
-            id="new-staff-role"
-            className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-            {...form.register("role")}
-          >
-            <option value="STAFF">Personnel</option>
-            <option value="ADMIN">Administrateur</option>
-          </select>
-          <p className="mt-1.5 text-xs text-ink-500">
-            Un administrateur peut restaurer un enfant archivé et gérer les
-            comptes de l'équipe.
-          </p>
-        </div>
+        <Select
+          label="Rôle"
+          options={[
+            { value: "STAFF", label: "Personnel" },
+            { value: "ADMIN", label: "Administrateur" },
+          ]}
+          hint="Un administrateur peut restaurer un enfant archivé et gérer les comptes de l'équipe."
+          {...form.register("role")}
+        />
       </div>
     </Modal>
   );

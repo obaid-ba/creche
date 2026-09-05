@@ -99,6 +99,11 @@ const StaffSettingsPage = lazy(() =>
     default: m.StaffSettingsPage,
   })),
 );
+const NotificationsPage = lazy(() =>
+  import("@/pages/NotificationsPage").then((m) => ({
+    default: m.NotificationsPage,
+  })),
+);
 const MessagesPage = lazy(() =>
   import("@/pages/MessagesPage").then((m) => ({ default: m.MessagesPage })),
 );
@@ -181,6 +186,7 @@ export const routeTable: RouteObject[] = [
           { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "profile", element: withSuspense(<ParentProfilePage />) },
+          { path: "notifications", element: withSuspense(<NotificationsPage />) },
         ],
       },
     ],
@@ -214,6 +220,7 @@ export const routeTable: RouteObject[] = [
           { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "parents", element: withSuspense(<StaffParentsPage />) },
+          { path: "notifications", element: withSuspense(<NotificationsPage />) },
           { path: "settings", element: withSuspense(<StaffSettingsPage />) },
         ],
       },

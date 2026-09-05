@@ -6,10 +6,13 @@ import {
   EmptyState,
   ErrorState,
   LoadingState,
+  Drawer,
   Pagination,
+  Select,
 } from "@/components/ui";
 import { ActivityCard } from "@/features/activities/components/ActivityCard";
 import { ActivityFormModal } from "@/features/activities/components/ActivityFormModal";
+import { ActivityPhotos } from "@/features/activities/components/ActivityPhotos";
 import { useActivities, useCreateActivity } from "@/features/activities/hooks";
 import { CATEGORY_LABELS } from "@/features/activities/types";
 
@@ -17,6 +20,7 @@ export function StaffActivitiesPage() {
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [openActivityId, setOpenActivityId] = useState<string | null>(null);
 
   const query = useActivities({ page, category });
   const createActivity = useCreateActivity();
@@ -40,29 +44,20 @@ export function StaffActivitiesPage() {
         </Button>
       </div>
 
-      <div className="mb-6">
-        <label
-          htmlFor="filter-category"
-          className="mb-1.5 block text-sm font-semibold text-ink-700"
-        >
-          Catégorie
-        </label>
-        <select
-          id="filter-category"
+      <div className="mb-6 w-64">
+        <Select
+          label="Catégorie"
           value={category}
+          placeholder="Toutes les catégories"
+          options={Object.entries(CATEGORY_LABELS).map(([value, label]) => ({
+            value,
+            label,
+          }))}
           onChange={(event) => {
             setPage(1);
             setCategory(event.target.value);
           }}
-          className="h-11 rounded-card border border-ink-200 bg-white px-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-        >
-          <option value="">Toutes les catégories</option>
-          {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       {query.isPending ? (
@@ -87,7 +82,10 @@ export function StaffActivitiesPage() {
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {query.data.results.map((activity) => (
             <li key={activity.id}>
-              <ActivityCard activity={activity} />
+              <ActivityCard
+                activity={activity}
+                onClick={() => setOpenActivityId(activity.id)}
+              />
             </li>
           ))}
         </ul>
@@ -103,6 +101,27 @@ export function StaffActivitiesPage() {
           />
         </div>
       )}
+
+      <Drawer
+        isOpen={openActivityId !== null}
+        onClose={() => setOpenActivityId(null)}
+        title={
+          query.data?.results.find((a) => a.id === openActivityId)?.title ??
+          "Activité"
+        }
+        description="Photos de l'activité"
+      >
+        {openActivityId !== null && (
+          <ActivityPhotos
+            activityId={openActivityId}
+            photos={
+              query.data?.results.find((a) => a.id === openActivityId)?.photos ?? []
+            }
+            canEdit
+            onChanged={() => void query.refetch()}
+          />
+        )}
+      </Drawer>
 
       <ActivityFormModal
         isOpen={isFormOpen}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Input, Modal } from "@/components/ui";
+import { Button, Input, Modal, Select } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 import { eventEmoji, groupAccent } from "../eventDisplay";
@@ -182,32 +182,17 @@ export function QuickAddBar({
         )}
 
         {choice !== undefined && (
-          <div>
-            <label
-              htmlFor="quick-choice"
-              className="mb-1.5 block text-sm font-semibold text-ink-700"
-            >
-              {choice.label}
-            </label>
-            <select
-              id="quick-choice"
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-            >
-              <option value="">Choisir…</option>
-              {choice.options.map(([optionValue, optionLabel]) => (
-                <option key={optionValue} value={optionValue}>
-                  {optionLabel}
-                </option>
-              ))}
-            </select>
-            {error !== null && (
-              <p role="alert" className="mt-1.5 text-xs font-semibold text-danger-700">
-                {error}
-              </p>
-            )}
-          </div>
+          <Select
+            label={choice.label}
+            value={value}
+            placeholder="Choisir…"
+            options={choice.options.map(([optionValue, optionLabel]) => ({
+              value: optionValue,
+              label: optionLabel,
+            }))}
+            error={error ?? undefined}
+            onChange={(event) => setValue(event.target.value)}
+          />
         )}
       </Modal>
     </>

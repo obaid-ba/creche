@@ -1,18 +1,7 @@
 import { MessageSquareWarning, Plus } from "lucide-react";
 import { useState } from "react";
 
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  EmptyState,
-  ErrorState,
-  Input,
-  LoadingState,
-  Modal,
-  Pagination,
-} from "@/components/ui";
+import { Alert, Button, Card, CardBody, EmptyState, ErrorState, Input, LoadingState, Modal, Pagination, Select } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
 import { ComplaintCard } from "@/features/complaints/components/ComplaintCard";
 import { useComplaints, useCreateComplaint } from "@/features/complaints/hooks";
@@ -80,29 +69,20 @@ export function ComplaintsPage() {
         )}
       </div>
 
-      <div className="mb-6">
-        <label
-          htmlFor="filter-status"
-          className="mb-1.5 block text-sm font-semibold text-ink-700"
-        >
-          Statut
-        </label>
-        <select
-          id="filter-status"
+      <div className="mb-6 w-56">
+        <Select
+          label="Statut"
           value={status}
+          placeholder="Tous les statuts"
+          options={STATUSES.map((value) => ({
+            value,
+            label: STATUS_LABELS[value] ?? value,
+          }))}
           onChange={(event) => {
             setPage(1);
             setStatus(event.target.value);
           }}
-          className="h-11 rounded-card border border-ink-200 bg-white px-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-        >
-          <option value="">Tous les statuts</option>
-          {STATUSES.map((value) => (
-            <option key={value} value={value}>
-              {STATUS_LABELS[value]}
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       {query.isPending ? (
@@ -174,27 +154,16 @@ export function ComplaintsPage() {
           />
 
           {(user?.children.length ?? 0) > 0 && (
-            <div>
-              <label
-                htmlFor="complaint-child"
-                className="mb-1.5 block text-sm font-semibold text-ink-700"
-              >
-                Enfant concerné (facultatif)
-              </label>
-              <select
-                id="complaint-child"
+              <Select
+                label="Enfant concerné"
+                placeholder="Aucun enfant en particulier"
+                options={(user?.children ?? []).map((c) => ({
+                  value: c.id,
+                  label: c.first_name,
+                }))}
                 value={childId}
                 onChange={(event) => setChildId(event.target.value)}
-                className="h-11 w-full rounded-card border border-ink-200 bg-white px-3.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
-              >
-                <option value="">Aucun en particulier</option>
-                {(user?.children ?? []).map((child) => (
-                  <option key={child.id} value={child.id}>
-                    {child.first_name} {child.last_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+              />
           )}
 
           <div>
