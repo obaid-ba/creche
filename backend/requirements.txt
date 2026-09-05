@@ -18,3 +18,11 @@ Pillow==11.0.0
 
 # ── Utilities ───────────────────────────────────────────────────────────
 python-dateutil==2.9.0.post0
+
+# ── Production serving ──────────────────────────────────────────────────
+# runserver is single-threaded and serves static files unsafely; Django
+# says never to use it in production.
+gunicorn==23.0.0
+# Lets Django serve its own hashed static files (the admin and DRF's
+# browsable assets) without a second web server in front of it.
+whitenoise[brotli]==6.8.2

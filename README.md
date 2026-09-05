@@ -113,7 +113,26 @@ npm run dev
 Vite proxies `/api` and `/media` to `localhost:8000`, so no CORS setup is
 needed for local work.
 
-### 4. Demo data
+### 4. Production
+
+The development stack above runs `runserver` and the Vite dev server —
+neither belongs in production. There is a separate stack for that:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+gunicorn behind nginx, source copied into the images rather than
+bind-mounted, non-root containers, the database not published to the
+host, and migrations applied on start-up. Full detail, including the
+security posture and what still needs doing before a real deployment, is
+in [docs/deployment.md](docs/deployment.md).
+
+> Because the production images copy the source instead of bind-mounting
+> it, the Docker Desktop file-sharing limitation described above does not
+> apply to them — the production stack builds and runs on any path.
+
+### 5. Demo data
 
 ```bash
 cd backend

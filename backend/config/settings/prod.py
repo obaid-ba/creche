@@ -10,8 +10,29 @@ REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (  # noqa: F405
     "rest_framework.renderers.JSONRenderer",
 )
 
+# ── Static files ────────────────────────────────────────────────────────
+# WhiteNoise serves Django's own static assets (admin, DRF) directly from
+# the app container, hashed and compressed, so no second web server is
+# needed just for them. It must sit immediately after SecurityMiddleware.
+MIDDLEWARE.insert(  # noqa: F405
+    MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,  # noqa: F405
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+)
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
 # ── Transport security ──────────────────────────────────────────────────
-SECURE_SSL_REDIRECT = True
+# On by default, but switchable: when TLS is terminated further out (a
+# load balancer, an ingress, a tunnel) and that hop does not set
+# X-Forwarded-Proto, redirecting here produces an infinite loop. Turning
+# it off is only correct when something in front is already enforcing
+# HTTPS — hence the explicit name.
+SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
 SECURE_HSTS_SECONDS = 31_536_000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True

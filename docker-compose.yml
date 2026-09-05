@@ -1,3 +1,5 @@
+# Development stack: bind-mounted source, auto-reload, Vite HMR.
+# For production use docker-compose.prod.yml.
 services:
   db:
     image: postgres:16-alpine
@@ -20,7 +22,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: creche_backend
     restart: unless-stopped
     command: python manage.py runserver 0.0.0.0:8000
@@ -45,7 +47,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: creche_frontend
     restart: unless-stopped
     command: npm run dev -- --host 0.0.0.0
