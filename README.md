@@ -57,12 +57,28 @@ python3 -c "import secrets; print(secrets.token_urlsafe(50))"
 > **Do not put inline `#` comments after values in `.env`.** `django-environ`
 > keeps them as part of the value.
 
-### 2. With Docker (recommended)
+### 2. With Docker
 
 ```bash
 docker compose up -d db      # Postgres 16, host port 5433
 docker compose up            # all services
 ```
+
+> **If this project lives outside your home directory**, `docker compose up`
+> will fail on the `backend` and `frontend` services with:
+>
+> ```
+> mounts denied: the path .../creche/backend is not shared from the host
+> ```
+>
+> Docker Desktop only bind-mounts from an allowlist of host paths, and
+> that list does not include secondary drives by default. Add the drive in
+> **Docker Desktop → Settings → Resources → File sharing**, then apply and
+> restart. Editing `~/.docker/desktop/settings-store.json` by hand does
+> **not** work — it prevented the Docker VM from starting when tried.
+>
+> The `db` service is unaffected (it uses a named volume, not a bind
+> mount), so the native path in §3 works regardless.
 
 - Frontend → http://localhost:5173
 - API → http://localhost:8000/api
@@ -75,7 +91,7 @@ starts as a *user* service — no root needed:
 systemctl --user start docker-desktop
 ```
 
-### 3. Without Docker
+### 3. Without Docker (works on any path)
 
 Postgres still comes from Compose (host port **5433**, chosen so it does not
 collide with a Postgres already running on 5432).
