@@ -24,6 +24,7 @@ FROM nginx:1.27-alpine AS runtime
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY security-headers.conf /etc/nginx/conf.d/security-headers.conf
 
 # nginx:alpine ships an unprivileged `nginx` user; the master process
 # still needs root to bind :80 and then drops to it for workers.
