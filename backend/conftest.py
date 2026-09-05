@@ -93,6 +93,23 @@ def at_today():
 
 
 @pytest.fixture
+def minutes_ago():
+    """A datetime N minutes in the past.
+
+    Prefer this over `at_today` whenever a test exercises an endpoint that
+    compares against `now()` — ending an interval, rejecting future
+    events. `at_today(10, 30)` is in the *future* when the suite runs
+    before 10:30, which made two sleep tests fail only at night.
+    """
+    from django.utils import timezone
+
+    def _ago(minutes: int):
+        return timezone.now() - timezone.timedelta(minutes=minutes)
+
+    return _ago
+
+
+@pytest.fixture
 def make_event(db, at_today):
     """Create a timeline event with a sensible payload for its type."""
     from apps.care.models import TimelineEvent

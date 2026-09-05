@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ReactNode } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router-dom";
 
 import { LoadingState } from "@/components/ui";
 import {
@@ -14,6 +14,9 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 // staff dashboard to read their child's day.
 const HomePage = lazy(() =>
   import("@/pages/HomePage").then((m) => ({ default: m.HomePage })),
+);
+const AboutPage = lazy(() =>
+  import("@/pages/AboutPage").then((m) => ({ default: m.AboutPage })),
 );
 const GalleryPage = lazy(() =>
   import("@/pages/GalleryPage").then((m) => ({ default: m.GalleryPage })),
@@ -106,11 +109,18 @@ function withSuspense(element: ReactNode) {
   );
 }
 
-export const router = createBrowserRouter([
+/**
+ * The route tree, exported separately from the browser router so tests
+ * can mount the same table against a memory history. Re-declaring routes
+ * in tests would defeat the purpose: a route missing from the app has to
+ * be missing from the test too.
+ */
+export const routeTable: RouteObject[] = [
   {
     element: <PublicLayout />,
     children: [
       { path: "/", element: withSuspense(<HomePage />) },
+      { path: "/about", element: withSuspense(<AboutPage />) },
       { path: "/gallery", element: withSuspense(<GalleryPage />) },
       { path: "/contact", element: withSuspense(<ContactPage />) },
       { path: "/documents", element: withSuspense(<DocumentsPage />) },
@@ -193,4 +203,6 @@ export const router = createBrowserRouter([
   },
 
   { path: "*", element: <NotFoundPage /> },
-]);
+];
+
+export const router = createBrowserRouter(routeTable);

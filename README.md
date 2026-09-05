@@ -115,6 +115,36 @@ one published password.
 
 ---
 
+## ⚠️ Before the site goes live
+
+Some copy on the public site was written during development and **was not
+supplied by the nursery**. It is displayed to visitors as fact. Publishing
+it unchecked would put wrong information in front of parents — wrong
+opening hours in particular send people to a locked door.
+
+Everything needing confirmation is collected in one place:
+[`frontend/src/config/nursery.ts`](frontend/src/config/nursery.ts) →
+`NURSERY_FACTS`. Each entry carries a `verified` flag.
+
+| Claim | Current value | Source |
+| --- | --- | --- |
+| Opening hours | Mon–Fri, 07:30–18:30 | **invented — confirm** |
+| Age range | 2 mois – 4 ans | upper bound **invented — confirm** |
+| Establishment type | "Crèche privée" | **assumed — confirm** |
+| Meals offered | "Repas équilibrés" | **assumed — confirm** |
+| Phone, Facebook, map location | — | supplied by the nursery ✅ |
+| Gallery photos, logo, registration PDF | — | supplied by the nursery ✅ |
+
+Set every `verified: true` once checked, then delete the warning comment.
+`FACTS_VERIFIED` exports whether all of them have been.
+
+**Still missing entirely:**
+- A street address (only map coordinates are known).
+- The nursery's own history and team, for `/about`.
+- A second video that was mentioned but not supplied.
+
+---
+
 ## Accessibility
 
 The interface is checked against WCAG 2.1 AA with axe-core across all

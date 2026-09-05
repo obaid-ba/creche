@@ -14,7 +14,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { Card, CardBody, LinkButton } from "@/components/ui";
-import { GALLERY, NURSERY, VIDEOS } from "@/config/nursery";
+import { GALLERY, NURSERY, NURSERY_FACTS, VIDEOS } from "@/config/nursery";
 import { GalleryGrid } from "@/features/public/components/GalleryGrid";
 import { VideoEmbed } from "@/features/public/components/VideoEmbed";
 
@@ -44,7 +44,7 @@ const VALUES = [
 const SERVICES = [
   {
     icon: Baby,
-    title: "Accueil dès 2 mois",
+    title: `Accueil dès ${NURSERY_FACTS.ageRange.from}`,
     text: "Quatre groupes d'âge, de la pouponnière aux grands.",
   },
   {
@@ -59,8 +59,8 @@ const SERVICES = [
   },
   {
     icon: Clock,
-    title: "Horaires souples",
-    text: "Ouvert du lundi au vendredi, de 7h30 à 18h30.",
+    title: "Horaires",
+    text: `${NURSERY_FACTS.openingHours.days}, de ${NURSERY_FACTS.openingHours.from} à ${NURSERY_FACTS.openingHours.to}.`,
   },
 ] as const;
 
@@ -73,7 +73,8 @@ export function HomePage() {
           <div>
             <span className="inline-flex items-center gap-2 rounded-pill bg-white px-3 py-1.5 text-xs font-semibold text-primary-700 shadow-soft">
               <Sparkles aria-hidden="true" className="size-3.5" />
-              Crèche privée · Accueil de 2 mois à 4 ans
+              {NURSERY_FACTS.kind.label} · Accueil de{" "}
+              {NURSERY_FACTS.ageRange.from} à {NURSERY_FACTS.ageRange.to}
             </span>
 
             <h1 className="mt-5 text-balance text-4xl font-bold leading-tight md:text-5xl">

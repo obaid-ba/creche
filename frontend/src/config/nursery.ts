@@ -34,6 +34,45 @@ export const NURSERY = {
   registrationDocument: "/images/documents/dossier-inscription-2026-2027.pdf",
 } as const;
 
+/**
+ * ⚠️  UNVERIFIED — CONFIRM BEFORE THE SITE GOES LIVE
+ *
+ * These are placeholder claims written during development. They were NOT
+ * supplied by the nursery. Publishing them unchecked would put wrong
+ * information in front of parents — wrong opening hours in particular
+ * send people to a locked door.
+ *
+ * Everything below is displayed publicly. Correct each line, then delete
+ * this warning.
+ */
+export const NURSERY_FACTS = {
+  /** Shown in the hero badge and on /about. */
+  ageRange: { from: "2 mois", to: "4 ans", verified: false },
+
+  /** Shown on /about and in the services list. */
+  openingHours: {
+    days: "Du lundi au vendredi",
+    from: "07:30",
+    to: "18:30",
+    verified: false,
+  },
+
+  /** "Crèche privée" in the hero badge. */
+  kind: { label: "Crèche privée", verified: false },
+
+  /** Services listed on the home page. Remove any the nursery does not
+   *  actually offer. */
+  services: {
+    meals: { label: "Repas équilibrés", verified: false },
+    activities: { label: "Activités d'éveil", verified: true },
+  },
+} as const;
+
+/** True once every claim above has been checked with the nursery. */
+export const FACTS_VERIFIED = Object.values(NURSERY_FACTS).every((fact) =>
+  "verified" in fact ? fact.verified : true,
+);
+
 export interface GalleryItem {
   /** Full-size image, shown only in the lightbox. */
   src: string;

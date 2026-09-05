@@ -356,30 +356,47 @@ class TestSleepIntervals:
         assert response.data["duration_minutes"] is None
 
     def test_ending_a_sleep_computes_the_duration(
-        self, api_client, staff, make_child, make_event, at_today
+        self, api_client, staff, make_child, minutes_ago
     ):
+        """The brief's own example: a 75-minute nap reads "Durée: 1h15".
+
+        Anchored to `now` rather than to wall-clock 10:30, so the test does
+        not depend on what time of day the suite runs.
+        """
+        from apps.care.models import TimelineEvent
+
         child = make_child()
-        event = make_event(child, "SLEEP", hour=10, minute=30)
+        event = TimelineEvent.objects.create(
+            child=child, type="SLEEP",
+            occurred_at=minutes_ago(120), is_published=True,
+        )
         api_client.force_authenticate(staff)
 
         response = api_client.post(
             reverse("timeline-event-end", args=[event.id]),
-            {"ended_at": at_today(11, 45).isoformat()},
+            {"ended_at": minutes_ago(45).isoformat()},
         )
 
-        assert response.status_code == 200
-        # 10:30 -> 11:45 is the brief's own example: "Durée: 1h15".
+        assert response.status_code == 200, response.data
         assert response.data["duration_minutes"] == 75
         assert response.data["is_open_interval"] is False
 
-    def test_ending_defaults_to_now(self, api_client, staff, make_child, make_event):
-        event = make_event(make_child(), "SLEEP", hour=10)
+    def test_ending_defaults_to_now(
+        self, api_client, staff, make_child, minutes_ago
+    ):
+        from apps.care.models import TimelineEvent
+
+        event = TimelineEvent.objects.create(
+            child=make_child(), type="SLEEP",
+            occurred_at=minutes_ago(60), is_published=True,
+        )
         api_client.force_authenticate(staff)
 
         response = api_client.post(reverse("timeline-event-end", args=[event.id]))
 
-        assert response.status_code == 200
+        assert response.status_code == 200, response.data
         assert response.data["ended_at"] is not None
+        assert response.data["duration_minutes"] >= 59
 
     def test_ending_an_already_closed_interval_is_a_conflict(
         self, api_client, staff, make_child, make_event, at_today
