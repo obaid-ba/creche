@@ -343,3 +343,64 @@ class TestCanSendMessagesFlag:
         api_client.force_authenticate(staff)
 
         assert api_client.get(reverse("auth-me")).data["can_send_messages"] is True
+
+
+@pytest.mark.django_db
+class TestProfileUpdate:
+    """/auth/me/ writes through to the role-specific profile, so the
+    profile screen is one request and one form (brief §20)."""
+
+    def test_parent_updates_their_address(self, api_client, parent):
+        api_client.force_authenticate(parent)
+
+        response = api_client.patch(
+            reverse("auth-me"),
+            {"address": "12 rue des Oliviers", "emergency_phone": "98 765 432"},
+        )
+
+        assert response.status_code == 200
+        parent.parent_profile.refresh_from_db()
+        assert parent.parent_profile.address == "12 rue des Oliviers"
+        assert parent.parent_profile.emergency_phone == "98 765 432"
+
+    def test_name_and_profile_update_together(self, api_client, parent):
+        api_client.force_authenticate(parent)
+
+        api_client.patch(
+            reverse("auth-me"),
+            {"first_name": "Sarah", "phone": "99 111 222",
+             "address": "Bizerte"},
+        )
+
+        parent.refresh_from_db()
+        parent.parent_profile.refresh_from_db()
+        assert parent.first_name == "Sarah"
+        assert parent.phone == "99 111 222"
+        assert parent.parent_profile.address == "Bizerte"
+
+    def test_parent_only_fields_are_absent_for_staff(self, api_client, staff):
+        """Returning nulls the form would have to special-case is worse
+        than omitting fields that do not apply."""
+        api_client.force_authenticate(staff)
+
+        data = api_client.get(reverse("auth-me")).data
+
+        assert "address" not in data
+        assert "emergency_phone" not in data
+        assert "job_title" in data
+
+    def test_staff_only_fields_are_absent_for_parents(self, api_client, parent):
+        api_client.force_authenticate(parent)
+
+        data = api_client.get(reverse("auth-me")).data
+
+        assert "job_title" not in data
+        assert "address" in data
+
+    def test_role_still_cannot_be_escalated(self, api_client, parent):
+        api_client.force_authenticate(parent)
+
+        api_client.patch(reverse("auth-me"), {"role": "ADMIN", "address": "x"})
+
+        parent.refresh_from_db()
+        assert parent.role == Role.PARENT

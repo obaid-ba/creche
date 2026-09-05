@@ -5,6 +5,27 @@ from rest_framework.test import APIClient
 from apps.accounts.models import ParentProfile, Role, StaffProfile, User
 
 
+def pytest_configure(config):
+    """Refuse to run against anything but the test settings.
+
+    pytest.ini sets DJANGO_SETTINGS_MODULE, but an environment variable
+    overrides it. Exporting `config.settings.dev` for a manage.py command
+    and then running pytest in the same shell silently enables throttling
+    and real password hashing, which fails ~19 tests in ways that look
+    like application bugs. Fail loudly instead.
+    """
+    from django.conf import settings
+
+    expected = "config.settings.test"
+    actual = settings.SETTINGS_MODULE
+    if actual != expected:
+        raise pytest.UsageError(
+            f"Tests must run with {expected}, not {actual}. "
+            f"Unset DJANGO_SETTINGS_MODULE in your shell "
+            f"(e.g. `env -u DJANGO_SETTINGS_MODULE pytest`)."
+        )
+
+
 @pytest.fixture
 def api_client():
     return APIClient()

@@ -84,6 +84,21 @@ const StaffActivitiesPage = lazy(() =>
     default: m.StaffActivitiesPage,
   })),
 );
+const ParentProfilePage = lazy(() =>
+  import("@/pages/parent/ParentProfilePage").then((m) => ({
+    default: m.ParentProfilePage,
+  })),
+);
+const StaffParentsPage = lazy(() =>
+  import("@/pages/staff/StaffParentsPage").then((m) => ({
+    default: m.StaffParentsPage,
+  })),
+);
+const StaffSettingsPage = lazy(() =>
+  import("@/pages/staff/StaffSettingsPage").then((m) => ({
+    default: m.StaffSettingsPage,
+  })),
+);
 const MessagesPage = lazy(() =>
   import("@/pages/MessagesPage").then((m) => ({ default: m.MessagesPage })),
 );
@@ -165,6 +180,7 @@ export const routeTable: RouteObject[] = [
           { path: "activities", element: withSuspense(<ParentActivitiesPage />) },
           { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
+          { path: "profile", element: withSuspense(<ParentProfilePage />) },
         ],
       },
     ],
@@ -197,6 +213,8 @@ export const routeTable: RouteObject[] = [
           { path: "activities", element: withSuspense(<StaffActivitiesPage />) },
           { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
+          { path: "parents", element: withSuspense(<StaffParentsPage />) },
+          { path: "settings", element: withSuspense(<StaffSettingsPage />) },
         ],
       },
     ],

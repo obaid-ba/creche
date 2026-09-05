@@ -4,6 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 
 import { AuthProvider } from "@/features/auth/AuthContext";
+import { routeTable } from "@/app/routes";
+import { NAV } from "@/layouts/AppLayout";
 import { PublicLayout } from "@/layouts/PublicLayout";
 
 /**
@@ -85,4 +87,60 @@ describe("router", () => {
       );
     },
   );
+});
+
+/**
+ * The same guard for the authenticated areas. /parent/profile,
+ * /staff/parents and /staff/settings were in the brief but unbuilt for
+ * several phases; nav entries pointing at them would have 404'd.
+ */
+describe("application navigation", () => {
+  function registeredPaths(area: "parent" | "staff"): string[] {
+    const branch = routeTable.find((r) => r.path === `/${area}`);
+    const layout = branch?.children?.[0];
+    return (layout?.children ?? []).map((child) =>
+      child.index === true ? `/${area}` : `/${area}/${child.path ?? ""}`,
+    );
+  }
+
+  it.each(["parent", "staff"] as const)(
+    "every %s nav link has a matching route",
+    (area) => {
+      const paths = registeredPaths(area);
+      for (const item of NAV[area]) {
+        expect(paths, `${item.to} is in the nav but has no route`).toContain(
+          item.to,
+        );
+      }
+    },
+  );
+
+  it("covers the parent routes the brief requires", () => {
+    const paths = registeredPaths("parent");
+    for (const required of [
+      "/parent",
+      "/parent/timeline",
+      "/parent/activities",
+      "/parent/messages",
+      "/parent/complaints",
+      "/parent/profile",
+    ]) {
+      expect(paths).toContain(required);
+    }
+  });
+
+  it("covers the staff routes the brief requires", () => {
+    const paths = registeredPaths("staff");
+    for (const required of [
+      "/staff",
+      "/staff/children",
+      "/staff/activities",
+      "/staff/messages",
+      "/staff/complaints",
+      "/staff/parents",
+      "/staff/settings",
+    ]) {
+      expect(paths).toContain(required);
+    }
+  });
 });

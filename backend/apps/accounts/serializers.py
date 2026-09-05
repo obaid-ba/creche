@@ -45,15 +45,59 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
     can_send_messages = serializers.SerializerMethodField()
 
+    # Role-specific profile fields, flattened onto the user so the profile
+    # screen is one request and one form rather than two of each.
+    address = serializers.CharField(
+        source="parent_profile.address", required=False, allow_blank=True
+    )
+    emergency_phone = serializers.CharField(
+        source="parent_profile.emergency_phone", required=False,
+        allow_blank=True, max_length=30,
+    )
+    job_title = serializers.CharField(
+        source="staff_profile.job_title", required=False,
+        allow_blank=True, read_only=True,
+    )
+
     class Meta:
         model = User
         fields = (
             "id", "email", "first_name", "last_name",
             "phone", "role", "children", "can_send_messages",
+            "address", "emergency_phone", "job_title",
         )
         read_only_fields = (
             "id", "email", "role", "children", "can_send_messages",
+            "job_title",
         )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # A staff member has no parent profile and vice versa; omit the
+        # fields that do not apply rather than returning nulls the form
+        # would then have to special-case.
+        if not instance.is_parent:
+            data.pop("address", None)
+            data.pop("emergency_phone", None)
+        else:
+            data.pop("job_title", None)
+        return data
+
+    def update(self, instance, validated_data):
+        """Write through to the parent profile as well as the user."""
+        profile_data = validated_data.pop("parent_profile", {})
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        instance.save()
+
+        if profile_data and instance.is_parent:
+            profile = instance.parent_profile
+            for field, value in profile_data.items():
+                setattr(profile, field, value)
+            profile.save()
+
+        return instance
 
     def get_can_send_messages(self, obj) -> bool:
         """Whether this user may post a message (brief 13).

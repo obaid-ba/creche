@@ -25,6 +25,11 @@ export interface CurrentUser {
   children: ChildSummary[];
   /** Presentation only - the server still enforces the rule. */
   can_send_messages: boolean;
+  /** Parent-only; absent for staff. */
+  address?: string;
+  emergency_phone?: string;
+  /** Staff-only; absent for parents. */
+  job_title?: string;
 }
 
 export interface ChildSummary {

@@ -6,13 +6,18 @@ import { NotificationBell } from "@/features/notifications/components/Notificati
 import { useAuth } from "@/features/auth/useAuth";
 import { cn } from "@/lib/cn";
 
-const NAV: Record<"parent" | "staff", readonly { to: string; label: string }[]> = {
+/** Exported so a test can assert every entry has a matching route. */
+export const NAV: Record<
+  "parent" | "staff",
+  readonly { to: string; label: string }[]
+> = {
   parent: [
     { to: "/parent", label: "Accueil" },
     { to: "/parent/timeline", label: "Journée" },
     { to: "/parent/activities", label: "Activités" },
     { to: "/parent/messages", label: "Messages" },
     { to: "/parent/complaints", label: "Réclamations" },
+    { to: "/parent/profile", label: "Profil" },
   ],
   staff: [
     { to: "/staff", label: "Tableau de bord" },
@@ -20,6 +25,8 @@ const NAV: Record<"parent" | "staff", readonly { to: string; label: string }[]> 
     { to: "/staff/activities", label: "Activités" },
     { to: "/staff/messages", label: "Messages" },
     { to: "/staff/complaints", label: "Réclamations" },
+    { to: "/staff/parents", label: "Parents" },
+    { to: "/staff/settings", label: "Paramètres" },
   ],
 };
 
