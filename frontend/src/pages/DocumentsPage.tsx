@@ -30,7 +30,7 @@ export function DocumentsPage() {
             // `download` on a same-origin file: the browser saves it
             // instead of navigating away from the site.
             download
-            className="inline-flex h-11 items-center gap-2 rounded-pill bg-primary-500 px-5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-600"
+            className="inline-flex h-11 items-center gap-2 rounded-pill bg-primary-600 px-5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-700"
           >
             <Download aria-hidden="true" className="size-4" />
             Télécharger

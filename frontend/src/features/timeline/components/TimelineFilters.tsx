@@ -31,7 +31,7 @@ export function TimelineFilters({
             className={cn(
               "rounded-pill px-3.5 py-1.5 text-sm font-semibold transition-colors",
               isActive
-                ? "bg-primary-500 text-white"
+                ? "bg-primary-600 text-white"
                 : "bg-white text-ink-600 ring-1 ring-ink-200 hover:bg-ink-50",
             )}
           >

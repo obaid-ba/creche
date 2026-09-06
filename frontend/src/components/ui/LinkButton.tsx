@@ -19,7 +19,7 @@ export function LinkButton({
   size?: "sm" | "md" | "lg";
 }) {
   const variants = {
-    primary: "bg-primary-500 text-white hover:bg-primary-600 shadow-soft",
+    primary: "bg-primary-600 text-white hover:bg-primary-700 shadow-soft",
     outline:
       "border border-ink-200 bg-white text-ink-700 hover:bg-ink-50",
     ghost: "text-ink-600 hover:bg-ink-100",

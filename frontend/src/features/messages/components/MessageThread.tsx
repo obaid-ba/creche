@@ -38,7 +38,7 @@ export function MessageThread({ messages }: { messages: Message[] }) {
             className={cn(
               "max-w-[85%] rounded-card px-4 py-2.5 shadow-soft sm:max-w-[70%]",
               message.is_mine
-                ? "bg-primary-500 text-white"
+                ? "bg-primary-600 text-white"
                 : "bg-white text-ink-800 ring-1 ring-ink-100",
             )}
           >

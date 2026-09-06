@@ -88,7 +88,7 @@ export function MessagesPage() {
                         {conversation.child.first_name}
                       </p>
                       {conversation.unread_count > 0 && (
-                        <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary-500 text-[0.65rem] font-bold text-white">
+                        <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary-600 text-[0.65rem] font-bold text-white">
                           {conversation.unread_count}
                         </span>
                       )}

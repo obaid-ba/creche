@@ -1,82 +1,121 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 /* ── Design tokens ──────────────────────────────────────────────────────
-   Warm and reassuring rather than clinical: this is a nursery, and the
-   people reading it are parents checking on their child. The palette is
-   built on a soft terracotta/amber primary with a calm teal secondary.
+   Sampled from the brand reference (public/test.png), not invented.
+
+   The palette is deliberately narrow: coral carries action, purple
+   carries voice, and the four pastels appear only as tint fields behind
+   icons. Colour is a signal here, not decoration — a nursery site that
+   uses every hue everywhere reads as a toy, not as somewhere you would
+   leave your child.
+
+   Contrast: every pairing used for text is checked against WCAG 2.1 AA
+   (4.5:1). See the table in DESIGN-AUDIT.md §6.
    ------------------------------------------------------------------- */
 @theme {
-  /* Colour choices here are contrast-checked against WCAG 2.1 AA:
-     white on primary-500 is 4.74:1 and ink-400 on cream is 5.17:1,
-     both above the 4.5:1 minimum for body text. */
-  /* Primary — warm terracotta */
-  --color-primary-50: #fdf5f0;
-  --color-primary-100: #fae8dc;
-  --color-primary-200: #f4cdb5;
-  --color-primary-300: #ecab85;
-  --color-primary-400: #e28054;
-  --color-primary-500: #c74a25;
-  --color-primary-600: #b03f20;
-  --color-primary-700: #96361c;
-  --color-primary-800: #862f20;
-  --color-primary-900: #6e2a1e;
+  /* ── Primary: coral. The brand's action colour. ─────────────────
+     Named semantically rather than by hue so a future rebrand does
+     not require touching 117 call sites. */
+  --color-primary-50:  #fff1f4;
+  --color-primary-100: #ffe0e7;
+  --color-primary-200: #fec2ce;
+  --color-primary-300: #fd93ac;
+  --color-primary-400: #fb718e;
+  --color-primary-500: #f5486a;   /* the reference coral: decorative fills only,
+                                   3.49:1 with white text — never for controls */
+  --color-primary-600: #d42a4d;  /* white text: 4.96:1 — the button fill */
+  --color-primary-700: #bb2444;
+  --color-primary-800: #99203c;
+  --color-primary-900: #7d1f37;
 
-  /* Secondary — calm teal */
-  --color-secondary-50: #f0faf9;
-  --color-secondary-100: #d8f2f0;
-  --color-secondary-200: #b3e5e2;
-  --color-secondary-300: #82d1cd;
-  --color-secondary-400: #4fb5b2;
-  --color-secondary-500: #339a98;
-  --color-secondary-600: #277b7b;
-  --color-secondary-700: #236263;
-  --color-secondary-800: #214e50;
-  --color-secondary-900: #1f4143;
+  /* ── Secondary: purple. The brand's voice — headings, second CTA. */
+  --color-secondary-50:  #f7f3fc;
+  --color-secondary-100: #efe6f9;
+  --color-secondary-200: #e0cef3;
+  --color-secondary-300: #c8ade1;   /* the blob behind the hero image */
+  --color-secondary-400: #ac8ad4;
+  --color-secondary-500: #9b74c8;
+  --color-secondary-600: #7d51ae;
+  --color-secondary-700: #6939a3;   /* logo "Mamati" */
+  --color-secondary-800: #4b2578;
+  --color-secondary-900: #2b144f;   /* headings — deep purple, never black */
 
-  /* Accent — soft sunshine, for highlights and children's moments */
-  --color-accent-50: #fffaeb;
-  --color-accent-100: #fdf0c8;
-  --color-accent-200: #fbdf8c;
-  --color-accent-300: #f9c74f;
-  --color-accent-400: #f7b32b;
-  --color-accent-500: #e89611;
+  /* ── Accent (yellow) and the tint palette.
+     These appear only as soft fields behind icons — never as large
+     areas. A nursery site that uses every hue everywhere reads as a
+     toy rather than as somewhere you would leave your child. */
+  --color-accent-50:  #fef9ec;
+  --color-accent-100: #fef4dd;
+  --color-accent-200: #fde7b0;
+  --color-accent-300: #fdd05f;
+  --color-accent-500: #eaa900;
+  --color-accent-700: #956609;   /* 4.59:1 on accent-100 */    /* text weight */
 
-  /* Neutrals — warm-tinted greys, never pure grey */
-  --color-cream: #fdfbf7;
-  --color-ink-50: #f7f5f2;
-  --color-ink-100: #ebe7e1;
-  --color-ink-200: #d8d2c9;
-  --color-ink-300: #b8b0a4;
-  --color-ink-400: #75695c;
-  --color-ink-500: #6b6155;
-  --color-ink-600: #524a41;
-  --color-ink-700: #3d3730;
-  --color-ink-800: #2a2521;
-  --color-ink-900: #1a1714;
+  --color-sky-50:  #f2f8fe;
+  --color-sky-100: #e3f1fd;
+  --color-sky-300: #9dc9f2;
+  --color-sky-700: #1f5f9e;
 
-  /* Semantic */
-  --color-success-50: #f0f9f2;
+  --color-mint-50:  #f5fbf5;
+  --color-mint-100: #eff9ef;
+  --color-mint-300: #a8dcae;
+  --color-mint-700: #2f7a41;
+
+  /* ── Ink — warm-tinted neutrals, biased toward purple ───────────── */
+  --color-ink-50:  #faf7f9;
+  --color-ink-100: #f0eaef;
+  --color-ink-200: #ddd3dd;
+  --color-ink-300: #b8a9b8;
+  --color-ink-400: #7a6c7d;   /* 4.9:1 on cream — safe for small text */
+  --color-ink-500: #5f5364;
+  --color-ink-600: #4a4050;
+  --color-ink-700: #3a3140;
+  --color-ink-800: #2b2331;
+  --color-ink-900: #2b144f;   /* same deep purple as plum-900 */
+
+  /* ── Ground — warm off-white, never pure white ──────────────────── */
+  --color-cream:      #fffbf9;
+  --color-cream-deep: #fdf3f1;
+  --color-shell:      #ffffff;
+
+  /* ── Semantic ───────────────────────────────────────────────────── */
+  --color-success-50: #f1faf3;
   --color-success-500: #3f9e5c;
   --color-success-700: #2c6f42;
-  --color-warning-50: #fff8ed;
+  --color-warning-50: #fef8ec;
   --color-warning-500: #e08c1a;
-  --color-warning-700: #a2620f;
-  --color-danger-50: #fdf2f2;
-  --color-danger-500: #d64545;
-  --color-danger-700: #a12f2f;
-  --color-info-50: #f0f6fd;
+  --color-warning-700: #9a6408;
+  --color-danger-50: #fff1f3;
+  --color-danger-500: #e5364f;
+  --color-danger-700: #b2233a;
+  --color-info-50: #f2f8fe;
   --color-info-500: #3b82c4;
-  --color-info-700: #2a5f92;
+  --color-info-700: #1f5f9e;
 
+  /* ── Type ───────────────────────────────────────────────────────── */
+  --font-display: "Baloo 2", "Nunito", ui-rounded, system-ui, sans-serif;
   --font-sans: "Nunito", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: "Baloo 2", "Nunito", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-card: 1rem;
+  /* ── Shape ──────────────────────────────────────────────────────── */
+  --radius-card: 1.25rem;
+  --radius-panel: 2rem;
   --radius-pill: 9999px;
 
-  --shadow-soft: 0 1px 2px rgb(42 37 33 / 0.04), 0 2px 8px rgb(42 37 33 / 0.06);
-  --shadow-lifted: 0 2px 4px rgb(42 37 33 / 0.05), 0 8px 24px rgb(42 37 33 / 0.09);
+  /* ── Shadows — warm and soft, tinted with the ink hue ───────────── */
+  --shadow-soft:   0 1px 2px rgb(43 20 79 / 0.04), 0 4px 12px rgb(43 20 79 / 0.06);
+  --shadow-lifted: 0 2px 6px rgb(43 20 79 / 0.05), 0 12px 32px rgb(43 20 79 / 0.10);
+  --shadow-float:  0 8px 20px rgb(43 20 79 / 0.08), 0 24px 60px rgb(43 20 79 / 0.12);
+
+  /* ── Motion ─────────────────────────────────────────────────────── */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* Organic, asymmetric shapes. Used for the hero image and decorative
+   forms so the page is not a stack of rectangles. */
+@utility blob-a { border-radius: 58% 42% 47% 53% / 46% 41% 59% 54%; }
+@utility blob-b { border-radius: 44% 56% 62% 38% / 55% 47% 53% 45%; }
+@utility blob-c { border-radius: 63% 37% 39% 61% / 44% 58% 42% 56%; }
 
 @layer base {
   html {
@@ -86,35 +125,38 @@
 
   body {
     background-color: var(--color-cream);
-    color: var(--color-ink-800);
+    color: var(--color-ink-700);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    color: var(--color-ink-900);
+    color: var(--color-secondary-900);
+    font-weight: 700;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
-  /* A visible focus ring everywhere: staff use this app at speed and often
-     by keyboard, and parents may rely on assistive technology. */
+  /* Visible focus everywhere: staff work at speed by keyboard, and
+     parents may rely on assistive technology. */
   :focus-visible {
     outline: 2px solid var(--color-primary-500);
     outline-offset: 2px;
-    border-radius: 0.25rem;
+    border-radius: 0.35rem;
   }
 
   ::selection {
     background-color: var(--color-primary-200);
-    color: var(--color-ink-900);
+    color: var(--color-secondary-900);
   }
 }
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* Respect a user's reduced-motion preference rather than overriding it. */
+  /* Respect the visitor's setting rather than overriding it. Decorative
+     motion stops entirely; nothing essential depends on it. */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;

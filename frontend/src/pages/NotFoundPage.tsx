@@ -12,7 +12,7 @@ export function NotFoundPage() {
       </p>
       <Link
         to="/"
-        className="inline-flex h-11 items-center rounded-pill bg-primary-500 px-5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-600"
+        className="inline-flex h-11 items-center rounded-pill bg-primary-600 px-5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-700"
       >
         Retour à l'accueil
       </Link>

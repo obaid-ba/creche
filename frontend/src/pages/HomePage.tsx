@@ -91,7 +91,7 @@ export function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/parent/login"
-                className="inline-flex h-12 items-center rounded-pill bg-primary-500 px-6 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-600"
+                className="inline-flex h-12 items-center rounded-pill bg-primary-600 px-6 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-700"
               >
                 Espace parents
               </Link>
@@ -193,7 +193,7 @@ export function HomePage() {
               </p>
               <Link
                 to="/parent/login"
-                className="mt-6 inline-flex h-12 items-center rounded-pill bg-primary-500 px-6 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-600"
+                className="mt-6 inline-flex h-12 items-center rounded-pill bg-primary-600 px-6 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-700"
               >
                 Accéder à mon espace
               </Link>
