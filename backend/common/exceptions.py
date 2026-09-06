@@ -103,18 +103,31 @@ def api_exception_handler(exc, context):
         response.status_code, ("error", "Une erreur est survenue.")
     )
     detail = getattr(exc, "detail", None) if exc is not None else None
+    normalised = _normalise_details(detail)
 
-    # A serializer's own message is more useful than the generic one.
-    if isinstance(detail, (str,)) or (
-        detail is not None and not isinstance(detail, (dict, list))
-    ):
-        message = str(detail)
+    # Promote a serializer's own message when it has nowhere else to show.
+    #
+    # DRF wraps a bare `ValidationError("Identifiants invalides.")` into
+    # `["Identifiants invalides."]`, which normalises to
+    # `non_field_errors`. Without this, that specific message was buried
+    # in `details` while the banner showed the generic "Les données
+    # envoyées sont invalides." — so a parent with a wrong password was
+    # told their data was malformed.
+    #
+    # Field-specific errors are deliberately NOT promoted: the form
+    # already renders them beside the input, and repeating one in the
+    # banner would say the same thing twice.
+    non_field = normalised.get("non_field_errors")
+    if non_field and len(normalised) == 1 and len(non_field) == 1:
+        message = str(non_field[0])
+    elif isinstance(detail, str):
+        message = detail
 
     response.data = {
         "error": {
             "code": getattr(exc, "default_code", code) if exc is not None else code,
             "message": message,
-            "details": _normalise_details(detail),
+            "details": normalised,
             "request_id": str(uuid.uuid4()),
         }
     }

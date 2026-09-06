@@ -8,7 +8,7 @@ These answer "what may this *role* do". They do **not** answer "may this
 user touch *this row*" - that is ownership, and it is enforced by queryset
 scoping in ``Child.objects.visible_to()`` (docs/authentication.md 5).
 """
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
 
 
 class IsParent(BasePermission):
@@ -36,12 +36,3 @@ class IsAdmin(BasePermission):
         user = request.user
         return bool(user and user.is_authenticated and user.is_admin)
 
-
-class IsStaffOrReadOnly(BasePermission):
-    message = "Seul le personnel peut modifier cette ressource."
-
-    def has_permission(self, request, view):
-        user = request.user
-        if not (user and user.is_authenticated):
-            return False
-        return request.method in SAFE_METHODS or user.is_staff_member
