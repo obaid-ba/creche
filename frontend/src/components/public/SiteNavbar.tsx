@@ -52,7 +52,7 @@ export function SiteNavbar() {
             isScrolled ? "shadow-lifted" : "shadow-soft",
           )}
         >
-          <div className="flex h-16 items-center justify-between gap-3 px-4 sm:h-[4.5rem] sm:px-6">
+          <div className="flex h-16 items-center justify-between gap-2 px-3 sm:h-[4.5rem] sm:gap-3 sm:px-6">
             <Link to="/" className="shrink-0" aria-label={t("nav.homeAria")}>
               <Wordmark variant="compact" />
             </Link>

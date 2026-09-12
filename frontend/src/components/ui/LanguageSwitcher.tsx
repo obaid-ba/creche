@@ -27,9 +27,12 @@ export function LanguageSwitcher({ className }: { className?: string }) {
         className,
       )}
     >
+      {/* Decorative, and the first thing to go when space is tight: at
+          360px the navbar could not fit the wordmark, the switcher and
+          the menu button on one line. */}
       <Languages
         aria-hidden="true"
-        className="ms-2 me-0.5 size-3.5 shrink-0 text-ink-400"
+        className="ms-2 me-0.5 hidden size-3.5 shrink-0 text-ink-400 sm:block"
       />
       {(Object.keys(LANGUAGES) as Language[]).map((code) => {
         const isActive = code === language;

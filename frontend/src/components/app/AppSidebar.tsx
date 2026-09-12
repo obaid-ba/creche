@@ -67,8 +67,11 @@ export function AppSidebar({
       >
         {NAVIGATION[area].map((section, index) => (
           <div key={section.key ?? index} className={index > 0 ? "mt-5" : ""}>
+            {/* ink-400, not ink-300: at 2.23:1 on white these section
+                labels failed AA, which axe caught on every screen in the
+                application. ink-400 is 4.92:1. */}
             {section.key !== undefined && (
-              <p className="mb-1.5 px-3 text-[0.68rem] font-bold uppercase tracking-wider text-ink-300">
+              <p className="mb-1.5 px-3 text-[0.68rem] font-bold uppercase tracking-wider text-ink-400">
                 {t(`app.section.${section.key}`)}
               </p>
             )}
