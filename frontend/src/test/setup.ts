@@ -15,6 +15,29 @@ if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = vi.fn();
 }
 
+// Likewise the <dialog> methods: jsdom parses the element but implements
+// neither, so any test that opens a Modal dies on `showModal is not a
+// function`. The `open` attribute is what the component and the a11y tree
+// actually read, so these keep it honest rather than no-op'ing.
+if (typeof HTMLDialogElement !== "undefined") {
+  if (!HTMLDialogElement.prototype.showModal) {
+    HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement) {
+      this.open = true;
+    };
+  }
+  if (!HTMLDialogElement.prototype.show) {
+    HTMLDialogElement.prototype.show = function show(this: HTMLDialogElement) {
+      this.open = true;
+    };
+  }
+  if (!HTMLDialogElement.prototype.close) {
+    HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement) {
+      this.open = false;
+      this.dispatchEvent(new Event("close"));
+    };
+  }
+}
+
 beforeEach(async () => {
   // The language detector reads localStorage, so a test that switched
   // language would otherwise leak into the next one.

@@ -741,7 +741,16 @@
     "yourMessage": "رسالتك",
     "placeholder": "اكتب رسالة…",
     "send": "إرسال",
-    "sendError": "تعذّر إرسال الرسالة."
+    "sendError": "تعذّر إرسال الرسالة.",
+    "new": "رسالة جديدة",
+    "newTitle": "رسالة جديدة",
+    "newHint": "سيرد عليك فريق الحضانة هنا.",
+    "newHintStaff": "سيتلقى الولي إشعاراً.",
+    "aboutChild": "بخصوص",
+    "chooseChild": "اختر طفلاً",
+    "subjectOptional": "الموضوع (اختياري)",
+    "subjectPlaceholder": "سؤال حول أوقات العمل…",
+    "startFirst": "مراسلة الحضانة"
   },
   "notifications": {
     "title": "الإشعارات",

@@ -666,7 +666,16 @@
     "yourMessage": "Votre message",
     "placeholder": "Écrire un message…",
     "send": "Envoyer",
-    "sendError": "Impossible d'envoyer le message."
+    "sendError": "Impossible d'envoyer le message.",
+    "new": "Nouveau message",
+    "newTitle": "Nouveau message",
+    "newHint": "L'équipe de la crèche vous répondra ici.",
+    "newHintStaff": "Le parent recevra une notification.",
+    "aboutChild": "Au sujet de",
+    "chooseChild": "Choisir un enfant",
+    "subjectOptional": "Sujet (facultatif)",
+    "subjectPlaceholder": "Question sur les horaires…",
+    "startFirst": "Écrire à la crèche"
   },
   "notifications": {
     "title": "Notifications",

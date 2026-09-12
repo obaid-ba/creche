@@ -1,9 +1,10 @@
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
 import { PageShell } from "@/components/app";
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
 import { MessageComposer } from "@/features/messages/components/MessageComposer";
+import { NewConversationModal } from "@/features/messages/components/NewConversationModal";
 import { MessageThread } from "@/features/messages/components/MessageThread";
 import {
   useConversations,
@@ -28,6 +30,11 @@ export function MessagesPage() {
   const { user } = useAuth();
   const conversations = useConversations();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
+
+  // The server rejects a blocked parent with a 403 regardless; this only
+  // lets the UI explain why instead of failing after they have typed.
+  const canSend = user?.can_send_messages ?? false;
 
   const thread = useThread(selectedId ?? undefined);
   const sendMessage = useSendMessage(selectedId ?? "");
@@ -47,15 +54,22 @@ export function MessagesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
-  // The server rejects a blocked parent with a 403 regardless; this only
-  // lets the UI explain why instead of failing after they have typed.
-  const canSend = user?.can_send_messages ?? false;
-
   return (
     <PageShell size="wide">
-      <h1 className="mb-6 font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
-        {t("messages.title")}
-      </h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+          {t("messages.title")}
+        </h1>
+
+        {canSend && (
+          <Button
+            leftIcon={<Plus className="size-4" />}
+            onClick={() => setIsStarting(true)}
+          >
+            {t("messages.new")}
+          </Button>
+        )}
+      </div>
 
       {conversations.isPending ? (
         <LoadingState label={t("messages.loading")} />
@@ -69,6 +83,15 @@ export function MessagesPage() {
           icon={<MessageCircle className="size-6" />}
           title={t("messages.empty")}
           description={t("messages.emptyHint")}
+          // Without this the empty state was a dead end: the only way to
+          // get a conversation was for the other side to start one.
+          action={
+            canSend ? (
+              <Button size="sm" onClick={() => setIsStarting(true)}>
+                {t("messages.startFirst")}
+              </Button>
+            ) : undefined
+          }
         />
       ) : (
         <div className="grid gap-5 lg:grid-cols-[18rem_1fr]">
@@ -135,6 +158,11 @@ export function MessagesPage() {
           </Card>
         </div>
       )}
+      <NewConversationModal
+        isOpen={isStarting}
+        onClose={() => setIsStarting(false)}
+        onCreated={setSelectedId}
+      />
     </PageShell>
   );
 }
