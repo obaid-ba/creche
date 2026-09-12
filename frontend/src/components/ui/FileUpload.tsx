@@ -1,5 +1,6 @@
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/cn";
 
@@ -25,6 +26,7 @@ export function FileUpload({
   isUploading?: boolean;
   hint?: string;
 }) {
+  const { t } = useTranslation();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -36,11 +38,11 @@ export function FileUpload({
     setError(null);
 
     if (!ACCEPTED.includes(file.type)) {
-      setError("Format non accepté. Utilisez JPEG, PNG ou WebP.");
+      setError(t("upload.badFormat"));
       return;
     }
     if (file.size > MAX_MB * 1024 * 1024) {
-      setError(`Le fichier dépasse ${MAX_MB} Mo.`);
+      setError(t("upload.tooLarge", { max: MAX_MB }));
       return;
     }
 
@@ -80,19 +82,19 @@ export function FileUpload({
         }}
         className={cn(
           "rounded-card border-2 border-dashed p-4 transition-colors",
-          isOver ? "border-primary-400 bg-primary-50" : "border-ink-200 bg-white",
+          isOver ? "border-primary-400 bg-primary-50" : "border-ink-200 bg-shell",
         )}
       >
         {preview !== null ? (
           <div className="flex items-center gap-3">
             <img
               src={preview}
-              alt="Aperçu de l'image sélectionnée"
+              alt={t("upload.previewAlt")}
               className="size-20 rounded-card object-cover"
             />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-ink-800">
-                {isUploading ? "Envoi en cours…" : "Image prête"}
+                {t(isUploading ? "upload.uploading" : "upload.ready")}
               </p>
             </div>
             {isUploading ? (
@@ -101,7 +103,7 @@ export function FileUpload({
               <button
                 type="button"
                 onClick={clear}
-                aria-label="Retirer l'image"
+                aria-label={t("upload.remove")}
                 className="rounded-pill p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
               >
                 <X aria-hidden="true" className="size-4" />

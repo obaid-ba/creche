@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { FileUpload, ImagePreview, useToast, type PreviewImage } from "@/components/ui";
 import { activitiesApi } from "../api";
@@ -23,6 +24,7 @@ export function ActivityPhotos({
   canEdit: boolean;
   onChanged: () => void;
 }) {
+  const { t } = useTranslation();
   const upload = useUploadPhoto(activityId);
   const { notify } = useToast();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -37,10 +39,10 @@ export function ActivityPhotos({
   async function remove(id: string) {
     try {
       await activitiesApi.removePhoto(activityId, id);
-      notify("Photo supprimée.");
+      notify(t("activities.photoRemoved"));
       onChanged();
     } catch {
-      notify("Impossible de supprimer la photo.", "danger");
+      notify(t("activities.photoRemoveFailed"), "danger");
     }
   }
 
@@ -55,16 +57,16 @@ export function ActivityPhotos({
 
       {canEdit && (
         <FileUpload
-          label="Ajouter une photo"
+          label={t("activities.addPhoto")}
           isUploading={upload.isPending}
-          hint="Les métadonnées (dont la localisation) sont supprimées automatiquement."
+          hint={t("activities.photoHint")}
           onSelect={async (file) => {
             try {
               await upload.mutateAsync({ file });
-              notify("Photo ajoutée.");
+              notify(t("activities.photoAdded"));
               onChanged();
             } catch {
-              notify("L'envoi de la photo a échoué.", "danger");
+              notify(t("activities.photoUploadFailed"), "danger");
             }
           }}
         />

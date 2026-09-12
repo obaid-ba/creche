@@ -1,5 +1,6 @@
 import { Palette, Plus } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
 import {
@@ -15,9 +16,10 @@ import { ActivityCard } from "@/features/activities/components/ActivityCard";
 import { ActivityFormModal } from "@/features/activities/components/ActivityFormModal";
 import { ActivityPhotos } from "@/features/activities/components/ActivityPhotos";
 import { useActivities, useCreateActivity } from "@/features/activities/hooks";
-import { CATEGORY_LABELS } from "@/features/activities/types";
+import { CATEGORY_KEYS } from "@/features/activities/types";
 
 export function StaffActivitiesPage() {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -30,10 +32,11 @@ export function StaffActivitiesPage() {
     <PageShell>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Activités</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+            {t("activities.pageTitle")}
+          </h1>
           <p className="mt-1 text-sm text-ink-500">
-            {query.data?.count ?? 0} activité
-            {(query.data?.count ?? 0) === 1 ? "" : "s"}
+            {t("activities.count", { count: query.data?.count ?? 0 })}
           </p>
         </div>
 
@@ -41,18 +44,18 @@ export function StaffActivitiesPage() {
           leftIcon={<Plus className="size-4" />}
           onClick={() => setIsFormOpen(true)}
         >
-          Nouvelle activité
+          {t("activities.new")}
         </Button>
       </div>
 
       <div className="mb-6 w-64">
         <Select
-          label="Catégorie"
+          label={t("activities.category")}
           value={category}
-          placeholder="Toutes les catégories"
-          options={Object.entries(CATEGORY_LABELS).map(([value, label]) => ({
+          placeholder={t("activities.allCategories")}
+          options={Object.entries(CATEGORY_KEYS).map(([value, key]) => ({
             value,
-            label,
+            label: t(key),
           }))}
           onChange={(event) => {
             setPage(1);
@@ -62,20 +65,20 @@ export function StaffActivitiesPage() {
       </div>
 
       {query.isPending ? (
-        <LoadingState label="Chargement des activités…" />
+        <LoadingState label={t("activities.loading")} />
       ) : query.isError ? (
         <ErrorState
-          description="Impossible de charger les activités."
+          description={t("activities.loadError")}
           onRetry={() => void query.refetch()}
         />
       ) : query.data.results.length === 0 ? (
         <EmptyState
           icon={<Palette className="size-6" />}
-          title="Aucune activité"
-          description="Créez la première activité de la crèche."
+          title={t("activities.empty")}
+          description={t("activities.staffEmptyHint")}
           action={
             <Button size="sm" onClick={() => setIsFormOpen(true)}>
-              Nouvelle activité
+              {t("activities.new")}
             </Button>
           }
         />
@@ -98,6 +101,7 @@ export function StaffActivitiesPage() {
             page={query.data.page}
             totalPages={query.data.total_pages}
             count={query.data.count}
+            countLabel={t("activities.count", { count: query.data.count })}
             onChange={setPage}
           />
         </div>
@@ -108,9 +112,9 @@ export function StaffActivitiesPage() {
         onClose={() => setOpenActivityId(null)}
         title={
           query.data?.results.find((a) => a.id === openActivityId)?.title ??
-          "Activité"
+          t("activities.fallbackTitle")
         }
-        description="Photos de l'activité"
+        description={t("activities.photos")}
       >
         {openActivityId !== null && (
           <ActivityPhotos

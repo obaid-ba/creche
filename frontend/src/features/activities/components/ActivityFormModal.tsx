@@ -1,25 +1,26 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { Alert, Button, Input, Modal, Select } from "@/components/ui";
 import { ApiError } from "@/services/errors";
 
-import { CATEGORY_LABELS, type Activity } from "../types";
+import { CATEGORY_KEYS, type Activity } from "../types";
 
 const schema = z
   .object({
-    title: z.string().trim().min(1, "Le titre est requis.").max(120),
+    title: z.string().trim().min(1, "validation.titleRequired").max(120),
     description: z.string().optional(),
     date: z
       .string()
-      .min(1, "La date est requise.")
+      .min(1, "validation.dateRequired")
       .refine((value) => {
         const today = new Date();
         today.setHours(23, 59, 59, 999);
         return new Date(value) <= today;
-      }, "Une activité ne peut pas être datée dans le futur."),
+      }, "validation.activityFuture"),
     start_time: z.string().optional(),
     end_time: z.string().optional(),
     category: z.string(),
@@ -31,7 +32,7 @@ const schema = z
       v.start_time === "" ||
       v.end_time === "" ||
       v.end_time >= v.start_time,
-    { message: "La fin ne peut pas précéder le début.", path: ["end_time"] },
+    { message: "validation.endBeforeStart", path: ["end_time"] },
   );
 
 type FormValues = z.infer<typeof schema>;
@@ -47,6 +48,7 @@ export function ActivityFormModal({
   activity?: Activity;
   onSubmit: (values: FormValues) => Promise<unknown>;
 }) {
+  const { t } = useTranslation();
   const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -75,7 +77,7 @@ export function ActivityFormModal({
           ? error
           : new ApiError({
               code: "unknown",
-              message: "Une erreur inattendue est survenue.",
+              message: t("validation.unexpected"),
               status: 0,
             });
       for (const [field, messages] of Object.entries(apiError.fieldErrors)) {
@@ -91,14 +93,14 @@ export function ActivityFormModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={activity !== undefined ? "Modifier l'activité" : "Nouvelle activité"}
+      title={t(activity !== undefined ? "activities.edit" : "activities.new")}
       footer={
         <>
           <Button variant="outline" onClick={onClose}>
-            Annuler
+            {t("common.cancel")}
           </Button>
           <Button onClick={() => void submit()} isLoading={isSubmitting}>
-            Enregistrer
+            {t("common.save")}
           </Button>
         </>
       }
@@ -107,21 +109,24 @@ export function ActivityFormModal({
         {formError !== null && <Alert tone="danger">{formError}</Alert>}
 
         <Input
-          label="Titre"
+          label={t("activities.fieldTitle")}
           autoFocus
-          placeholder="Atelier peinture"
+          placeholder={t("activities.titlePlaceholder")}
           error={errors.title?.message}
           {...form.register("title")}
         />
 
         <Select
-          label={"Catégorie"}
-          options={Object.entries(CATEGORY_LABELS).map(([value, label]) => ({ value, label }))}
+          label={t("activities.category")}
+          options={Object.entries(CATEGORY_KEYS).map(([value, key]) => ({
+            value,
+            label: t(key),
+          }))}
           {...form.register("category")}
         />
 
         <Input
-          label="Date"
+          label={t("activities.date")}
           type="date"
           error={errors.date?.message}
           {...form.register("date")}
@@ -129,13 +134,13 @@ export function ActivityFormModal({
 
         <div className="grid grid-cols-2 gap-4">
           <Input
-            label="Début"
+            label={t("activities.start")}
             type="time"
             error={errors.start_time?.message}
             {...form.register("start_time")}
           />
           <Input
-            label="Fin"
+            label={t("activities.end")}
             type="time"
             error={errors.end_time?.message}
             {...form.register("end_time")}
@@ -147,12 +152,12 @@ export function ActivityFormModal({
             htmlFor="activity-description"
             className="mb-1.5 block text-sm font-semibold text-ink-700"
           >
-            Description
+            {t("activities.description")}
           </label>
           <textarea
             id="activity-description"
             rows={3}
-            className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+            className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
             {...form.register("description")}
           />
         </div>

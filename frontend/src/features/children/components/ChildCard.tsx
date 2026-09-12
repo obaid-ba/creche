@@ -1,4 +1,5 @@
 import { AlertTriangle, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Badge } from "@/components/ui";
@@ -7,6 +8,7 @@ import type { ChildListItem } from "../types";
 import { ChildAvatar } from "./ChildAvatar";
 
 export function ChildCard({ child }: { child: ChildListItem }) {
+  const { t } = useTranslation();
   const hasAllergies = child.allergies.trim() !== "";
 
   return (
@@ -31,10 +33,12 @@ export function ChildCard({ child }: { child: ChildListItem }) {
           // glance in the list rather than only on the profile.
           <Badge tone="warning">
             <AlertTriangle aria-hidden="true" className="me-1 size-3" />
-            Allergies
+            {t("children.allergies")}
           </Badge>
         )}
-        {child.status === "ARCHIVED" && <Badge tone="neutral">Archivé</Badge>}
+        {child.status === "ARCHIVED" && (
+          <Badge tone="neutral">{t("children.archivedOne")}</Badge>
+        )}
         <ChevronRight aria-hidden="true" className="size-4 text-ink-300" />
       </div>
     </Link>

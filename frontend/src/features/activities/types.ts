@@ -52,12 +52,14 @@ export interface ActivityListParams {
   page?: number;
 }
 
-export const CATEGORY_LABELS: Record<ActivityCategory, string> = {
-  ART: "Arts plastiques",
-  MUSIC: "Musique",
-  OUTDOOR: "Jeux extérieurs",
-  STORY: "Lecture",
-  MOTOR: "Motricité",
-  EDUCATIONAL: "Éveil éducatif",
-  OTHER: "Autre",
+/** Translation keys; the API also sends `category_label` translated, but
+ *  a filter dropdown has to list categories no loaded activity has. */
+export const CATEGORY_KEYS: Record<ActivityCategory, string> = {
+  ART: "activities.cat.ART",
+  MUSIC: "activities.cat.MUSIC",
+  OUTDOOR: "activities.cat.OUTDOOR",
+  STORY: "activities.cat.STORY",
+  MOTOR: "activities.cat.MOTOR",
+  EDUCATIONAL: "activities.cat.EDUCATIONAL",
+  OTHER: "activities.cat.OTHER",
 };

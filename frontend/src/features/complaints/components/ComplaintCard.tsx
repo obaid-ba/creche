@@ -1,13 +1,17 @@
 import { Lock, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Badge, Button, Card, CardBody } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
+import { useLocale } from "@/i18n/useLocale";
 
 import { useChangeStatus, useReplyToComplaint } from "../hooks";
-import { STATUS_LABELS, STATUS_TONES, type Complaint } from "../types";
+import { STATUS_LABEL_KEYS, STATUS_TONES, type Complaint } from "../types";
 
 export function ComplaintCard({ complaint }: { complaint: Complaint }) {
+  const { t } = useTranslation();
+  const locale = useLocale();
   const { role } = useAuth();
   const isStaff = role === "STAFF" || role === "ADMIN";
 
@@ -30,7 +34,7 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
               </Badge>
             </div>
             <p className="mt-1 text-xs text-ink-400">
-              {new Date(complaint.created_at).toLocaleDateString("fr-FR", {
+              {new Date(complaint.created_at).toLocaleDateString(locale, {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
@@ -58,7 +62,7 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
                     changeStatus.mutate({ id: complaint.id, status: target })
                   }
                 >
-                  {STATUS_LABELS[target]}
+                  {t(STATUS_LABEL_KEYS[target])}
                 </Button>
               ))}
             </div>
@@ -84,7 +88,7 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
                   {item.is_internal && (
                     <>
                       <Lock aria-hidden="true" className="size-3" />
-                      Note interne ·{" "}
+                      {t("complaints.internalNoteLabel")} ·{" "}
                     </>
                   )}
                   {item.author?.first_name ?? "—"}
@@ -100,14 +104,14 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
         {isReplying ? (
           <div className="space-y-2">
             <label className="sr-only" htmlFor={`reply-${complaint.id}`}>
-              Votre réponse
+              {t("complaints.yourReply")}
             </label>
             <textarea
               id={`reply-${complaint.id}`}
               rows={3}
               value={body}
               onChange={(event) => setBody(event.target.value)}
-              className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+              className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
             />
 
             {isStaff && (
@@ -118,7 +122,7 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
                   onChange={(event) => setIsInternal(event.target.checked)}
                   className="size-4 rounded border-ink-300"
                 />
-                Note interne (non visible par le parent)
+                {t("complaints.internalCheckbox")}
               </label>
             )}
 
@@ -140,14 +144,14 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
                   )
                 }
               >
-                Envoyer
+                {t("complaints.send")}
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsReplying(false)}
               >
-                Annuler
+                {t("common.cancel")}
               </Button>
             </div>
           </div>
@@ -158,7 +162,7 @@ export function ComplaintCard({ complaint }: { complaint: Complaint }) {
             leftIcon={<MessageSquare className="size-4" />}
             onClick={() => setIsReplying(true)}
           >
-            Répondre
+            {t("complaints.reply")}
           </Button>
         )}
       </CardBody>

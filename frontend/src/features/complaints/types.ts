@@ -32,11 +32,15 @@ export interface Complaint {
   updated_at: string;
 }
 
-export const STATUS_LABELS: Record<ComplaintStatus, string> = {
-  NEW: "Nouvelle",
-  IN_PROGRESS: "En cours",
-  RESOLVED: "Résolue",
-  CLOSED: "Clôturée",
+/** Translation keys, not copy: see `features/auth/schemas.ts` for why a
+ *  module constant cannot hold translated text. The API also sends
+ *  `status_label` already translated; this is for the filter dropdown,
+ *  which lists statuses that no loaded complaint may have. */
+export const STATUS_LABEL_KEYS: Record<ComplaintStatus, string> = {
+  NEW: "complaints.state.NEW",
+  IN_PROGRESS: "complaints.state.IN_PROGRESS",
+  RESOLVED: "complaints.state.RESOLVED",
+  CLOSED: "complaints.state.CLOSED",
 };
 
 export const STATUS_TONES: Record<

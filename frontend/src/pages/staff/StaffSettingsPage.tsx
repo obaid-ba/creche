@@ -1,6 +1,7 @@
 import { KeyRound, LogOut, Plus, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
 import {
@@ -38,6 +39,7 @@ function NewStaffModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const createStaff = useCreateStaff();
   const [error, setError] = useState<string | null>(null);
   const form = useForm<NewStaffValues>({
@@ -57,7 +59,7 @@ function NewStaffModal({
       const apiError =
         caught instanceof ApiError
           ? caught
-          : new ApiError({ code: "unknown", message: "Erreur.", status: 0 });
+          : new ApiError({ code: "unknown", message: t("settings.genericError"), status: 0 });
       for (const [field, messages] of Object.entries(apiError.fieldErrors)) {
         form.setError(field as keyof NewStaffValues, {
           message: messages[0] ?? "",
@@ -71,15 +73,18 @@ function NewStaffModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Nouveau membre de l'équipe"
-      description="Le compte est actif immédiatement."
+      title={t("settings.newMember")}
+      description={t("settings.newMemberHint")}
       footer={
         <>
           <Button variant="outline" onClick={onClose}>
-            Annuler
+            {t("common.cancel")}
           </Button>
-          <Button onClick={() => void submit()} isLoading={form.formState.isSubmitting}>
-            Créer le compte
+          <Button
+            onClick={() => void submit()}
+            isLoading={form.formState.isSubmitting}
+          >
+            {t("settings.create")}
           </Button>
         </>
       }
@@ -89,46 +94,47 @@ function NewStaffModal({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label="Prénom"
+            label={t("form.firstName")}
             autoFocus
             error={form.formState.errors.first_name?.message}
-            {...form.register("first_name", { required: "Requis." })}
+            {...form.register("first_name", { required: "settings.required" })}
           />
           <Input
-            label="Nom"
+            label={t("form.lastName")}
             error={form.formState.errors.last_name?.message}
-            {...form.register("last_name", { required: "Requis." })}
+            {...form.register("last_name", { required: "settings.required" })}
           />
         </div>
 
         <Input
-          label="Adresse e-mail"
+          label={t("form.email")}
           type="email"
+          dir="ltr"
           error={form.formState.errors.email?.message}
-          {...form.register("email", { required: "Requis." })}
+          {...form.register("email", { required: "settings.required" })}
         />
 
         <Input
-          label="Fonction"
-          placeholder="Éducatrice, auxiliaire…"
+          label={t("settings.jobTitle")}
+          placeholder={t("settings.jobTitlePlaceholder")}
           {...form.register("job_title")}
         />
 
         <Input
-          label="Mot de passe provisoire"
+          label={t("settings.tempPassword")}
           type="password"
-          hint="Au moins 10 caractères. À communiquer à la personne concernée."
+          hint={t("settings.tempPasswordHint")}
           error={form.formState.errors.password?.message}
-          {...form.register("password", { required: "Requis." })}
+          {...form.register("password", { required: "settings.required" })}
         />
 
         <Select
-          label="Rôle"
+          label={t("settings.role")}
           options={[
-            { value: "STAFF", label: "Personnel" },
-            { value: "ADMIN", label: "Administrateur" },
+            { value: "STAFF", label: t("settings.roleStaff") },
+            { value: "ADMIN", label: t("settings.roleAdmin") },
           ]}
-          hint="Un administrateur peut restaurer un enfant archivé et gérer les comptes de l'équipe."
+          hint={t("settings.roleHint")}
           {...form.register("role")}
         />
       </div>
@@ -137,6 +143,7 @@ function NewStaffModal({
 }
 
 export function StaffSettingsPage() {
+  const { t } = useTranslation();
   const { user, refreshUser, logout } = useAuth();
   const staffQuery = useStaffMembers();
   const toggleActive = useToggleStaffActive();
@@ -147,17 +154,21 @@ export function StaffSettingsPage() {
 
   return (
     <PageShell size="form">
-      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Paramètres</h1>
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+        {t("settings.title")}
+      </h1>
+      {/* Two whole sentences rather than a French fragment glued on: the
+          clause goes in a different place in Arabic. */}
       <p className="mt-1 text-sm text-ink-500">
-        Votre compte{isAdmin && " et ceux de l'équipe"}.
+        {t(isAdmin ? "settings.leadAdmin" : "settings.leadSelf")}
       </p>
 
       <Card className="mt-6">
         <CardHeader
-          title="Mon compte"
+          title={t("settings.myAccount")}
           action={
             <Badge tone={isAdmin ? "primary" : "secondary"}>
-              {isAdmin ? "Administrateur" : "Personnel"}
+              {t(isAdmin ? "settings.roleAdmin" : "settings.roleStaff")}
             </Badge>
           }
         />
@@ -167,7 +178,7 @@ export function StaffSettingsPage() {
       </Card>
 
       <Card className="mt-5">
-        <CardHeader title="Sécurité" />
+        <CardHeader title={t("settings.security")} />
         <CardBody className="space-y-6">
           <div className="flex items-start gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-card bg-ink-100 text-ink-600">
@@ -184,7 +195,7 @@ export function StaffSettingsPage() {
               leftIcon={<LogOut className="size-4" />}
               onClick={() => void logout()}
             >
-              Se déconnecter
+              {t("settings.signOut")}
             </Button>
           </div>
         </CardBody>
@@ -192,12 +203,10 @@ export function StaffSettingsPage() {
 
       <Card className="mt-5">
         <CardHeader
-          title="Équipe"
-          description={
-            isAdmin
-              ? "Créer, désactiver et réactiver les comptes."
-              : "Seul un administrateur peut modifier ces comptes."
-          }
+          title={t("settings.team")}
+          description={t(
+            isAdmin ? "settings.teamAdminHint" : "settings.teamStaffHint",
+          )}
           action={
             isAdmin ? (
               <Button
@@ -205,16 +214,16 @@ export function StaffSettingsPage() {
                 leftIcon={<Plus className="size-4" />}
                 onClick={() => setIsCreating(true)}
               >
-                Ajouter
+                {t("settings.add")}
               </Button>
             ) : undefined
           }
         />
         <CardBody>
           {staffQuery.isPending ? (
-            <LoadingState label="Chargement de l'équipe…" />
+            <LoadingState label={t("settings.teamLoading")} />
           ) : staffQuery.isError ? (
-            <ErrorState description="Impossible de charger l'équipe." />
+            <ErrorState description={t("settings.teamLoadError")} />
           ) : (
             <ul className="divide-y divide-ink-100">
               {staffQuery.data.results.map((member) => {
@@ -229,7 +238,7 @@ export function StaffSettingsPage() {
                         {member.first_name} {member.last_name}
                         {isSelf && (
                           <span className="ms-2 text-xs font-normal text-ink-400">
-                            (vous)
+                            {t("settings.you")}
                           </span>
                         )}
                       </p>
@@ -241,10 +250,10 @@ export function StaffSettingsPage() {
 
                     <div className="flex items-center gap-2">
                       {member.role === "ADMIN" && (
-                        <Badge tone="primary">Admin</Badge>
+                        <Badge tone="primary">{t("settings.adminBadge")}</Badge>
                       )}
                       {!member.is_active && (
-                        <Badge tone="neutral">Désactivé</Badge>
+                        <Badge tone="neutral">{t("settings.disabled")}</Badge>
                       )}
 
                       {isAdmin && !isSelf && (
@@ -269,7 +278,11 @@ export function StaffSettingsPage() {
                             )
                           }
                         >
-                          {member.is_active ? "Désactiver" : "Réactiver"}
+                          {t(
+                            member.is_active
+                              ? "settings.deactivate"
+                              : "settings.reactivate",
+                          )}
                         </Button>
                       )}
                     </div>

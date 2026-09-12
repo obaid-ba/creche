@@ -1,5 +1,6 @@
 import { Plus, Search, Users } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
 import {
@@ -19,8 +20,8 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { AgeGroupKey, ChildStatus } from "@/types/api";
 
 const STATUS_FILTERS = [
-  { value: "", label: "Actifs" },
-  { value: "ARCHIVED", label: "Archivés" },
+  { value: "", key: "children.active" },
+  { value: "ARCHIVED", key: "children.archived" },
 ] as const;
 
 /** Split a page of children into their age bands, preserving band order. */
@@ -35,6 +36,7 @@ function groupByAgeBand(
 }
 
 export function StaffChildrenPage() {
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [ageGroup, setAgeGroup] = useState<AgeGroupKey | "">("");
   const [status, setStatus] = useState<ChildStatus | "">("");
@@ -67,24 +69,26 @@ export function StaffChildrenPage() {
     <PageShell>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Enfants</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+            {t("children.title")}
+          </h1>
           <p className="mt-1 text-sm text-ink-500">
-            {total} enfant{total === 1 ? "" : "s"} au total
+            {t("children.totalCount", { count: total })}
           </p>
         </div>
 
         <LinkButton to="/staff/children/new">
           <Plus aria-hidden="true" className="size-4" />
-          Ajouter un enfant
+          {t("children.add")}
         </LinkButton>
       </div>
 
       <div className="mb-6 flex flex-wrap items-end gap-3">
         <div className="min-w-56 flex-1">
           <Input
-            label="Rechercher"
+            label={t("children.search")}
             type="search"
-            placeholder="Nom ou prénom…"
+            placeholder={t("children.searchPlaceholder")}
             value={searchInput}
             onChange={(event) => {
               setPage(1);
@@ -96,12 +100,17 @@ export function StaffChildrenPage() {
 
         <div className="w-48">
           <Select
-            label="Groupe d'âge"
+            label={t("children.ageGroup")}
             value={ageGroup}
-            placeholder="Tous les groupes"
+            placeholder={t("children.allGroups")}
             options={(groupsQuery.data ?? []).map((group) => ({
               value: group.key,
-              label: `${group.label} (${group.count})`,
+              // The band name comes from the API already translated; only
+              // the parenthesised count is assembled here.
+              label: t("children.groupWithCount", {
+                label: group.label,
+                count: group.count,
+              }),
             }))}
             onChange={(event) => {
               setPage(1);
@@ -112,9 +121,12 @@ export function StaffChildrenPage() {
 
         <div className="w-40">
           <Select
-            label="Statut"
+            label={t("children.status")}
             value={status}
-            options={STATUS_FILTERS.map((o) => ({ value: o.value, label: o.label }))}
+            options={STATUS_FILTERS.map((o) => ({
+              value: o.value,
+              label: t(o.key),
+            }))}
             onChange={(event) => {
               setPage(1);
               setStatus(event.target.value as ChildStatus | "");
@@ -124,21 +136,19 @@ export function StaffChildrenPage() {
       </div>
 
       {query.isPending ? (
-        <LoadingState label="Chargement des enfants…" />
+        <LoadingState label={t("children.loading")} />
       ) : query.isError ? (
         <ErrorState
-          description="Impossible de charger la liste des enfants."
+          description={t("children.loadError")}
           onRetry={() => void query.refetch()}
         />
       ) : results.length === 0 ? (
         <EmptyState
           icon={<Users className="size-6" />}
-          title={isFiltered ? "Aucun résultat" : "Aucun enfant enregistré"}
-          description={
-            isFiltered
-              ? "Essayez de modifier votre recherche ou vos filtres."
-              : "Commencez par ajouter le premier enfant de la crèche."
-          }
+          title={t(isFiltered ? "children.noResults" : "children.empty")}
+          description={t(
+            isFiltered ? "children.noResultsHint" : "children.emptyHint",
+          )}
         />
       ) : isFiltered ? (
         <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
@@ -160,6 +170,7 @@ export function StaffChildrenPage() {
             page={query.data.page}
             totalPages={query.data.total_pages}
             count={query.data.count}
+            countLabel={t("common.child", { count: query.data.count })}
             onChange={setPage}
           />
         </div>
