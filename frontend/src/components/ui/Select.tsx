@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { forwardRef, useId, type SelectHTMLAttributes } from "react";
 
+import { useFieldError } from "@/i18n/useFieldError";
 import { cn } from "@/lib/cn";
 
 export interface SelectOption {
@@ -25,12 +26,18 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
  * Nine screens had grown their own copy of the same `<select>` markup and
  * Tailwind classes, which is exactly the duplication the design system is
  * meant to prevent. Field styling, error wiring and the label/`aria`
- * relationship now live in one place.
+ * relationship now live in one place — as does resolving `error` and
+ * `hint` through i18next; see Input for why that happens here rather
+ * than at each call site.
  */
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
-  { label, options, error, hint, placeholder, hideLabel = false, className, id, ...props },
+  { label, options, error: rawError, hint: rawHint, placeholder, hideLabel = false, className, id, ...props },
   ref,
 ) {
+  const resolve = useFieldError();
+  const error = resolve(rawError);
+  const hint = resolve(rawHint);
+
   const generatedId = useId();
   const selectId = id ?? generatedId;
   const errorId = `${selectId}-error`;

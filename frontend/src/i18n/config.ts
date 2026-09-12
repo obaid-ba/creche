@@ -42,6 +42,11 @@ void i18next
       // French copy is full of.
       escapeValue: false,
     },
+    // There is one namespace, and `t()` is also called with server-sent
+    // sentences that fall through to their own text. A colon in such a
+    // sentence ("Format attendu : MAM-XXXXX") would otherwise be read as
+    // a namespace separator.
+    nsSeparator: false,
     detection: {
       order: ["localStorage", "navigator"],
       lookupLocalStorage: "creche-lang",

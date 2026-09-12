@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/cn";
 
@@ -9,7 +10,9 @@ export interface Column<T> {
   cell: (row: T) => ReactNode;
   /** Hide below the sm breakpoint, for columns that do not fit a phone. */
   hideOnMobile?: boolean;
-  align?: "left" | "right";
+  /** "end" rather than "right": numeric columns align to the reading
+   *  end, which is the left-hand side in Arabic. */
+  align?: "start" | "end";
 }
 
 /**
@@ -24,7 +27,7 @@ export function Table<T>({
   rows,
   getRowKey,
   onRowClick,
-  emptyMessage = "Aucun résultat.",
+  emptyMessage,
   caption,
 }: {
   columns: readonly Column<T>[];
@@ -34,8 +37,14 @@ export function Table<T>({
   emptyMessage?: string;
   caption?: string;
 }) {
+  const { t } = useTranslation();
+
   if (rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-ink-500">{emptyMessage}</p>;
+    return (
+      <p className="py-8 text-center text-sm text-ink-500">
+        {emptyMessage ?? t("ui.noResults")}
+      </p>
+    );
   }
 
   return (
@@ -51,7 +60,7 @@ export function Table<T>({
                 scope="col"
                 className={cn(
                   "px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-ink-500",
-                  column.align === "right" ? "text-end" : "text-start",
+                  column.align === "end" ? "text-end" : "text-start",
                   column.hideOnMobile === true && "hidden sm:table-cell",
                 )}
               >
@@ -76,7 +85,7 @@ export function Table<T>({
                   key={column.key}
                   className={cn(
                     "px-3 py-3 text-ink-700",
-                    column.align === "right" ? "text-end" : "text-start",
+                    column.align === "end" ? "text-end" : "text-start",
                     column.hideOnMobile === true && "hidden sm:table-cell",
                   )}
                 >

@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { Alert, Button, Input, Select } from "@/components/ui";
@@ -10,11 +11,12 @@ import { ApiError } from "@/services/errors";
 import { claimSchema, type ClaimFormValues } from "../schemas";
 import { useAuth } from "../useAuth";
 
+/** Values are the API's enum; the wording comes from the locale files. */
 const RELATIONSHIPS = [
-  { value: "MOTHER", label: "Mère" },
-  { value: "FATHER", label: "Père" },
-  { value: "GUARDIAN", label: "Tuteur / Tutrice" },
-  { value: "OTHER", label: "Autre" },
+  { value: "MOTHER", key: "form.mother" },
+  { value: "FATHER", key: "form.father" },
+  { value: "GUARDIAN", key: "form.guardian" },
+  { value: "OTHER", key: "form.other" },
 ] as const;
 
 /** Fields the backend may report that map onto this form. */
@@ -28,6 +30,7 @@ const MAPPED_FIELDS = new Set<keyof ClaimFormValues>([
 ]);
 
 export function ClaimForm() {
+  const { t } = useTranslation();
   const { claim } = useAuth();
   const navigate = useNavigate();
   const [formError, setFormError] = useState<string | null>(null);
@@ -61,7 +64,7 @@ export function ClaimForm() {
           ? error
           : new ApiError({
               code: "unknown",
-              message: "Une erreur inattendue est survenue.",
+              message: t("validation.unexpected"),
               status: 0,
             });
 
@@ -81,12 +84,15 @@ export function ClaimForm() {
       {formError !== null && <Alert tone="danger">{formError}</Alert>}
 
       <Input
-        label="Code d'accès"
+        label={t("form.accessCode")}
         placeholder="MAM-XXXXX"
         autoFocus
         autoComplete="off"
         spellCheck={false}
-        hint="Ce code vous a été remis par la crèche."
+        // The code is issued in Latin letters and digits whatever the
+        // interface language, so the field stays left-to-right.
+        dir="ltr"
+        hint={t("form.accessCodeHint")}
         leftIcon={<KeyRound className="size-4" />}
         error={errors.access_code?.message}
         {...form.register("access_code")}
@@ -94,14 +100,14 @@ export function ClaimForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prénom"
+          label={t("form.firstName")}
           autoComplete="given-name"
           leftIcon={<User className="size-4" />}
           error={errors.first_name?.message}
           {...form.register("first_name")}
         />
         <Input
-          label="Nom"
+          label={t("form.lastName")}
           autoComplete="family-name"
           error={errors.last_name?.message}
           {...form.register("last_name")}
@@ -109,13 +115,16 @@ export function ClaimForm() {
       </div>
 
         <Select
-          label="Lien avec l'enfant"
-          options={RELATIONSHIPS.map((r) => ({ value: r.value, label: r.label }))}
+          label={t("form.relationship")}
+          options={RELATIONSHIPS.map((r) => ({
+            value: r.value,
+            label: t(r.key),
+          }))}
           {...form.register("relationship")}
         />
 
       <Input
-        label="Adresse e-mail"
+        label={t("form.email")}
         type="email"
         autoComplete="email"
         leftIcon={<Mail className="size-4" />}
@@ -124,24 +133,25 @@ export function ClaimForm() {
       />
 
       <Input
-        label="Téléphone (facultatif)"
+        label={t("form.phoneOptional")}
         type="tel"
         autoComplete="tel"
+        dir="ltr"
         error={errors.phone?.message}
         {...form.register("phone")}
       />
 
       <Input
-        label="Mot de passe"
+        label={t("form.password")}
         type="password"
         autoComplete="new-password"
-        hint="Au moins 10 caractères."
+        hint={t("form.passwordHint")}
         error={errors.password?.message}
         {...form.register("password")}
       />
 
       <Input
-        label="Confirmer le mot de passe"
+        label={t("form.passwordConfirm")}
         type="password"
         autoComplete="new-password"
         error={errors.password_confirm?.message}
@@ -149,7 +159,7 @@ export function ClaimForm() {
       />
 
       <Button type="submit" fullWidth size="lg" isLoading={isSubmitting}>
-        Activer mon compte
+        {t("form.activate")}
       </Button>
     </form>
   );

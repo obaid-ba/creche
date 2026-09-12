@@ -68,7 +68,9 @@ describe("eventDetail", () => {
       duration_minutes: 75,
       is_open_interval: false,
     });
-    expect(eventDetail(event)).toBe("Durée : 1h15");
+    // A non-breaking space before the colon, as French typography wants:
+    // "Durée :" must not be allowed to break across two lines.
+    expect(eventDetail(event)).toBe("Durée\u00a0: 1h15");
   });
 
   it("shows an in-progress nap as ongoing rather than a duration", () => {

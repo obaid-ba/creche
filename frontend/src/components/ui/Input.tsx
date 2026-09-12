@@ -1,5 +1,6 @@
 import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from "react";
 
+import { useFieldError } from "@/i18n/useFieldError";
 import { cn } from "@/lib/cn";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -9,10 +10,26 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: ReactNode;
 }
 
+/**
+ * A labelled text field.
+ *
+ * `error` and `hint` are resolved through i18next before rendering.
+ *
+ * Two kinds of message arrive here: Zod schema messages, which are
+ * translation keys because a schema is evaluated once at import and
+ * cannot hold translated text, and API messages, which are already
+ * sentences in the request's language. `defaultValue` handles both — a
+ * key that exists is translated, anything else passes through — so no
+ * caller has to know which kind it is holding.
+ */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { label, error, hint, leftIcon, className, id, ...props },
+  { label, error: rawError, hint: rawHint, leftIcon, className, id, ...props },
   ref,
 ) {
+  const resolve = useFieldError();
+  const error = resolve(rawError);
+  const hint = resolve(rawHint);
+
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const errorId = `${inputId}-error`;
@@ -49,13 +66,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           aria-invalid={error !== undefined}
           aria-describedby={describedBy}
           className={cn(
-            "h-11 w-full rounded-card border bg-white px-3.5 text-sm text-ink-800",
+            "h-11 w-full rounded-card border bg-shell px-3.5 text-sm text-ink-800",
             "placeholder:text-ink-300",
             "transition-colors focus:outline-none focus:ring-2",
             leftIcon !== undefined && "ps-10",
             error !== undefined
               ? "border-danger-500 focus:ring-danger-500/30"
-              : "border-ink-200 focus:border-primary-400 focus:ring-primary-500/25",
+              : "border-ink-200 hover:border-ink-300 focus:border-primary-400 focus:ring-primary-500/25",
             className,
           )}
           {...props}

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { cn } from "@/lib/cn";
 
 import type { TimelineFilter } from "../types";
@@ -12,12 +14,15 @@ export function TimelineFilters({
   onChange: (filter: TimelineFilter) => void;
   options: { key: string; label: string }[];
 }) {
-  const chips = [{ key: "all", label: "Tout" }, ...options];
+  const { t } = useTranslation();
+  // Chip labels other than "all" come from the API, already translated
+  // against the request's Accept-Language.
+  const chips = [{ key: "all", label: t("timeline.all") }, ...options];
 
   return (
     <div
       role="group"
-      aria-label="Filtrer les événements"
+      aria-label={t("timeline.filterEvents")}
       className="flex flex-wrap gap-2"
     >
       {chips.map((chip) => {

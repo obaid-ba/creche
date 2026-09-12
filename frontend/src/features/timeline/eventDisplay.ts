@@ -1,3 +1,6 @@
+import i18n from "@/i18n/config";
+import { currentLanguage } from "@/i18n/useDirection";
+
 import type { TimelineEvent } from "./types";
 
 /**
@@ -5,7 +8,19 @@ import type { TimelineEvent } from "./types";
  *
  * Kept out of the components so the display rules are testable on their
  * own and shared between the parent and staff views (brief 24).
+ *
+ * These read the i18next instance directly rather than taking a `t`
+ * argument. They are only ever called during a component's render, and
+ * react-i18next re-renders every subscriber when the language changes,
+ * so the value read here is always the current one — and the call sites
+ * stay free of prop drilling through three layers of timeline
+ * components.
  */
+
+/** BCP-47 tag for `Intl`; ar-TN keeps Western digits and Tunisian months. */
+function locale(): string {
+  return currentLanguage(i18n.language) === "ar" ? "ar-TN" : "fr-FR";
+}
 
 /** Emoji per type, matching the brief's own timeline mock-up. */
 const EMOJI: Record<string, string> = {
@@ -21,36 +36,17 @@ const EMOJI: Record<string, string> = {
   MESSAGE: "💬",
 };
 
-const MOOD_LABELS: Record<string, string> = {
-  HAPPY: "Joyeux",
-  CALM: "Calme",
-  TIRED: "Fatigué",
-  SAD: "Triste",
-  IRRITATED: "Irrité",
-  ACTIVE: "Actif",
-  OTHER: "Autre",
-};
-
-const MEAL_LABELS: Record<string, string> = {
-  BREAKFAST: "Petit déjeuner",
-  LUNCH: "Déjeuner",
-  SNACK: "Goûter",
-  DINNER: "Dîner",
-};
-
-const EATEN_LABELS: Record<string, string> = {
-  ALL: "Tout mangé",
-  MOST: "Presque tout",
-  SOME: "Un peu",
-  NONE: "Rien mangé",
-};
-
-const DIAPER_LABELS: Record<string, string> = {
-  WET: "Mouillé",
-  SOILED: "Sale",
-  BOTH: "Mouillé et sale",
-  DRY: "Sec",
-};
+/**
+ * Payload enums are stored values, so the lookup is by value and only
+ * the wording is translated. An unrecognised value yields "" rather than
+ * the key itself, which would surface "event.mood.SOMETHING" to a parent.
+ */
+function enumLabel(group: string, value: unknown): string {
+  if (typeof value !== "string" || value === "") return "";
+  const key = `event.${group}.${value}`;
+  const translated = i18n.t(key);
+  return translated === key ? "" : translated;
+}
 
 export function eventEmoji(type: string): string {
   return EMOJI[type] ?? "•";
@@ -58,20 +54,23 @@ export function eventEmoji(type: string): string {
 
 /** HH:MM in the viewer's locale. */
 export function formatTime(isoString: string): string {
-  return new Date(isoString).toLocaleTimeString("fr-FR", {
+  return new Date(isoString).toLocaleTimeString(locale(), {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
-/** 75 → "1h15", matching the backend's French formatting. */
+/** 75 → "1h15". */
 export function formatDuration(minutes: number): string {
-  if (minutes <= 0) return "0 min";
+  if (minutes <= 0) return i18n.t("event.minutes", { count: 0 });
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
-  if (hours === 0) return `${rest} min`;
-  if (rest === 0) return `${hours}h`;
-  return `${hours}h${String(rest).padStart(2, "0")}`;
+  if (hours === 0) return i18n.t("event.minutes", { count: rest });
+  if (rest === 0) return i18n.t("event.hours", { count: hours });
+  return i18n.t("event.hoursMinutes", {
+    hours,
+    minutes: String(rest).padStart(2, "0"),
+  });
 }
 
 /**
@@ -86,40 +85,51 @@ export function eventDetail(event: TimelineEvent): string {
   switch (event.type) {
     case "BOTTLE": {
       const volume = data["volume_ml"];
-      return typeof volume === "number" ? `${volume} ml` : event.description;
+      return typeof volume === "number"
+        ? i18n.t("event.millilitres", { count: volume })
+        : event.description;
     }
 
     case "MEAL": {
-      const meal = MEAL_LABELS[String(data["meal"])] ?? "";
-      const eaten = EATEN_LABELS[String(data["eaten"])] ?? "";
+      const meal = enumLabel("meal", data["meal"]);
+      const eaten = enumLabel("eaten", data["eaten"]);
       return [meal, eaten].filter(Boolean).join(" · ") || event.description;
     }
 
     case "SLEEP": {
-      if (event.is_open_interval) return "En cours…";
+      if (event.is_open_interval) return i18n.t("event.inProgress");
       return event.duration_minutes !== null
-        ? `Durée : ${formatDuration(event.duration_minutes)}`
+        ? i18n.t("event.duration", {
+            value: formatDuration(event.duration_minutes),
+          })
         : event.description;
     }
 
     case "TEMPERATURE": {
       const celsius = data["celsius"];
+      // A temperature is a measurement, not prose: it keeps Latin digits
+      // and Latin order in both languages.
       return celsius !== undefined && celsius !== null
-        ? `${String(celsius).replace(".", ",")} °C`
+        ? `${Number(celsius).toLocaleString("fr-FR", {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })} °C`
         : event.description;
     }
 
     case "MOOD": {
-      const mood = MOOD_LABELS[String(data["mood"])] ?? "";
+      const mood = enumLabel("mood", data["mood"]);
       const note = typeof data["note"] === "string" ? data["note"] : "";
       return [mood, note].filter(Boolean).join(" · ") || event.description;
     }
 
     case "DIAPER":
-      return DIAPER_LABELS[String(data["state"])] ?? event.description;
+      return enumLabel("diaper", data["state"]) || event.description;
 
     case "TOILET":
-      return data["success"] === true ? "Réussi" : "Sans résultat";
+      return data["success"] === true
+        ? i18n.t("event.toiletSuccess")
+        : i18n.t("event.toiletNoResult");
 
     case "ACTIVITY":
       return event.activity?.title ?? event.description;

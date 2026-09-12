@@ -1,28 +1,31 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { AuthLayout } from "@/layouts/AuthLayout";
 
 export function ParentLoginPage() {
+  const { t } = useTranslation();
+
   return (
     <AuthLayout
-      title="Espace parents"
-      subtitle="Connectez-vous pour suivre la journée de votre enfant."
+      title={t("auth.parentTitle")}
+      subtitle={t("auth.parentSubtitle")}
       footer={
         <>
           <p>
-            Première connexion ?{" "}
+            {t("auth.firstLogin")}{" "}
             <Link
               to="/parent/activation"
               className="font-semibold text-primary-700 underline underline-offset-2"
             >
-              Activer mon compte avec un code
+              {t("auth.activateWithCode")}
             </Link>
           </p>
           <p className="mt-2 text-xs text-ink-500">
-            Vous êtes membre de l'équipe ?{" "}
+            {t("auth.areYouStaff")}{" "}
             <Link to="/staff/login" className="underline underline-offset-2">
-              Connexion personnel
+              {t("auth.staffLogin")}
             </Link>
           </p>
         </>

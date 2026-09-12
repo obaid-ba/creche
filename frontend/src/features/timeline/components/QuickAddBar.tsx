@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button, Input, Modal, Select } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -6,48 +7,45 @@ import { cn } from "@/lib/cn";
 import { eventEmoji, groupAccent } from "../eventDisplay";
 import type { CreateEventInput, EventTypeSpec, TimelineEventType } from "../types";
 
-/** Extra field a type needs before it can be recorded in one tap. */
+/** Extra field a type needs before it can be recorded in one tap.
+ *
+ *  The option values are the API's stored enums; only the labels are
+ *  translated, and they share their keys with the timeline feed so a
+ *  mood chosen here reads identically once it appears in the day. */
 const PROMPTS: Partial<
-  Record<TimelineEventType, { label: string; field: string; type: string }>
+  Record<TimelineEventType, { labelKey: string; field: string; type: string }>
 > = {
-  BOTTLE: { label: "Volume (ml)", field: "volume_ml", type: "number" },
-  TEMPERATURE: { label: "Température (°C)", field: "celsius", type: "number" },
+  BOTTLE: { labelKey: "timeline.volumeMl", field: "volume_ml", type: "number" },
+  TEMPERATURE: {
+    labelKey: "timeline.temperatureC",
+    field: "celsius",
+    type: "number",
+  },
 };
 
 const CHOICES: Partial<
-  Record<TimelineEventType, { field: string; label: string; options: [string, string][] }>
+  Record<
+    TimelineEventType,
+    { field: string; labelKey: string; values: readonly string[]; group: string }
+  >
 > = {
   MEAL: {
     field: "meal",
-    label: "Repas",
-    options: [
-      ["BREAKFAST", "Petit déjeuner"],
-      ["LUNCH", "Déjeuner"],
-      ["SNACK", "Goûter"],
-      ["DINNER", "Dîner"],
-    ],
+    labelKey: "timeline.meal",
+    group: "meal",
+    values: ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
   },
   MOOD: {
     field: "mood",
-    label: "Humeur",
-    options: [
-      ["HAPPY", "Joyeux"],
-      ["CALM", "Calme"],
-      ["TIRED", "Fatigué"],
-      ["SAD", "Triste"],
-      ["IRRITATED", "Irrité"],
-      ["ACTIVE", "Actif"],
-    ],
+    labelKey: "timeline.mood",
+    group: "mood",
+    values: ["HAPPY", "CALM", "TIRED", "SAD", "IRRITATED", "ACTIVE"],
   },
   DIAPER: {
     field: "state",
-    label: "État",
-    options: [
-      ["WET", "Mouillé"],
-      ["SOILED", "Sale"],
-      ["BOTH", "Mouillé et sale"],
-      ["DRY", "Sec"],
-    ],
+    labelKey: "timeline.diaperState",
+    group: "diaper",
+    values: ["WET", "SOILED", "BOTH", "DRY"],
   },
 };
 
@@ -69,6 +67,7 @@ export function QuickAddBar({
   onAdd: (input: CreateEventInput) => void;
   isPending: boolean;
 }) {
+  const { t } = useTranslation();
   const [active, setActive] = useState<EventTypeSpec | null>(null);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -102,13 +101,13 @@ export function QuickAddBar({
     if (prompt !== undefined) {
       const numeric = Number(value);
       if (value.trim() === "" || Number.isNaN(numeric)) {
-        setError("Veuillez saisir une valeur valide.");
+        setError(t("timeline.invalidValue"));
         return;
       }
       record(active, { [prompt.field]: numeric });
     } else if (choice !== undefined) {
       if (value === "") {
-        setError("Veuillez faire un choix.");
+        setError(t("timeline.chooseSomething"));
         return;
       }
       record(active, { [choice.field]: value });
@@ -124,7 +123,7 @@ export function QuickAddBar({
     <>
       <div
         role="group"
-        aria-label="Enregistrer un événement"
+        aria-label={t("timeline.recordEvent")}
         className="flex flex-wrap gap-2"
       >
         {quickTypes.map((spec) => (
@@ -157,21 +156,21 @@ export function QuickAddBar({
         isOpen={active !== null}
         onClose={() => setActive(null)}
         title={active?.label ?? ""}
-        description="Enregistré à l'heure actuelle."
+        description={t("timeline.recordedNow")}
         footer={
           <>
             <Button variant="outline" onClick={() => setActive(null)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button onClick={submitDialog} isLoading={isPending}>
-              Enregistrer
+              {t("common.save")}
             </Button>
           </>
         }
       >
         {prompt !== undefined && (
           <Input
-            label={prompt.label}
+            label={t(prompt.labelKey)}
             type={prompt.type}
             inputMode="decimal"
             autoFocus
@@ -183,12 +182,12 @@ export function QuickAddBar({
 
         {choice !== undefined && (
           <Select
-            label={choice.label}
+            label={t(choice.labelKey)}
             value={value}
-            placeholder="Choisir…"
-            options={choice.options.map(([optionValue, optionLabel]) => ({
+            placeholder={t("timeline.choose")}
+            options={choice.values.map((optionValue) => ({
               value: optionValue,
-              label: optionLabel,
+              label: t(`event.${choice.group}.${optionValue}`),
             }))}
             error={error ?? undefined}
             onChange={(event) => setValue(event.target.value)}
