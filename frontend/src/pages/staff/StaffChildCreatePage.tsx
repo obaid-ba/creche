@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import { Card, CardBody, CardHeader } from "@/components/ui";
 import { ChildForm } from "@/features/children/components/ChildForm";
 import { useCreateChild } from "@/features/children/hooks";
@@ -9,8 +10,8 @@ export function StaffChildCreatePage() {
   const createChild = useCreateChild();
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold">Ajouter un enfant</h1>
+    <PageShell size="form">
+      <h1 className="mb-6 font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Ajouter un enfant</h1>
 
       <Card>
         <CardHeader
@@ -27,6 +28,6 @@ export function StaffChildCreatePage() {
           />
         </CardBody>
       </Card>
-    </div>
+    </PageShell>
   );
 }

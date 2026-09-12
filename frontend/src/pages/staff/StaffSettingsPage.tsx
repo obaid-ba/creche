@@ -2,6 +2,7 @@ import { KeyRound, LogOut, Plus, UserCheck, UserX } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { PageShell } from "@/components/app";
 import {
   Alert,
   Badge,
@@ -145,8 +146,8 @@ export function StaffSettingsPage() {
   const isAdmin = user.role === "ADMIN";
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold">Paramètres</h1>
+    <PageShell size="form">
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Paramètres</h1>
       <p className="mt-1 text-sm text-ink-500">
         Votre compte{isAdmin && " et ceux de l'équipe"}.
       </p>
@@ -281,6 +282,6 @@ export function StaffSettingsPage() {
       </Card>
 
       <NewStaffModal isOpen={isCreating} onClose={() => setIsCreating(false)} />
-    </div>
+    </PageShell>
   );
 }

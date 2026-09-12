@@ -26,6 +26,23 @@ def pytest_configure(config):
         )
 
 
+@pytest.fixture(autouse=True)
+def reset_active_language():
+    """Stop one test's language from leaking into the next.
+
+    `LocaleMiddleware` activates the request's language and never
+    deactivates it, so a test that asks the API for Arabic leaves Arabic
+    active for every test that follows in the same process. The symptom
+    is remote from the cause: unrelated assertions on French copy start
+    failing, and only when run in a particular order.
+    """
+    from django.utils import translation
+    from django.conf import settings
+
+    yield
+    translation.activate(settings.LANGUAGE_CODE)
+
+
 @pytest.fixture
 def api_client():
     return APIClient()

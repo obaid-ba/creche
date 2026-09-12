@@ -22,13 +22,14 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext, gettext_lazy as _, ngettext
 
 
 class AgeGroup(models.TextChoices):
-    INFANT = "INFANT", "2 → 6 mois"
-    BABY = "BABY", "7 mois → 1 an"
-    TODDLER = "TODDLER", "1 → 2 ans"
-    PRESCHOOL = "PRESCHOOL", "2 ans et +"
+    INFANT = "INFANT", _("2 → 6 mois")
+    BABY = "BABY", _("7 mois → 1 an")
+    TODDLER = "TODDLER", _("1 → 2 ans")
+    PRESCHOOL = "PRESCHOOL", _("2 ans et +")
 
 
 # Half-open month bounds [lower, upper). ``None`` means unbounded.
@@ -68,24 +69,39 @@ def age_group_for(date_of_birth: date, on: date | None = None) -> str:
 
 
 def age_display(date_of_birth: date, on: date | None = None) -> str:
-    """Human-readable French age, e.g. "2 ans et 5 mois"."""
+    """Human-readable age in the request language, e.g. "2 ans et 5 mois".
+
+    Built with ``ngettext`` rather than a French singular/plural ternary:
+    Arabic has six plural categories, so "2 ans" is not a plural at all
+    there but a dual form, and no amount of `if n == 1` gets that right.
+    The two halves are assembled through a translatable template, because
+    a language need not join them with a word in the middle or put the
+    years first.
+    """
     reference = on or today()
     if date_of_birth > reference:
-        return "0 mois"
+        return ngettext("%(count)d mois", "%(count)d mois", 0) % {"count": 0}
 
     delta = relativedelta(reference, date_of_birth)
     years, months, days = delta.years, delta.months, delta.days
 
     if years == 0 and months == 0:
-        return "1 jour" if days == 1 else f"{days} jours"
+        return ngettext("%(count)d jour", "%(count)d jours", days) % {"count": days}
     if years == 0:
-        return "1 mois" if months == 1 else f"{months} mois"
+        return ngettext("%(count)d mois", "%(count)d mois", months) % {
+            "count": months
+        }
 
-    year_part = "1 an" if years == 1 else f"{years} ans"
+    year_part = ngettext("%(count)d an", "%(count)d ans", years) % {"count": years}
     if months == 0:
         return year_part
-    month_part = "1 mois" if months == 1 else f"{months} mois"
-    return f"{year_part} et {month_part}"
+    month_part = ngettext("%(count)d mois", "%(count)d mois", months) % {
+        "count": months
+    }
+    return gettext("%(years)s et %(months)s") % {
+        "years": year_part,
+        "months": month_part,
+    }
 
 
 @dataclass(frozen=True)

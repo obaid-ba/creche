@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from django.utils import timezone
+from django.utils.encoding import force_str
 from rest_framework import serializers
 
 from .event_types import (
@@ -45,8 +46,9 @@ class TimelineEventSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_label(self, obj: TimelineEvent) -> str:
-        # An explicit title wins; otherwise fall back to the type's label.
-        return obj.title or spec_for(obj.type).label
+        # An explicit title wins; otherwise fall back to the type's label,
+        # which is a lazy proxy resolved here against the request language.
+        return obj.title or force_str(spec_for(obj.type).label)
 
     def get_icon(self, obj: TimelineEvent) -> str:
         return spec_for(obj.type).icon

@@ -1,6 +1,7 @@
 import { Plus, Search, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { PageShell } from "@/components/app";
 import {
   EmptyState,
   ErrorState,
@@ -63,10 +64,10 @@ export function StaffChildrenPage() {
   const total = query.data?.count ?? 0;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <PageShell>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Enfants</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Enfants</h1>
           <p className="mt-1 text-sm text-ink-500">
             {total} enfant{total === 1 ? "" : "s"} au total
           </p>
@@ -163,6 +164,6 @@ export function StaffChildrenPage() {
           />
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

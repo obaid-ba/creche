@@ -8,18 +8,19 @@ title, so editing the activity updates the timeline automatically
 from __future__ import annotations
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
 
 
 class ActivityCategory(models.TextChoices):
-    ART = "ART", "Arts plastiques"
-    MUSIC = "MUSIC", "Musique"
-    OUTDOOR = "OUTDOOR", "Jeux extérieurs"
-    STORY = "STORY", "Lecture"
-    MOTOR = "MOTOR", "Motricité"
-    EDUCATIONAL = "EDUCATIONAL", "Éveil éducatif"
-    OTHER = "OTHER", "Autre"
+    ART = "ART", _("Arts plastiques")
+    MUSIC = "MUSIC", _("Musique")
+    OUTDOOR = "OUTDOOR", _("Jeux extérieurs")
+    STORY = "STORY", _("Lecture")
+    MOTOR = "MOTOR", _("Motricité")
+    EDUCATIONAL = "EDUCATIONAL", _("Éveil éducatif")
+    OTHER = "OTHER", _("Autre")
 
 
 class Activity(BaseModel):

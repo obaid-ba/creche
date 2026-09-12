@@ -23,35 +23,37 @@ from datetime import date, datetime, time
 from decimal import Decimal
 
 from django.db import models
+from django.utils.functional import Promise
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.settings import api_settings
 
 
 class TimelineEventType(models.TextChoices):
     # Owned: TimelineEvent *is* the record.
-    MEAL = "MEAL", "Repas"
-    BOTTLE = "BOTTLE", "Biberon"
-    SLEEP = "SLEEP", "Sommeil"
-    DIAPER = "DIAPER", "Change"
-    TOILET = "TOILET", "Toilettes"
-    TEMPERATURE = "TEMPERATURE", "Température"
-    MOOD = "MOOD", "Humeur"
-    NOTE = "NOTE", "Note"
+    MEAL = "MEAL", _("Repas")
+    BOTTLE = "BOTTLE", _("Biberon")
+    SLEEP = "SLEEP", _("Sommeil")
+    DIAPER = "DIAPER", _("Change")
+    TOILET = "TOILET", _("Toilettes")
+    TEMPERATURE = "TEMPERATURE", _("Température")
+    MOOD = "MOOD", _("Humeur")
+    NOTE = "NOTE", _("Note")
 
     # Reference: another aggregate owns the content.
-    ACTIVITY = "ACTIVITY", "Activité"
-    MESSAGE = "MESSAGE", "Message"
+    ACTIVITY = "ACTIVITY", _("Activité")
+    MESSAGE = "MESSAGE", _("Message")
 
 
 class EventGroup(models.TextChoices):
     """Parent-facing filter chips (docs/timeline.md 7)."""
 
-    MEALS = "meals", "Repas"
-    SLEEP = "sleep", "Sommeil"
-    ACTIVITIES = "activities", "Activités"
-    HEALTH = "health", "Santé"
-    HYGIENE = "hygiene", "Hygiène"
-    OTHER = "other", "Autre"
+    MEALS = "meals", _("Repas")
+    SLEEP = "sleep", _("Sommeil")
+    ACTIVITIES = "activities", _("Activités")
+    HEALTH = "health", _("Santé")
+    HYGIENE = "hygiene", _("Hygiène")
+    OTHER = "other", _("Autre")
 
 
 # ── Payload schemas ─────────────────────────────────────────────────────
@@ -147,7 +149,10 @@ class MoodPayload(StrictPayloadSerializer):
 @dataclass(frozen=True)
 class EventTypeSpec:
     key: str
-    label: str
+    #: A lazy proxy, not a str: the registry is built once at import, but
+    #: the language is only known per request. Call ``force_str`` at the
+    #: serialisation boundary to resolve it.
+    label: Promise | str
     icon: str
     group: str
     schema: type[serializers.Serializer]
@@ -163,46 +168,46 @@ REGISTRY: dict[str, EventTypeSpec] = {
     spec.key: spec
     for spec in [
         EventTypeSpec(
-            key=TimelineEventType.BOTTLE, label="Biberon", icon="milk",
+            key=TimelineEventType.BOTTLE, label=_("Biberon"), icon="milk",
             group=EventGroup.MEALS, schema=BottlePayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.MEAL, label="Repas", icon="utensils",
+            key=TimelineEventType.MEAL, label=_("Repas"), icon="utensils",
             group=EventGroup.MEALS, schema=MealPayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.SLEEP, label="Sommeil", icon="moon",
+            key=TimelineEventType.SLEEP, label=_("Sommeil"), icon="moon",
             group=EventGroup.SLEEP, schema=SleepPayload,
             interval=True, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.DIAPER, label="Change", icon="baby",
+            key=TimelineEventType.DIAPER, label=_("Change"), icon="baby",
             group=EventGroup.HYGIENE, schema=DiaperPayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.TOILET, label="Toilettes", icon="toilet",
+            key=TimelineEventType.TOILET, label=_("Toilettes"), icon="toilet",
             group=EventGroup.HYGIENE, schema=ToiletPayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.TEMPERATURE, label="Température",
+            key=TimelineEventType.TEMPERATURE, label=_("Température"),
             icon="thermometer", group=EventGroup.HEALTH,
             schema=TemperaturePayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.MOOD, label="Humeur", icon="smile",
+            key=TimelineEventType.MOOD, label=_("Humeur"), icon="smile",
             group=EventGroup.HEALTH, schema=MoodPayload, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.NOTE, label="Note", icon="sticky-note",
+            key=TimelineEventType.NOTE, label=_("Note"), icon="sticky-note",
             group=EventGroup.OTHER, schema=EmptyPayload,
         ),
         EventTypeSpec(
-            key=TimelineEventType.ACTIVITY, label="Activité", icon="palette",
+            key=TimelineEventType.ACTIVITY, label=_("Activité"), icon="palette",
             group=EventGroup.ACTIVITIES, schema=EmptyPayload,
             interval=True, reference="activity", staff_creatable=False,
         ),
         EventTypeSpec(
-            key=TimelineEventType.MESSAGE, label="Message",
+            key=TimelineEventType.MESSAGE, label=_("Message"),
             icon="message-circle", group=EventGroup.OTHER,
             schema=EmptyPayload, reference="message", staff_creatable=False,
         ),

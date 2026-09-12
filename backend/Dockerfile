@@ -26,9 +26,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PATH="/opt/venv/bin:$PATH" \
     DJANGO_SETTINGS_MODULE=config.settings.prod
 
-# libpq for psycopg and curl for the container healthcheck; no compilers.
+# libpq for psycopg, curl for the container healthcheck, gettext for the
+# msgfmt that compilemessages shells out to. No compilers.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        libpq5 curl \
+        libpq5 curl gettext \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/venv /opt/venv
@@ -41,6 +42,14 @@ COPY --chown=creche:creche . .
 
 RUN mkdir -p /app/media /app/staticfiles \
     && chown -R creche:creche /app/media /app/staticfiles
+
+# Recompile the catalogues from source rather than trusting the committed
+# .mo, so the image cannot ship a translation the repository does not
+# actually contain. msgfmt directly rather than `manage.py
+# compilemessages`: that would import production settings, which demand
+# every runtime secret, and the build has no business holding those.
+RUN find /app/locale -name '*.po' \
+        -exec sh -c 'msgfmt --check -o "${0%.po}.mo" "$0"' {} \;
 
 USER creche
 EXPOSE 8000

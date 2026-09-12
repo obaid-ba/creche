@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import {
   Alert,
   Badge,
@@ -62,7 +63,7 @@ export function StaffChildDetailPage() {
   const child = query.data;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <PageShell size="form">
       <Card>
         <CardBody className="flex flex-wrap items-start gap-5">
           <ChildAvatar
@@ -74,7 +75,7 @@ export function StaffChildDetailPage() {
 
           <div className="min-w-48 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold">{child.full_name}</h1>
+              <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">{child.full_name}</h1>
               {child.status === "ARCHIVED" && <Badge tone="neutral">Archivé</Badge>}
             </div>
 
@@ -243,6 +244,6 @@ export function StaffChildDetailPage() {
       </Card>
 
       <AccessCodeModal issued={issued} onClose={() => setIssued(null)} />
-    </div>
+    </PageShell>
   );
 }

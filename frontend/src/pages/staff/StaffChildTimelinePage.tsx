@@ -2,6 +2,7 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import {
   Alert,
   Badge,
@@ -66,10 +67,10 @@ export function StaffChildTimelinePage() {
   const notesValue = notes ?? record.data?.general_notes ?? "";
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <PageShell size="form">
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{child.full_name}</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">{child.full_name}</h1>
           <p className="mt-1 text-sm text-ink-500">
             {child.age_display} · <span className="capitalize">{describeDate(date)}</span>
           </p>
@@ -190,6 +191,6 @@ export function StaffChildTimelinePage() {
           </Button>
         </CardBody>
       </Card>
-    </div>
+    </PageShell>
   );
 }

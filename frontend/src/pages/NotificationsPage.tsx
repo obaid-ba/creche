@@ -1,6 +1,7 @@
 import { Bell, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import {
   Button,
   Card,
@@ -33,10 +34,10 @@ export function NotificationsPage() {
   const unread = count.data ?? 0;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <PageShell size="form">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Notifications</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Notifications</h1>
           <p className="mt-1 text-sm text-ink-500">
             {unread === 0
               ? "Tout est à jour."
@@ -131,6 +132,6 @@ export function NotificationsPage() {
           </Card>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
 
@@ -18,8 +19,8 @@ from .event_types import TimelineEventType
 
 
 class DailyRecordStatus(models.TextChoices):
-    DRAFT = "DRAFT", "Brouillon"
-    PUBLISHED = "PUBLISHED", "Publié"
+    DRAFT = "DRAFT", _("Brouillon")
+    PUBLISHED = "PUBLISHED", _("Publié")
 
 
 class TimelineEventQuerySet(models.QuerySet):

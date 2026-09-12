@@ -1,3 +1,4 @@
+import { ChevronDown } from "lucide-react";
 import { forwardRef, useId, type SelectHTMLAttributes } from "react";
 
 import { cn } from "@/lib/cn";
@@ -52,28 +53,41 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         {label}
       </label>
 
-      <select
-        ref={ref}
-        id={selectId}
-        aria-invalid={error !== undefined}
-        aria-describedby={describedBy}
-        className={cn(
-          "h-11 w-full rounded-card border bg-white px-3.5 text-sm text-ink-800",
-          "transition-colors focus:outline-none focus:ring-2",
-          error !== undefined
-            ? "border-danger-500 focus:ring-danger-500/30"
-            : "border-ink-200 focus:border-primary-400 focus:ring-primary-500/25",
-          className,
-        )}
-        {...props}
-      >
-        {placeholder !== undefined && <option value="">{placeholder}</option>}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      {/* The native control keeps its own popup — it is the only one
+          that behaves correctly on a phone and with a screen reader —
+          but its closed state is drawn by the platform and looks nothing
+          like the rest of the fields. `appearance-none` removes that
+          chrome, and the chevron below replaces it. */}
+      <div className="relative">
+        <select
+          ref={ref}
+          id={selectId}
+          aria-invalid={error !== undefined}
+          aria-describedby={describedBy}
+          className={cn(
+            "h-11 w-full appearance-none rounded-card border bg-shell ps-3.5 pe-10",
+            "text-sm font-medium text-ink-800",
+            "transition-colors focus:outline-none focus:ring-2",
+            error !== undefined
+              ? "border-danger-500 focus:ring-danger-500/30"
+              : "border-ink-200 hover:border-ink-300 focus:border-primary-400 focus:ring-primary-500/25",
+            className,
+          )}
+          {...props}
+        >
+          {placeholder !== undefined && <option value="">{placeholder}</option>}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <ChevronDown
+          aria-hidden="true"
+          className="pointer-events-none absolute end-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-400"
+        />
+      </div>
 
       {hint !== undefined && (
         <p id={hintId} className="mt-1.5 text-xs text-ink-500">

@@ -1,6 +1,7 @@
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { PageShell } from "@/components/app";
 import {
   Card,
   CardBody,
@@ -49,8 +50,8 @@ export function MessagesPage() {
   const canSend = user?.can_send_messages ?? false;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold">Messages</h1>
+    <PageShell size="wide">
+      <h1 className="mb-6 font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Messages</h1>
 
       {conversations.isPending ? (
         <LoadingState label="Chargement des conversations…" />
@@ -130,6 +131,6 @@ export function MessagesPage() {
           </Card>
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

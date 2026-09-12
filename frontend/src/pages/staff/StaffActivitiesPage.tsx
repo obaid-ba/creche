@@ -1,6 +1,7 @@
 import { Palette, Plus } from "lucide-react";
 import { useState } from "react";
 
+import { PageShell } from "@/components/app";
 import {
   Button,
   EmptyState,
@@ -26,10 +27,10 @@ export function StaffActivitiesPage() {
   const createActivity = useCreateActivity();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <PageShell>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Activités</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Activités</h1>
           <p className="mt-1 text-sm text-ink-500">
             {query.data?.count ?? 0} activité
             {(query.data?.count ?? 0) === 1 ? "" : "s"}
@@ -137,6 +138,6 @@ export function StaffActivitiesPage() {
           });
         }}
       />
-    </div>
+    </PageShell>
   );
 }

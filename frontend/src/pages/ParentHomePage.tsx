@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import {
   Alert,
   Badge,
@@ -55,20 +56,20 @@ export function ParentHomePage() {
   if (query.isPending) return <LoadingState label="Chargement…" />;
   if (query.isError) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <PageShell size="form">
         <ErrorState
           description="Impossible de charger votre tableau de bord."
           onRetry={() => void query.refetch()}
         />
-      </div>
+      </PageShell>
     );
   }
 
   const { children, unread_messages, open_complaints } = query.data;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold">Bonjour {user?.first_name}</h1>
+    <PageShell size="form">
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Bonjour {user?.first_name}</h1>
       <p className="mt-1 text-ink-500">Voici la journée de votre enfant.</p>
 
       {children.length === 0 ? (
@@ -181,6 +182,6 @@ export function ParentHomePage() {
           </span>
         </Link>
       </div>
-    </div>
+    </PageShell>
   );
 }

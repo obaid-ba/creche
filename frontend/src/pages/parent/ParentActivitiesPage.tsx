@@ -1,5 +1,6 @@
 import { Palette } from "lucide-react";
 
+import { PageShell } from "@/components/app";
 import { EmptyState, ErrorState, LoadingState } from "@/components/ui";
 import { ActivityCard } from "@/features/activities/components/ActivityCard";
 import { useActivities } from "@/features/activities/hooks";
@@ -14,8 +15,8 @@ export function ParentActivitiesPage() {
   const query = useActivities({});
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold">Activités</h1>
+    <PageShell size="form">
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Activités</h1>
       <p className="mt-1 text-sm text-ink-500">
         Les activités auxquelles votre enfant a participé.
       </p>
@@ -44,6 +45,6 @@ export function ParentActivitiesPage() {
           </ul>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

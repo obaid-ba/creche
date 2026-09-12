@@ -2,6 +2,7 @@ import { KeyRound, LinkIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { PageShell } from "@/components/app";
 import {
   Alert,
   Badge,
@@ -90,8 +91,8 @@ export function ParentProfilePage() {
   if (user === null) return null;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold">Mon profil</h1>
+    <PageShell size="form">
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Mon profil</h1>
       <p className="mt-1 text-sm text-ink-500">
         Vos informations et celles de vos enfants.
       </p>
@@ -170,6 +171,6 @@ export function ParentProfilePage() {
           </div>
         </CardBody>
       </Card>
-    </div>
+    </PageShell>
   );
 }

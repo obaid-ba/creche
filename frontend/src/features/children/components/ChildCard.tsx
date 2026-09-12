@@ -12,7 +12,7 @@ export function ChildCard({ child }: { child: ChildListItem }) {
   return (
     <Link
       to={`/staff/children/${child.id}`}
-      className="flex items-center gap-3 rounded-card border border-ink-100 bg-white p-3 shadow-soft transition-colors hover:border-primary-200 hover:bg-primary-50/40"
+      className="flex items-center gap-3 rounded-card bg-shell p-3 shadow-soft transition-all hover:bg-primary-50/50 hover:shadow-lifted"
     >
       <ChildAvatar
         firstName={child.first_name}

@@ -7,21 +7,22 @@ default.
 from __future__ import annotations
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from common.age import age_display, age_group_for, age_in_months, group_payload
 from common.models import BaseModel, SoftDeleteQuerySet
 
 
 class ChildStatus(models.TextChoices):
-    ACTIVE = "ACTIVE", "Actif"
-    ARCHIVED = "ARCHIVED", "Archivé"
-    WAITLIST = "WAITLIST", "Liste d'attente"
+    ACTIVE = "ACTIVE", _("Actif")
+    ARCHIVED = "ARCHIVED", _("Archivé")
+    WAITLIST = "WAITLIST", _("Liste d'attente")
 
 
 class Gender(models.TextChoices):
-    MALE = "M", "Garçon"
-    FEMALE = "F", "Fille"
-    OTHER = "OTHER", "Autre"
+    MALE = "M", _("Garçon")
+    FEMALE = "F", _("Fille")
+    OTHER = "OTHER", _("Autre")
 
 
 class ChildQuerySet(SoftDeleteQuerySet):

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { PageShell } from "@/components/app";
 import { Card, CardBody, ErrorState, LoadingState } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
 import { DailySummaryCards } from "@/features/daily-records/components/DailySummaryCards";
@@ -37,12 +38,12 @@ export function ParentTimelinePage() {
 
   if (child === undefined) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <PageShell size="form">
         <ErrorState
           title="Aucun enfant rattaché"
           description="Contactez la crèche pour rattacher votre enfant à votre compte."
         />
-      </div>
+      </PageShell>
     );
   }
 
@@ -50,9 +51,9 @@ export function ParentTimelinePage() {
   const isDraft = record.data?.status === "DRAFT";
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <PageShell size="form">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold">{child.first_name}</h1>
+        <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">{child.first_name}</h1>
         <p className="mt-1 capitalize text-ink-500">{describeDate(date)}</p>
       </header>
 
@@ -107,6 +108,6 @@ export function ParentTimelinePage() {
             </CardBody>
           </Card>
         )}
-    </div>
+    </PageShell>
   );
 }

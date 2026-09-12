@@ -10,17 +10,18 @@ from __future__ import annotations
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
 
 
 class NotificationType(models.TextChoices):
-    NEW_MESSAGE = "NEW_MESSAGE", "Nouveau message"
-    DAY_PUBLISHED = "DAY_PUBLISHED", "Journée publiée"
-    NEW_ACTIVITY = "NEW_ACTIVITY", "Nouvelle activité"
-    COMPLAINT_CREATED = "COMPLAINT_CREATED", "Nouvelle réclamation"
-    COMPLAINT_UPDATED = "COMPLAINT_UPDATED", "Réclamation mise à jour"
-    COMPLAINT_REPLY = "COMPLAINT_REPLY", "Réponse à une réclamation"
+    NEW_MESSAGE = "NEW_MESSAGE", _("Nouveau message")
+    DAY_PUBLISHED = "DAY_PUBLISHED", _("Journée publiée")
+    NEW_ACTIVITY = "NEW_ACTIVITY", _("Nouvelle activité")
+    COMPLAINT_CREATED = "COMPLAINT_CREATED", _("Nouvelle réclamation")
+    COMPLAINT_UPDATED = "COMPLAINT_UPDATED", _("Réclamation mise à jour")
+    COMPLAINT_REPLY = "COMPLAINT_REPLY", _("Réponse à une réclamation")
 
 
 class NotificationQuerySet(models.QuerySet):

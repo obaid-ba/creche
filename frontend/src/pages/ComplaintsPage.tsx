@@ -1,6 +1,7 @@
 import { MessageSquareWarning, Plus } from "lucide-react";
 import { useState } from "react";
 
+import { PageShell } from "@/components/app";
 import { Alert, Button, Card, CardBody, EmptyState, ErrorState, Input, LoadingState, Modal, Pagination, Select } from "@/components/ui";
 import { useAuth } from "@/features/auth/useAuth";
 import { ComplaintCard } from "@/features/complaints/components/ComplaintCard";
@@ -48,10 +49,10 @@ export function ComplaintsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <PageShell size="form">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Réclamations</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Réclamations</h1>
           <p className="mt-1 text-sm text-ink-500">
             {isParent
               ? "Vos demandes et le suivi de l'équipe."
@@ -191,6 +192,6 @@ export function ComplaintsPage() {
           </CardBody>
         </Card>
       )}
-    </div>
+    </PageShell>
   );
 }

@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import { Card, CardBody, CardHeader, ErrorState, LoadingState } from "@/components/ui";
 import { ChildForm } from "@/features/children/components/ChildForm";
 import { useChild, useUpdateChild } from "@/features/children/hooks";
@@ -21,8 +22,8 @@ export function StaffChildEditPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="mb-6 text-2xl font-bold">
+    <PageShell size="form">
+      <h1 className="mb-6 font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
         Modifier {query.data.full_name}
       </h1>
 
@@ -39,6 +40,6 @@ export function StaffChildEditPage() {
           />
         </CardBody>
       </Card>
-    </div>
+    </PageShell>
   );
 }

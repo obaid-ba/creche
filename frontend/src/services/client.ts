@@ -4,6 +4,8 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
 
+import i18n from "@/i18n/config";
+
 import { normaliseError } from "./errors";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./tokenStore";
 
@@ -20,6 +22,12 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  // The API is stateless, so `Accept-Language` is the only way Django's
+  // LocaleMiddleware can know which language to answer in. Read from
+  // i18next at request time rather than captured once: the header has to
+  // follow a language switch, and queries are refetched on that switch.
+  config.headers["Accept-Language"] = i18n.resolvedLanguage ?? i18n.language;
 
   // File uploads must not inherit the JSON default: the browser has to
   // set multipart/form-data itself so it can append the boundary.

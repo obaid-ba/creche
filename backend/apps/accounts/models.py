@@ -14,21 +14,22 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel, UUIDModel
 
 
 class Role(models.TextChoices):
-    PARENT = "PARENT", "Parent"
-    STAFF = "STAFF", "Personnel"
-    ADMIN = "ADMIN", "Administrateur"
+    PARENT = "PARENT", _("Parent")
+    STAFF = "STAFF", _("Personnel")
+    ADMIN = "ADMIN", _("Administrateur")
 
 
 class Relationship(models.TextChoices):
-    MOTHER = "MOTHER", "Mère"
-    FATHER = "FATHER", "Père"
-    GUARDIAN = "GUARDIAN", "Tuteur"
-    OTHER = "OTHER", "Autre"
+    MOTHER = "MOTHER", _("Mère")
+    FATHER = "FATHER", _("Père")
+    GUARDIAN = "GUARDIAN", _("Tuteur")
+    OTHER = "OTHER", _("Autre")
 
 
 class UserManager(BaseUserManager):

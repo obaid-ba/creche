@@ -1,0 +1,198 @@
+# Arabic translations for Crèche Mamati.
+#
+# French is the source language, so `locale/fr` does not exist: an empty
+# msgstr falls back to the msgid, which is already the French text.
+#
+# The plural header carries all six CLDR categories. Arabic distinguishes
+# zero, one, two, few (3-10), many (11-99) and other, so "2 ans" is a dual
+# form rather than a plural and no singular/plural pair can express it.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: creche-mamati\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-12 11:42+0100\n"
+"PO-Revision-Date: 2026-09-12\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Parent"
+msgstr "ولي"
+
+msgid "Personnel"
+msgstr "موظف"
+
+msgid "Administrateur"
+msgstr "مدير"
+
+msgid "Mère"
+msgstr "الأم"
+
+msgid "Père"
+msgstr "الأب"
+
+msgid "Tuteur"
+msgstr "الوصي"
+
+msgid "Autre"
+msgstr "أخرى"
+
+msgid "Arts plastiques"
+msgstr "فنون تشكيلية"
+
+msgid "Musique"
+msgstr "موسيقى"
+
+msgid "Jeux extérieurs"
+msgstr "ألعاب خارجية"
+
+msgid "Lecture"
+msgstr "مطالعة"
+
+msgid "Motricité"
+msgstr "حركة"
+
+msgid "Éveil éducatif"
+msgstr "إيقاظ تربوي"
+
+msgid "Repas"
+msgstr "وجبة"
+
+msgid "Biberon"
+msgstr "رضعة"
+
+msgid "Sommeil"
+msgstr "نوم"
+
+msgid "Change"
+msgstr "تغيير الحفاظ"
+
+msgid "Toilettes"
+msgstr "المرحاض"
+
+msgid "Température"
+msgstr "الحرارة"
+
+msgid "Humeur"
+msgstr "المزاج"
+
+msgid "Note"
+msgstr "ملاحظة"
+
+msgid "Activité"
+msgstr "نشاط"
+
+msgid "Message"
+msgstr "رسالة"
+
+msgid "Activités"
+msgstr "الأنشطة"
+
+msgid "Santé"
+msgstr "الصحة"
+
+msgid "Hygiène"
+msgstr "النظافة"
+
+msgid "Brouillon"
+msgstr "مسودة"
+
+msgid "Publié"
+msgstr "منشور"
+
+msgid "Actif"
+msgstr "نشط"
+
+msgid "Archivé"
+msgstr "مؤرشف"
+
+msgid "Liste d'attente"
+msgstr "قائمة الانتظار"
+
+msgid "Garçon"
+msgstr "ذكر"
+
+msgid "Fille"
+msgstr "أنثى"
+
+msgid "Nouvelle"
+msgstr "جديدة"
+
+msgid "En cours"
+msgstr "قيد المعالجة"
+
+msgid "Résolue"
+msgstr "تمت المعالجة"
+
+msgid "Clôturée"
+msgstr "مغلقة"
+
+msgid "Nouveau message"
+msgstr "رسالة جديدة"
+
+msgid "Journée publiée"
+msgstr "يومية منشورة"
+
+msgid "Nouvelle activité"
+msgstr "نشاط جديد"
+
+msgid "Nouvelle réclamation"
+msgstr "شكوى جديدة"
+
+msgid "Réclamation mise à jour"
+msgstr "تحديث شكوى"
+
+msgid "Réponse à une réclamation"
+msgstr "رد على شكوى"
+
+msgid "2 → 6 mois"
+msgstr "شهران ← 6 أشهر"
+
+msgid "7 mois → 1 an"
+msgstr "7 أشهر ← سنة"
+
+msgid "1 → 2 ans"
+msgstr "سنة ← سنتان"
+
+msgid "2 ans et +"
+msgstr "سنتان فما فوق"
+
+#, python-format
+msgid "%(count)d mois"
+msgid_plural "%(count)d mois"
+msgstr[0] "لا شهر"
+msgstr[1] "شهر واحد"
+msgstr[2] "شهران"
+msgstr[3] "%(count)d أشهر"
+msgstr[4] "%(count)d شهراً"
+msgstr[5] "%(count)d شهر"
+
+#, python-format
+msgid "%(count)d jour"
+msgid_plural "%(count)d jours"
+msgstr[0] "لا يوم"
+msgstr[1] "يوم واحد"
+msgstr[2] "يومان"
+msgstr[3] "%(count)d أيام"
+msgstr[4] "%(count)d يوماً"
+msgstr[5] "%(count)d يوم"
+
+#, python-format
+msgid "%(count)d an"
+msgid_plural "%(count)d ans"
+msgstr[0] "لا سنة"
+msgstr[1] "سنة واحدة"
+msgstr[2] "سنتان"
+msgstr[3] "%(count)d سنوات"
+msgstr[4] "%(count)d سنة"
+msgstr[5] "%(count)d سنة"
+
+#, python-format
+msgid "%(years)s et %(months)s"
+msgstr "%(years)s و%(months)s"

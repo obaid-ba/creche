@@ -62,6 +62,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Resolves the request language from Accept-Language, which is the
+    # only signal the API gets: it is stateless, so there is no session
+    # or cookie to read a preference from. The SPA sends the header on
+    # every call, so a parent reading Arabic gets Arabic labels back.
+    "django.middleware.locale.LocaleMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -124,7 +129,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # ── i18n ────────────────────────────────────────────────────────────────
 # The interface is French; the nursery timezone defines what "today" means
 # for the timeline's local_date (docs/timeline.md 6).
-LANGUAGE_CODE = "fr-fr"
+LANGUAGE_CODE = "fr"
+# The API returns display labels ("2 → 6 mois", "Mère", "Joyeux") and
+# validation messages, so the language has to be negotiated per request
+# rather than baked in at deploy time.
+LANGUAGES = [
+    ("fr", "Français"),
+    # Modern Standard Arabic. Tunisian month names come from the client's
+    # own `ar-TN` formatting, not from here.
+    ("ar", "العربية"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = env("NURSERY_TIMEZONE", default="Africa/Tunis")
 USE_I18N = True
 USE_TZ = True

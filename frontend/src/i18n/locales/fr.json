@@ -199,6 +199,55 @@
     "label": "Langue",
     "switchTo": "Passer en {{language}}"
   },
+  "app": {
+    "section": {
+      "overview": "Aperçu",
+      "daily": "Le quotidien",
+      "people": "Personnes",
+      "admin": "Administration"
+    },
+    "dashboard": "Tableau de bord",
+    "children": "Enfants",
+    "activities": "Activités",
+    "messages": "Messages",
+    "complaints": "Réclamations",
+    "parents": "Parents",
+    "notifications": "Notifications",
+    "settings": "Paramètres",
+    "home": "Accueil",
+    "timeline": "Journée",
+    "profile": "Profil",
+    "label": "Navigation",
+    "open": "Ouvrir le menu",
+    "close": "Fermer le menu"
+  },
+  "shell": {
+    "logout": "Déconnexion",
+    "staffArea": "Espace équipe",
+    "parentArea": "Espace parents",
+    "account": "Mon compte"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "greeting": "Bonjour {{name}}, voici la situation du jour.",
+    "children": "Enfants",
+    "childrenDetail": "Inscrits et actifs",
+    "daysRecorded": "Journées saisies",
+    "daysPublished_one": "{{count}} journée publiée",
+    "daysPublished_other": "{{count}} journées publiées",
+    "noChildren": "Aucun enfant",
+    "childrenRecorded": "{{done}} / {{total}} enfants",
+    "complaints": "Réclamations",
+    "complaintsDetail_one": "{{count}} en cours",
+    "complaintsDetail_other": "{{count}} en cours",
+    "unreadMessages": "Messages non lus",
+    "ageGroups": "Groupes d'âge",
+    "ageGroupsDetail": "Répartition calculée depuis les dates de naissance",
+    "recentActivities": "Activités récentes",
+    "seeAll": "Tout voir",
+    "noActivities": "Aucune activité enregistrée.",
+    "loadError": "Impossible de charger le tableau de bord."
+  },
   "common": {
     "loading": "Chargement…",
     "retry": "Réessayer",

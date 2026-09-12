@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { AuthProvider } from "@/features/auth/AuthContext";
 import { routeTable } from "@/app/routes";
-import { NAV } from "@/layouts/AppLayout";
+import { allNavItems } from "@/components/app/navigation";
 import { PublicLayout } from "@/layouts/PublicLayout";
 
 /**
@@ -107,7 +107,7 @@ describe("application navigation", () => {
     "every %s nav link has a matching route",
     (area) => {
       const paths = registeredPaths(area);
-      for (const item of NAV[area]) {
+      for (const item of allNavItems(area)) {
         expect(paths, `${item.to} is in the nav but has no route`).toContain(
           item.to,
         );

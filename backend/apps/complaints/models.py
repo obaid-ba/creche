@@ -10,15 +10,16 @@ from __future__ import annotations
 
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
 
 
 class ComplaintStatus(models.TextChoices):
-    NEW = "NEW", "Nouvelle"
-    IN_PROGRESS = "IN_PROGRESS", "En cours"
-    RESOLVED = "RESOLVED", "Résolue"
-    CLOSED = "CLOSED", "Clôturée"
+    NEW = "NEW", _("Nouvelle")
+    IN_PROGRESS = "IN_PROGRESS", _("En cours")
+    RESOLVED = "RESOLVED", _("Résolue")
+    CLOSED = "CLOSED", _("Clôturée")
 
 
 #: Which statuses each status may move to.

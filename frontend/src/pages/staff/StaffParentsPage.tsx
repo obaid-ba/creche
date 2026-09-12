@@ -2,6 +2,7 @@ import { MessageCircleOff, Search, Users } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { PageShell } from "@/components/app";
 import {
   Badge,
   Button,
@@ -39,8 +40,8 @@ export function StaffParentsPage() {
   const rows = query.data?.results ?? [];
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <h1 className="text-2xl font-bold">Parents</h1>
+    <PageShell size="wide">
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Parents</h1>
       <p className="mt-1 text-sm text-ink-500">
         {query.data?.count ?? 0} parent{(query.data?.count ?? 0) === 1 ? "" : "s"}
       </p>
@@ -180,6 +181,6 @@ export function StaffParentsPage() {
           />
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

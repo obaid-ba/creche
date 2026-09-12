@@ -43,18 +43,20 @@ export function Wordmark({
       <LogoMark className={cn(markSize, "shrink-0")} />
 
       <span className={cn("leading-none", variant === "stacked" && "text-center")}>
+        {/* The isolate goes on the parent, not on each word: with one on
+            each, the bidi algorithm still reorders the two relative to
+            each other and the sign above the door reads "Mamati Crèche"
+            in Arabic. */}
         <span
+          lang="fr"
+          dir="ltr"
           className={cn(
-            "block font-display font-extrabold tracking-tight",
+            "block whitespace-nowrap font-display font-extrabold tracking-tight",
             variant === "full" ? "text-2xl" : "text-xl",
           )}
         >
-          <span lang="fr" dir="ltr" className="text-primary-500">
-            Crèche
-          </span>{" "}
-          <span lang="fr" dir="ltr" className="text-secondary-700">
-            Mamati
-          </span>
+          <span className="text-primary-500">Crèche</span>{" "}
+          <span className="text-secondary-700">Mamati</span>
         </span>
 
         {variant !== "compact" && (
