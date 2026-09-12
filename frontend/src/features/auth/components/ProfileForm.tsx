@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Input } from "@/components/ui";
 import { ApiError } from "@/services/errors";
@@ -14,6 +15,7 @@ export function ProfileForm({
   user: CurrentUser;
   onSaved: () => Promise<void> | void;
 }) {
+  const { t } = useTranslation();
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -48,7 +50,7 @@ export function ProfileForm({
           ? error
           : new ApiError({
               code: "unknown",
-              message: "Une erreur inattendue est survenue.",
+              message: t("validation.unexpected"),
               status: 0,
             });
       for (const [field, messages] of Object.entries(apiError.fieldErrors)) {
@@ -61,35 +63,41 @@ export function ProfileForm({
   return (
     <form onSubmit={submit} noValidate className="space-y-4">
       {formError !== null && <Alert tone="danger">{formError}</Alert>}
-      {isSaved && <Alert tone="success">Vos informations ont été enregistrées.</Alert>}
+      {isSaved && <Alert tone="success">{t("profile.saved")}</Alert>}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prénom"
+          label={t("form.firstName")}
           autoComplete="given-name"
           error={errors.first_name?.message}
-          {...form.register("first_name", { required: "Le prénom est requis." })}
+          {...form.register("first_name", {
+            required: "validation.firstNameRequired",
+          })}
         />
         <Input
-          label="Nom"
+          label={t("form.lastName")}
           autoComplete="family-name"
           error={errors.last_name?.message}
-          {...form.register("last_name", { required: "Le nom est requis." })}
+          {...form.register("last_name", {
+            required: "validation.lastNameRequired",
+          })}
         />
       </div>
 
       <Input
-        label="Adresse e-mail"
+        label={t("form.email")}
         value={user.email}
         readOnly
         disabled
-        hint="Contactez la crèche pour changer votre adresse e-mail."
+        dir="ltr"
+        hint={t("profile.emailReadOnly")}
       />
 
       <Input
-        label="Téléphone"
+        label={t("form.phone")}
         type="tel"
         autoComplete="tel"
+        dir="ltr"
         error={errors.phone?.message}
         {...form.register("phone")}
       />
@@ -97,9 +105,10 @@ export function ProfileForm({
       {isParent && (
         <>
           <Input
-            label="Téléphone d'urgence"
+            label={t("profile.emergencyPhone")}
             type="tel"
-            hint="Une deuxième personne à joindre si vous êtes injoignable."
+            dir="ltr"
+            hint={t("profile.emergencyPhoneHint")}
             error={errors.emergency_phone?.message}
             {...form.register("emergency_phone")}
           />
@@ -109,12 +118,12 @@ export function ProfileForm({
               htmlFor="address"
               className="mb-1.5 block text-sm font-semibold text-ink-700"
             >
-              Adresse
+              {t("profile.address")}
             </label>
             <textarea
               id="address"
               rows={3}
-              className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+              className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
               {...form.register("address")}
             />
           </div>

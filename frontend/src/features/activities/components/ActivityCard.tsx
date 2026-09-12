@@ -1,4 +1,5 @@
 import { Clock, ImageIcon, Users } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Badge, Card, CardBody } from "@/components/ui";
 
@@ -28,6 +29,7 @@ export function ActivityCard({
   activity: Activity;
   onClick?: () => void;
 }) {
+  const { t } = useTranslation();
   const range = timeRange(activity);
   const cover = activity.photos[0];
 
@@ -66,8 +68,9 @@ export function ActivityCard({
         <div className="flex items-center gap-3 text-xs text-ink-400">
           <span className="flex items-center gap-1">
             <Users aria-hidden="true" className="size-3.5" />
-            {activity.participant_count} enfant
-            {activity.participant_count === 1 ? "" : "s"}
+            {t("activities.participant", {
+              count: activity.participant_count,
+            })}
           </span>
           {activity.photos.length > 0 && (
             <span className="flex items-center gap-1">

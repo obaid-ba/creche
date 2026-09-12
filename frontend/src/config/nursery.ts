@@ -91,7 +91,9 @@ export interface GalleryItem {
    *  the aspect ratio the grid renders, so the browser stops downloading
    *  height it would immediately crop away. */
   thumb: string;
-  alt: string;
+  /** Translation key. Alt text is read aloud, so it has to be in the
+   *  reader's language; what stays here is which photo is which. */
+  altKey: string;
 }
 
 /**
@@ -99,18 +101,18 @@ export interface GalleryItem {
  * public site carries no image requiring parental consent.
  */
 export const GALLERY: GalleryItem[] = [
-  { src: "/images/gallery/creche-01.jpg", thumb: "/images/gallery/thumbs/creche-01.webp", alt: "Salle de jeux colorée avec tapis alphabet, tente et coin lecture" },
-  { src: "/images/gallery/creche-02.jpg", thumb: "/images/gallery/thumbs/creche-02.webp", alt: "Espace d'activités de la crèche" },
-  { src: "/images/gallery/creche-03.jpg", thumb: "/images/gallery/thumbs/creche-03.webp", alt: "Coin jeux et jouets des enfants" },
-  { src: "/images/gallery/creche-04.jpg", thumb: "/images/gallery/thumbs/creche-04.webp", alt: "Salle d'éveil de la crèche" },
-  { src: "/images/gallery/creche-05.jpg", thumb: "/images/gallery/thumbs/creche-05.webp", alt: "Espace intérieur aménagé pour les tout-petits" },
-  { src: "/images/gallery/creche-06.jpg", thumb: "/images/gallery/thumbs/creche-06.webp", alt: "Entrée de la crèche avec cour couverte et gazon" },
-  { src: "/images/gallery/creche-07.jpg", thumb: "/images/gallery/thumbs/creche-07.webp", alt: "Espace extérieur sécurisé" },
-  { src: "/images/gallery/creche-08.jpg", thumb: "/images/gallery/thumbs/creche-08.webp", alt: "Salle de repos et de sieste" },
-  { src: "/images/gallery/creche-09.jpg", thumb: "/images/gallery/thumbs/creche-09.webp", alt: "Coin repas des enfants" },
-  { src: "/images/gallery/creche-10.jpg", thumb: "/images/gallery/thumbs/creche-10.webp", alt: "Matériel pédagogique et jeux d'éveil" },
-  { src: "/images/gallery/creche-11.jpg", thumb: "/images/gallery/thumbs/creche-11.webp", alt: "Espace de motricité" },
-  { src: "/images/gallery/creche-12.jpg", thumb: "/images/gallery/thumbs/creche-12.webp", alt: "Aménagement intérieur de la crèche" },
+  { src: "/images/gallery/creche-01.jpg", thumb: "/images/gallery/thumbs/creche-01.webp", altKey: "gallery.alt.creche-01" },
+  { src: "/images/gallery/creche-02.jpg", thumb: "/images/gallery/thumbs/creche-02.webp", altKey: "gallery.alt.creche-02" },
+  { src: "/images/gallery/creche-03.jpg", thumb: "/images/gallery/thumbs/creche-03.webp", altKey: "gallery.alt.creche-03" },
+  { src: "/images/gallery/creche-04.jpg", thumb: "/images/gallery/thumbs/creche-04.webp", altKey: "gallery.alt.creche-04" },
+  { src: "/images/gallery/creche-05.jpg", thumb: "/images/gallery/thumbs/creche-05.webp", altKey: "gallery.alt.creche-05" },
+  { src: "/images/gallery/creche-06.jpg", thumb: "/images/gallery/thumbs/creche-06.webp", altKey: "gallery.alt.creche-06" },
+  { src: "/images/gallery/creche-07.jpg", thumb: "/images/gallery/thumbs/creche-07.webp", altKey: "gallery.alt.creche-07" },
+  { src: "/images/gallery/creche-08.jpg", thumb: "/images/gallery/thumbs/creche-08.webp", altKey: "gallery.alt.creche-08" },
+  { src: "/images/gallery/creche-09.jpg", thumb: "/images/gallery/thumbs/creche-09.webp", altKey: "gallery.alt.creche-09" },
+  { src: "/images/gallery/creche-10.jpg", thumb: "/images/gallery/thumbs/creche-10.webp", altKey: "gallery.alt.creche-10" },
+  { src: "/images/gallery/creche-11.jpg", thumb: "/images/gallery/thumbs/creche-11.webp", altKey: "gallery.alt.creche-11" },
+  { src: "/images/gallery/creche-12.jpg", thumb: "/images/gallery/thumbs/creche-12.webp", altKey: "gallery.alt.creche-12" },
 ];
 
 export interface VideoItem {

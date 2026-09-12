@@ -4,6 +4,7 @@ from __future__ import annotations
 from rest_framework import serializers
 
 from .models import Activity, ActivityCategory, ActivityParticipation, ActivityPhoto
+from django.utils.translation import gettext_lazy as _
 
 
 class ActivityPhotoSerializer(serializers.ModelSerializer):
@@ -75,7 +76,7 @@ class ActivitySerializer(serializers.ModelSerializer):
         end = attrs.get("end_time", getattr(self.instance, "end_time", None))
         if start is not None and end is not None and end < start:
             raise serializers.ValidationError(
-                {"end_time": "L'heure de fin ne peut pas précéder l'heure de début."}
+                {"end_time": _("L'heure de fin ne peut pas précéder l'heure de début.")}
             )
         return attrs
 
@@ -84,7 +85,7 @@ class ActivitySerializer(serializers.ModelSerializer):
 
         if value > timezone.localdate():
             raise serializers.ValidationError(
-                "Une activité ne peut pas être datée dans le futur."
+                _("Une activité ne peut pas être datée dans le futur.")
             )
         return value
 

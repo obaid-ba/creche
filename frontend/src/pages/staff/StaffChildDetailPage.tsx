@@ -8,6 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 import { PageShell } from "@/components/app";
@@ -32,15 +33,18 @@ import {
 } from "@/features/children/hooks";
 import type { IssuedAccessCode } from "@/features/children/types";
 import { useAuth } from "@/features/auth/useAuth";
+import { useLocale } from "@/i18n/useLocale";
 
-const RELATIONSHIP_LABELS: Record<string, string> = {
-  MOTHER: "Mère",
-  FATHER: "Père",
-  GUARDIAN: "Tuteur",
-  OTHER: "Autre",
+const RELATIONSHIP_KEYS: Record<string, string> = {
+  MOTHER: "form.mother",
+  FATHER: "form.father",
+  GUARDIAN: "form.guardian",
+  OTHER: "form.other",
 };
 
 export function StaffChildDetailPage() {
+  const { t } = useTranslation();
+  const locale = useLocale();
   const { childId } = useParams<{ childId: string }>();
   const { role } = useAuth();
   const query = useChild(childId);
@@ -50,12 +54,12 @@ export function StaffChildDetailPage() {
   const issueCode = useIssueAccessCode();
   const [issued, setIssued] = useState<IssuedAccessCode | null>(null);
 
-  if (query.isPending) return <LoadingState label="Chargement du profil…" />;
+  if (query.isPending) return <LoadingState label={t("child.loading")} />;
   if (query.isError) {
     return (
       <ErrorState
-        title="Enfant introuvable"
-        description="Ce dossier n'existe pas ou vous n'y avez pas accès."
+        title={t("day.childNotFound")}
+        description={t("day.childNotFoundHint")}
       />
     );
   }
@@ -76,7 +80,9 @@ export function StaffChildDetailPage() {
           <div className="min-w-48 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">{child.full_name}</h1>
-              {child.status === "ARCHIVED" && <Badge tone="neutral">Archivé</Badge>}
+              {child.status === "ARCHIVED" && (
+                <Badge tone="neutral">{t("children.archivedOne")}</Badge>
+              )}
             </div>
 
             <p className="mt-1 text-ink-600">
@@ -85,11 +91,12 @@ export function StaffChildDetailPage() {
             </p>
 
             <p className="mt-1 text-sm text-ink-500">
-              Né(e) le{" "}
-              {new Date(child.date_of_birth).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
+              {t("child.bornOn", {
+                date: new Date(child.date_of_birth).toLocaleDateString(locale, {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }),
               })}
             </p>
           </div>
@@ -97,7 +104,7 @@ export function StaffChildDetailPage() {
           <div className="flex flex-wrap gap-2">
             <LinkButton to={`/staff/children/${child.id}/timeline`} size="sm">
               <CalendarClock aria-hidden="true" className="size-4" />
-              Journée
+              {t("child.day")}
             </LinkButton>
 
             <LinkButton
@@ -106,7 +113,7 @@ export function StaffChildDetailPage() {
               size="sm"
             >
               <Pencil aria-hidden="true" className="size-4" />
-              Modifier
+              {t("child.edit")}
             </LinkButton>
 
             {child.status === "ARCHIVED" ? (
@@ -119,7 +126,7 @@ export function StaffChildDetailPage() {
                   onClick={() => restore.mutate(child.id)}
                   leftIcon={<ArchiveRestore className="size-4" />}
                 >
-                  Restaurer
+                  {t("child.restore")}
                 </Button>
               )
             ) : (
@@ -130,7 +137,7 @@ export function StaffChildDetailPage() {
                 onClick={() => archive.mutate(child.id)}
                 leftIcon={<Archive className="size-4" />}
               >
-                Archiver
+                {t("child.archive")}
               </Button>
             )}
           </div>
@@ -140,7 +147,7 @@ export function StaffChildDetailPage() {
       {child.allergies.trim() !== "" && (
         <div className="mt-5">
           <Alert tone="danger">
-            <strong>Allergies :</strong> {child.allergies}
+            <strong>{t("child.allergiesLabel")}</strong> {child.allergies}
           </Alert>
         </div>
       )}
@@ -148,14 +155,16 @@ export function StaffChildDetailPage() {
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader
-            title="Parents rattachés"
-            description={`${child.guardians.length} parent(s)`}
+            title={t("child.guardians")}
+            description={t("child.guardianCount", {
+              count: child.guardians.length,
+            })}
           />
           <CardBody>
             {child.guardians.length === 0 ? (
               <p className="flex items-center gap-2 text-sm text-ink-500">
                 <Users aria-hidden="true" className="size-4" />
-                Aucun parent rattaché pour le moment.
+                {t("child.noGuardians")}
               </p>
             ) : (
               <ul className="space-y-3">
@@ -170,12 +179,16 @@ export function StaffChildDetailPage() {
                       <p className="font-semibold text-ink-800">
                         {guardian.first_name} {guardian.last_name}{" "}
                         {guardian.is_primary && (
-                          <Badge tone="primary">Contact principal</Badge>
+                          <Badge tone="primary">
+                            {t("child.primaryContact")}
+                          </Badge>
                         )}
                       </p>
                       <p className="truncate text-sm text-ink-500">
-                        {RELATIONSHIP_LABELS[guardian.relationship] ??
-                          guardian.relationship}{" "}
+                        {t(
+                          RELATIONSHIP_KEYS[guardian.relationship] ??
+                            guardian.relationship,
+                        )}{" "}
                         · {guardian.email}
                       </p>
                     </div>
@@ -188,19 +201,14 @@ export function StaffChildDetailPage() {
 
         <Card>
           <CardHeader
-            title="Code d'accès parent"
-            description="Permet à un parent d'activer son compte."
+            title={t("child.accessCode")}
+            description={t("child.accessCodeHint")}
           />
           <CardBody className="space-y-3">
             {child.has_active_access_code ? (
-              <Alert tone="info">
-                Un code est déjà actif pour cet enfant. En générer un nouveau
-                invalidera le précédent.
-              </Alert>
+              <Alert tone="info">{t("child.codeActive")}</Alert>
             ) : (
-              <p className="text-sm text-ink-500">
-                Aucun code actif pour le moment.
-              </p>
+              <p className="text-sm text-ink-500">{t("child.noCodeActive")}</p>
             )}
 
             <Button
@@ -213,7 +221,7 @@ export function StaffChildDetailPage() {
                 })
               }
             >
-              Générer un code
+              {t("child.issueCode")}
             </Button>
           </CardBody>
         </Card>
@@ -221,21 +229,23 @@ export function StaffChildDetailPage() {
 
       <Card className="mt-5">
         <CardHeader
-          title="Informations internes"
-          description="Non visibles par les parents"
+          title={t("child.internal")}
+          description={t("child.internalHint")}
         />
         <CardBody className="space-y-4 text-sm">
           <div>
             <p className="flex items-center gap-1.5 font-semibold text-ink-700">
               <ShieldAlert aria-hidden="true" className="size-4" />
-              Notes médicales
+              {t("child.medicalNotes")}
             </p>
             <p className="mt-1 whitespace-pre-wrap text-ink-600">
               {child.medical_notes.trim() === "" ? "—" : child.medical_notes}
             </p>
           </div>
           <div>
-            <p className="font-semibold text-ink-700">Notes internes</p>
+            <p className="font-semibold text-ink-700">
+              {t("child.internalNotes")}
+            </p>
             <p className="mt-1 whitespace-pre-wrap text-ink-600">
               {child.notes.trim() === "" ? "—" : child.notes}
             </p>

@@ -113,7 +113,7 @@ export function Hero() {
 
             <img
               src={cover?.src ?? ""}
-              alt={cover?.alt ?? ""}
+              alt={cover === undefined ? "" : t(cover.altKey)}
               width={900}
               height={700}
               fetchPriority="high"

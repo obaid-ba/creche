@@ -11,6 +11,7 @@ from datetime import date as date_cls
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -155,7 +156,7 @@ class ChildTimelineView(ChildScopedMixin, APIView):
     def check_staff(self, request):
         if not request.user.is_staff_member:
             self.permission_denied(
-                request, message="Seul le personnel peut enregistrer un événement."
+                request, message=_("Seul le personnel peut enregistrer un événement.")
             )
 
 
@@ -212,7 +213,7 @@ class TimelineEventViewSet(viewsets.GenericViewSet):
 
         if ended_at < event.occurred_at:
             raise ValidationError(
-                {"ended_at": "La fin ne peut pas précéder le début."}
+                {"ended_at": _("La fin ne peut pas précéder le début.")}
             )
 
         event.ended_at = ended_at

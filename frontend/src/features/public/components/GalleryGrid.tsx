@@ -42,11 +42,11 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
               type="button"
               onClick={() => setOpenIndex(index)}
               className="block w-full overflow-hidden rounded-card focus-visible:outline-2"
-              aria-label={t("gallery.enlarge", { alt: item.alt })}
+              aria-label={t("gallery.enlarge", { alt: t(item.altKey) })}
             >
               <img
                 src={item.thumb}
-                alt={item.alt}
+                alt={t(item.altKey)}
                 // Explicit dimensions reserve the tile before the image
                 // arrives, so the grid does not reflow as photos load.
                 width={600}
@@ -64,7 +64,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={active.alt}
+          aria-label={t(active.altKey)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/85 p-4"
           onClick={() => setOpenIndex(null)}
         >
@@ -79,7 +79,7 @@ export function GalleryGrid({ items }: { items: GalleryItem[] }) {
 
           <img
             src={active.src}
-            alt={active.alt}
+            alt={t(active.altKey)}
             // Full size, fetched only when a photo is actually opened.
             fetchPriority="high"
             className="max-h-full max-w-full rounded-card object-contain"

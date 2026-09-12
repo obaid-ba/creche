@@ -1,4 +1,5 @@
 import { Play } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -16,6 +17,7 @@ import type { VideoItem } from "@/config/nursery";
  * down on page load.
  */
 export function VideoEmbed({ video }: { video: VideoItem }) {
+  const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = useState(false);
 
   const frame = cn(
@@ -35,7 +37,7 @@ export function VideoEmbed({ video }: { video: VideoItem }) {
             className="size-full object-cover"
           >
             <source src={video.src} type="video/mp4" />
-            Votre navigateur ne peut pas lire cette vidéo.
+            {t("video.unsupported")}
           </video>
         </div>
         <figcaption className="mt-2 text-sm font-semibold text-ink-700">
@@ -67,10 +69,10 @@ export function VideoEmbed({ video }: { video: VideoItem }) {
                 <Play aria-hidden="true" className="size-7 translate-x-0.5 text-primary-600" />
               </span>
               <span className="px-4 text-sm font-bold text-ink-800">
-                Lire la vidéo
+                {t("video.play")}
               </span>
               <span className="px-6 text-xs text-ink-600">
-                La lecture charge du contenu Facebook
+                {t("video.facebookNotice")}
               </span>
             </span>
           </button>

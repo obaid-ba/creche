@@ -1,5 +1,6 @@
 import { Baby, Moon, Smile, Thermometer, UtensilsCrossed } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Card, CardBody } from "@/components/ui";
 import type { DailySummary } from "@/features/timeline/types";
@@ -51,37 +52,41 @@ function SummaryCard({
  * renders, so the two views cannot disagree (docs/timeline.md 3.1).
  */
 export function DailySummaryCards({ summary }: { summary: DailySummary }) {
+  const { t } = useTranslation();
   const { feeding, sleep, health, hygiene, mood } = summary;
 
   return (
     <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
       <SummaryCard
         icon={UtensilsCrossed}
-        label="Repas"
+        label={t("summary.meals")}
         value={String(feeding.meals + feeding.bottles)}
         detail={
           feeding.bottles > 0
-            ? `${feeding.bottles} biberon${feeding.bottles > 1 ? "s" : ""} · ${feeding.total_ml} ml`
-            : `${feeding.meals} repas`
+            ? t("summary.bottles", {
+                count: feeding.bottles,
+                ml: feeding.total_ml,
+              })
+            : t("summary.mealCount", { count: feeding.meals })
         }
         tone="bg-accent-100 text-accent-500"
       />
 
       <SummaryCard
         icon={Moon}
-        label="Sommeil"
+        label={t("summary.sleep")}
         value={sleep.total_display}
         detail={
           sleep.in_progress
-            ? "Sieste en cours"
-            : `${sleep.naps} sieste${sleep.naps > 1 ? "s" : ""}`
+            ? t("summary.napInProgress")
+            : t("summary.naps", { count: sleep.naps })
         }
         tone="bg-secondary-100 text-secondary-700"
       />
 
       <SummaryCard
         icon={Thermometer}
-        label="Température"
+        label={t("summary.temperature")}
         value={
           health.last_temperature !== null
             ? `${String(health.last_temperature).replace(".", ",")} °C`
@@ -89,32 +94,35 @@ export function DailySummaryCards({ summary }: { summary: DailySummary }) {
         }
         detail={
           health.temperature_count > 0
-            ? `${health.temperature_count} mesure${health.temperature_count > 1 ? "s" : ""}`
-            : "Aucune mesure"
+            ? t("summary.measurements", { count: health.temperature_count })
+            : t("summary.noMeasurement")
         }
         tone="bg-info-50 text-info-700"
       />
 
       <SummaryCard
         icon={Baby}
-        label="Hygiène"
+        label={t("summary.hygiene")}
         value={String(hygiene.diaper_changes + hygiene.toilet_visits)}
         detail={
           hygiene.toilet_visits > 0
-            ? `${hygiene.diaper_changes} change(s) · ${hygiene.toilet_visits} toilettes`
-            : `${hygiene.diaper_changes} change${hygiene.diaper_changes > 1 ? "s" : ""}`
+            ? t("summary.changesAndToilet", {
+                changes: hygiene.diaper_changes,
+                toilet: hygiene.toilet_visits,
+              })
+            : t("summary.changes", { count: hygiene.diaper_changes })
         }
         tone="bg-success-50 text-success-700"
       />
 
       <SummaryCard
         icon={Smile}
-        label="Humeur"
+        label={t("summary.mood")}
         value={mood.latest_label ?? "—"}
         detail={
           mood.observations > 0
-            ? `${mood.observations} observation${mood.observations > 1 ? "s" : ""}`
-            : "Aucune observation"
+            ? t("summary.observations", { count: mood.observations })
+            : t("summary.noObservation")
         }
         tone="bg-primary-100 text-primary-700"
       />

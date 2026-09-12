@@ -10,6 +10,7 @@ import uuid
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
 from django.http import Http404
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
@@ -20,40 +21,40 @@ logger = logging.getLogger(__name__)
 ERROR_CODES = {
     status.HTTP_400_BAD_REQUEST: (
         "validation_error",
-        "Les données envoyées sont invalides.",
+        _("Les données envoyées sont invalides."),
     ),
     status.HTTP_401_UNAUTHORIZED: (
         "authentication_failed",
-        "Authentification requise ou session expirée.",
+        _("Authentification requise ou session expirée."),
     ),
     status.HTTP_403_FORBIDDEN: (
         "permission_denied",
-        "Vous n'avez pas l'autorisation d'effectuer cette action.",
+        _("Vous n'avez pas l'autorisation d'effectuer cette action."),
     ),
     status.HTTP_404_NOT_FOUND: (
         "not_found",
-        "La ressource demandée est introuvable.",
+        _("La ressource demandée est introuvable."),
     ),
     status.HTTP_405_METHOD_NOT_ALLOWED: (
         "method_not_allowed",
-        "Méthode non autorisée.",
+        _("Méthode non autorisée."),
     ),
-    status.HTTP_409_CONFLICT: ("conflict", "Cette opération entre en conflit avec l'état actuel."),
+    status.HTTP_409_CONFLICT: ("conflict", _("Cette opération entre en conflit avec l'état actuel.")),
     status.HTTP_413_REQUEST_ENTITY_TOO_LARGE: (
         "payload_too_large",
-        "Le fichier envoyé est trop volumineux.",
+        _("Le fichier envoyé est trop volumineux."),
     ),
     status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: (
         "unsupported_media_type",
-        "Ce type de fichier n'est pas accepté.",
+        _("Ce type de fichier n'est pas accepté."),
     ),
     status.HTTP_429_TOO_MANY_REQUESTS: (
         "rate_limited",
-        "Trop de tentatives. Veuillez réessayer plus tard.",
+        _("Trop de tentatives. Veuillez réessayer plus tard."),
     ),
     status.HTTP_500_INTERNAL_SERVER_ERROR: (
         "server_error",
-        "Une erreur interne est survenue. Veuillez réessayer.",
+        _("Une erreur interne est survenue. Veuillez réessayer."),
     ),
 }
 
@@ -100,7 +101,7 @@ def api_exception_handler(exc, context):
         )
 
     code, message = ERROR_CODES.get(
-        response.status_code, ("error", "Une erreur est survenue.")
+        response.status_code, ("error", _("Une erreur est survenue."))
     )
     detail = getattr(exc, "detail", None) if exc is not None else None
     normalised = _normalise_details(detail)

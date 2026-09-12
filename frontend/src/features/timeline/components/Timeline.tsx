@@ -1,4 +1,5 @@
 import { CalendarClock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { EmptyState } from "@/components/ui";
 
@@ -9,19 +10,21 @@ export function Timeline({
   events,
   onEnd,
   endingId,
-  emptyMessage = "Aucun événement pour cette journée.",
+  emptyMessage,
 }: {
   events: TimelineEvent[];
   onEnd?: (eventId: string) => void;
   endingId?: string | null;
   emptyMessage?: string;
 }) {
+  const { t } = useTranslation();
+
   if (events.length === 0) {
     return (
       <EmptyState
         icon={<CalendarClock className="size-6" />}
-        title="Journée vide"
-        description={emptyMessage}
+        title={t("day.emptyDay")}
+        description={emptyMessage ?? t("day.emptyDayHint")}
       />
     );
   }

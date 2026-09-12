@@ -74,7 +74,7 @@ class StrictPayloadSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 {
                     api_settings.NON_FIELD_ERRORS_KEY: [
-                        "Les données de l'événement doivent être un objet."
+                        _("Les données de l'événement doivent être un objet.")
                     ]
                 }
             )
@@ -82,7 +82,7 @@ class StrictPayloadSerializer(serializers.Serializer):
         if unknown:
             raise serializers.ValidationError(
                 {
-                    key: ["Ce champ n'est pas attendu pour ce type d'événement."]
+                    key: [_("Ce champ n'est pas attendu pour ce type d'événement.")]
                     for key in sorted(unknown)
                 }
             )

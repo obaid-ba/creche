@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from django.utils import timezone
 from django.utils.encoding import force_str
+from django.utils.translation import gettext, gettext_lazy as _
 from rest_framework import serializers
 
 from .event_types import (
@@ -83,8 +84,11 @@ class TimelineEventWriteSerializer(serializers.ModelSerializer):
         if not spec.staff_creatable:
             # ACTIVITY and MESSAGE rows are created as a side effect of
             # their owning aggregate, never posted here directly.
+            # %-formatting rather than an f-string: gettext has to see a
+            # constant, and a translator needs the placeholder named.
             raise serializers.ValidationError(
-                f"Les événements de type {value} sont créés automatiquement."
+                gettext("Les événements de type %(type)s sont créés automatiquement.")
+                % {"type": value}
             )
         return value
 
@@ -93,7 +97,7 @@ class TimelineEventWriteSerializer(serializers.ModelSerializer):
         # the floor and the server.
         if value > timezone.now() + timezone.timedelta(minutes=5):
             raise serializers.ValidationError(
-                "Un événement ne peut pas être enregistré dans le futur."
+                _("Un événement ne peut pas être enregistré dans le futur.")
             )
         return value
 
@@ -107,11 +111,11 @@ class TimelineEventWriteSerializer(serializers.ModelSerializer):
         if ended_at is not None:
             if not spec_for(event_type).interval:
                 raise serializers.ValidationError(
-                    {"ended_at": "Ce type d'événement n'a pas de durée."}
+                    {"ended_at": _("Ce type d'événement n'a pas de durée.")}
                 )
             if occurred_at is not None and ended_at < occurred_at:
                 raise serializers.ValidationError(
-                    {"ended_at": "La fin ne peut pas précéder le début."}
+                    {"ended_at": _("La fin ne peut pas précéder le début.")}
                 )
 
         # The payload is validated against the schema declared for this
@@ -133,7 +137,7 @@ class EndIntervalSerializer(serializers.Serializer):
     def validate_ended_at(self, value):
         if value > timezone.now() + timezone.timedelta(minutes=5):
             raise serializers.ValidationError(
-                "La fin ne peut pas être dans le futur."
+                _("La fin ne peut pas être dans le futur.")
             )
         return value
 

@@ -1,4 +1,5 @@
 import { Send } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
 import { Alert, Button } from "@/components/ui";
@@ -13,6 +14,7 @@ export function MessageComposer({
   isPending: boolean;
   disabledReason?: string;
 }) {
+  const { t } = useTranslation();
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +35,7 @@ export function MessageComposer({
       setError(
         caught instanceof ApiError
           ? caught.message
-          : "Impossible d'envoyer le message.",
+          : t("messages.sendError"),
       );
     }
   }
@@ -43,15 +45,15 @@ export function MessageComposer({
       {error !== null && <Alert tone="danger">{error}</Alert>}
 
       <label className="sr-only" htmlFor="message-body">
-        Votre message
+        {t("messages.yourMessage")}
       </label>
       <textarea
         id="message-body"
         rows={3}
         value={body}
         onChange={(event) => setBody(event.target.value)}
-        placeholder="Écrire un message…"
-        className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+        placeholder={t("messages.placeholder")}
+        className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
       />
 
       <div className="flex justify-end">
@@ -61,7 +63,7 @@ export function MessageComposer({
           disabled={body.trim() === ""}
           leftIcon={<Send className="size-4" />}
         >
-          Envoyer
+          {t("messages.send")}
         </Button>
       </div>
     </form>

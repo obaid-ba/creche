@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, Info } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { useFieldError } from "@/i18n/useFieldError";
 import { cn } from "@/lib/cn";
 
 type Tone = "info" | "success" | "danger";
@@ -17,6 +18,16 @@ const TONES: Record<Tone, { box: string; Icon: typeof Info }> = {
   },
 };
 
+/**
+ * A tone-coded message box.
+ *
+ * A plain-string child is resolved through i18next before rendering, the
+ * same way Input resolves its `error`. Most of what lands here is an API
+ * error message — already a sentence in the request's language — but the
+ * client produces a few of its own (a network failure has no response to
+ * carry a message), and those are keys. `defaultValue` means neither
+ * kind needs special handling at the call site.
+ */
 export function Alert({
   tone = "info",
   children,
@@ -26,7 +37,9 @@ export function Alert({
   children: ReactNode;
   className?: string;
 }) {
+  const resolve = useFieldError();
   const { box, Icon } = TONES[tone];
+  const content = typeof children === "string" ? resolve(children) : children;
 
   return (
     <div
@@ -39,7 +52,7 @@ export function Alert({
       )}
     >
       <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      <div className="min-w-0">{children}</div>
+      <div className="min-w-0">{content}</div>
     </div>
   );
 }

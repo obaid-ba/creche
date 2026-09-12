@@ -19,6 +19,9 @@ export function LoginForm({ area }: { area: "parent" | "staff" }) {
         type="email"
         autoComplete="email"
         autoFocus
+        // An address is typed and read left-to-right in both languages;
+        // without this the caret starts on the wrong side in Arabic.
+        dir="ltr"
         placeholder={t("form.emailPlaceholder")}
         leftIcon={<Mail className="size-4" />}
         error={errors.email?.message}

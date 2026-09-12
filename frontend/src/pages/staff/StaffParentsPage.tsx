@@ -1,5 +1,6 @@
 import { MessageCircleOff, Search, Users } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { PageShell } from "@/components/app";
@@ -17,14 +18,15 @@ import {
 import { useParents, useSetParentMessaging } from "@/features/parents/hooks";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
-const RELATIONSHIP_LABELS: Record<string, string> = {
-  MOTHER: "Mère",
-  FATHER: "Père",
-  GUARDIAN: "Tuteur",
-  OTHER: "Autre",
+const RELATIONSHIP_KEYS: Record<string, string> = {
+  MOTHER: "form.mother",
+  FATHER: "form.father",
+  GUARDIAN: "form.guardian",
+  OTHER: "form.other",
 };
 
 export function StaffParentsPage() {
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [onlyUnlinked, setOnlyUnlinked] = useState(false);
   const [page, setPage] = useState(1);
@@ -41,17 +43,19 @@ export function StaffParentsPage() {
 
   return (
     <PageShell size="wide">
-      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Parents</h1>
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+        {t("parents.title")}
+      </h1>
       <p className="mt-1 text-sm text-ink-500">
-        {query.data?.count ?? 0} parent{(query.data?.count ?? 0) === 1 ? "" : "s"}
+        {t("parents.count", { count: query.data?.count ?? 0 })}
       </p>
 
       <div className="mt-6 flex flex-wrap items-end gap-3">
         <div className="min-w-56 flex-1">
           <Input
-            label="Rechercher"
+            label={t("parents.search")}
             type="search"
-            placeholder="Nom du parent ou de l'enfant…"
+            placeholder={t("parents.searchPlaceholder")}
             value={searchInput}
             onChange={(event) => {
               setPage(1);
@@ -61,7 +65,7 @@ export function StaffParentsPage() {
           />
         </div>
 
-        <label className="flex h-11 items-center gap-2 rounded-card border border-ink-200 bg-white px-3.5 text-sm font-semibold text-ink-700">
+        <label className="flex h-11 items-center gap-2 rounded-card border border-ink-200 bg-shell px-3.5 text-sm font-semibold text-ink-700">
           <input
             type="checkbox"
             checked={onlyUnlinked}
@@ -71,27 +75,27 @@ export function StaffParentsPage() {
             }}
             className="size-4 rounded"
           />
-          Sans enfant rattaché
+          {t("parents.onlyUnlinked")}
         </label>
       </div>
 
       <div className="mt-6">
         {query.isPending ? (
-          <LoadingState label="Chargement des parents…" />
+          <LoadingState label={t("parents.loading")} />
         ) : query.isError ? (
           <ErrorState
-            description="Impossible de charger la liste des parents."
+            description={t("parents.loadError")}
             onRetry={() => void query.refetch()}
           />
         ) : rows.length === 0 ? (
           <EmptyState
             icon={<Users className="size-6" />}
-            title="Aucun parent"
-            description={
+            title={t("parents.empty")}
+            description={t(
               search !== "" || onlyUnlinked
-                ? "Essayez de modifier votre recherche."
-                : "Les parents apparaissent ici après avoir activé leur compte."
-            }
+                ? "parents.emptySearchHint"
+                : "parents.emptyHint",
+            )}
           />
         ) : (
           <ul className="space-y-3">
@@ -105,10 +109,14 @@ export function StaffParentsPage() {
                           {parent.first_name} {parent.last_name}
                         </p>
                         {!parent.is_active && (
-                          <Badge tone="neutral">Compte désactivé</Badge>
+                          <Badge tone="neutral">
+                            {t("parents.accountDisabled")}
+                          </Badge>
                         )}
                         {!parent.can_send_messages && (
-                          <Badge tone="warning">Messagerie coupée</Badge>
+                          <Badge tone="warning">
+                            {t("parents.messagingOff")}
+                          </Badge>
                         )}
                       </div>
 
@@ -119,7 +127,7 @@ export function StaffParentsPage() {
 
                       {parent.children.length === 0 ? (
                         <p className="mt-2 text-sm text-ink-400">
-                          Aucun enfant rattaché
+                          {t("parents.noChildLinked")}
                         </p>
                       ) : (
                         <ul className="mt-2 flex flex-wrap gap-2">
@@ -134,8 +142,14 @@ export function StaffParentsPage() {
                                     4.5:1 AA threshold; secondary-700 on
                                     secondary-100 clears it. */}
                                 <span className="font-normal text-secondary-700">
-                                  {RELATIONSHIP_LABELS[child.relationship] ??
-                                    child.relationship}
+                                  {/* An unknown key resolves to itself,
+                                      so an enum the client does not know
+                                      renders as its raw value rather
+                                      than disappearing. */}
+                                  {t(
+                                    RELATIONSHIP_KEYS[child.relationship] ??
+                                      child.relationship,
+                                  )}
                                 </span>
                               </Link>
                             </li>
@@ -159,9 +173,11 @@ export function StaffParentsPage() {
                       }
                       leftIcon={<MessageCircleOff className="size-4" />}
                     >
-                      {parent.can_send_messages
-                        ? "Couper la messagerie"
-                        : "Réactiver la messagerie"}
+                      {t(
+                        parent.can_send_messages
+                          ? "parents.cutMessaging"
+                          : "parents.restoreMessaging",
+                      )}
                     </Button>
                   </CardBody>
                 </Card>
@@ -177,6 +193,7 @@ export function StaffParentsPage() {
             page={query.data.page}
             totalPages={query.data.total_pages}
             count={query.data.count}
+            countLabel={t("parents.count", { count: query.data.count })}
             onChange={setPage}
           />
         </div>

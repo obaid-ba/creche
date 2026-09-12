@@ -2,6 +2,8 @@ import { Bell, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import i18n from "@/i18n/config";
+import { currentLanguage } from "@/i18n/useDirection";
 import { cn } from "@/lib/cn";
 
 import {
@@ -12,12 +14,19 @@ import {
 } from "../hooks";
 import { NOTIFICATION_ICONS } from "../types";
 
+/** Reads the active language from the i18next instance; see
+ *  `features/timeline/eventDisplay.ts` for why that rather than an
+ *  argument. */
 function relativeTime(iso: string): string {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (seconds < 60) return "à l'instant";
-  if (seconds < 3600) return `il y a ${Math.floor(seconds / 60)} min`;
-  if (seconds < 86_400) return `il y a ${Math.floor(seconds / 3600)} h`;
-  return new Date(iso).toLocaleDateString("fr-FR", {
+  if (seconds < 60) return i18n.t("notifications.justNow");
+  if (seconds < 3600)
+    return i18n.t("notifications.minutesAgo", { count: Math.floor(seconds / 60) });
+  if (seconds < 86_400)
+    return i18n.t("notifications.hoursAgo", { count: Math.floor(seconds / 3600) });
+
+  const locale = currentLanguage(i18n.language) === "ar" ? "ar-TN" : "fr-FR";
+  return new Date(iso).toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
   });

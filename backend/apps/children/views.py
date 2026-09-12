@@ -10,6 +10,7 @@ from __future__ import annotations
 from django.db import transaction
 from django.db.models import Prefetch
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -149,7 +150,7 @@ class ChildViewSet(viewsets.ModelViewSet):
         """
         if not request.user.is_admin:
             raise PermissionDenied(
-                "Seul un administrateur peut supprimer définitivement un enfant."
+                _("Seul un administrateur peut supprimer définitivement un enfant.")
             )
 
         child = self.get_object()
@@ -170,7 +171,7 @@ class ChildViewSet(viewsets.ModelViewSet):
         child = self.get_object()
         if child.is_archived:
             return Response(
-                {"detail": "Cet enfant est déjà archivé."},
+                {"detail": _("Cet enfant est déjà archivé.")},
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -189,13 +190,13 @@ class ChildViewSet(viewsets.ModelViewSet):
     def restore(self, request, pk=None):
         if not request.user.is_admin:
             raise PermissionDenied(
-                "Seul un administrateur peut restaurer un enfant archivé."
+                _("Seul un administrateur peut restaurer un enfant archivé.")
             )
 
         child = self.get_object()
         if not child.is_archived:
             return Response(
-                {"detail": "Cet enfant n'est pas archivé."},
+                {"detail": _("Cet enfant n'est pas archivé.")},
                 status=status.HTTP_409_CONFLICT,
             )
 

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import type { ChildListItem } from "../types";
 import { ChildCard } from "./ChildCard";
 
@@ -16,6 +18,7 @@ export function AgeGroupSection({
   label: string;
   items: ChildListItem[];
 }) {
+  const { t } = useTranslation();
   const headingId = `group-${label.replace(/\s+/g, "-")}`;
 
   return (
@@ -25,12 +28,12 @@ export function AgeGroupSection({
           {label}
         </h2>
         <span className="text-sm font-semibold text-ink-400">
-          {items.length} {items.length === 1 ? "enfant" : "enfants"}
+          {t("common.child", { count: items.length })}
         </span>
       </div>
 
       {items.length === 0 ? (
-        <p className="py-4 text-sm text-ink-400">Aucun enfant dans ce groupe.</p>
+        <p className="py-4 text-sm text-ink-400">{t("children.emptyGroup")}</p>
       ) : (
         <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((child) => (

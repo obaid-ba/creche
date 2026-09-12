@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { LoadingState } from "@/components/ui";
@@ -15,10 +16,11 @@ import { useAuth } from "./useAuth";
  */
 
 export function RequireAuth({ children }: { children?: ReactNode }) {
+  const { t } = useTranslation();
   const { isAuthenticated, isBootstrapping } = useAuth();
   const location = useLocation();
 
-  if (isBootstrapping) return <LoadingState label="Vérification de la session…" />;
+  if (isBootstrapping) return <LoadingState label={t("network.checkingSession")} />;
 
   if (!isAuthenticated) {
     const loginPath = location.pathname.startsWith("/staff")
@@ -38,10 +40,11 @@ export function RequireRole({
   allowed: readonly Role[];
   children?: ReactNode;
 }) {
+  const { t } = useTranslation();
   const { role, isAuthenticated, isBootstrapping } = useAuth();
   const location = useLocation();
 
-  if (isBootstrapping) return <LoadingState label="Vérification de la session…" />;
+  if (isBootstrapping) return <LoadingState label={t("network.checkingSession")} />;
 
   if (!isAuthenticated) {
     return <Navigate to="/parent/login" state={{ from: location }} replace />;
@@ -59,6 +62,7 @@ export function RequireRole({
 export function RedirectIfAuthenticated({ children }: { children: ReactNode }) {
   const { isAuthenticated, role, isBootstrapping } = useAuth();
 
+  // No label: LoadingState falls back to the translated default.
   if (isBootstrapping) return <LoadingState />;
   if (isAuthenticated) {
     return <Navigate to={role === "PARENT" ? "/parent" : "/staff"} replace />;

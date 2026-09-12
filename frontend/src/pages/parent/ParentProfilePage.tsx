@@ -1,6 +1,7 @@
 import { KeyRound, LinkIcon, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
 import {
@@ -21,14 +22,15 @@ import { useAuth } from "@/features/auth/useAuth";
 import { ApiError } from "@/services/errors";
 
 const RELATIONSHIPS = [
-  { value: "MOTHER", label: "Mère" },
-  { value: "FATHER", label: "Père" },
-  { value: "GUARDIAN", label: "Tuteur / Tutrice" },
-  { value: "OTHER", label: "Autre" },
+  { value: "MOTHER", key: "form.mother" },
+  { value: "FATHER", key: "form.father" },
+  { value: "GUARDIAN", key: "form.guardian" },
+  { value: "OTHER", key: "form.other" },
 ] as const;
 
 /** Attach a second child using a code the nursery issued. */
 function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [isDone, setIsDone] = useState(false);
   const form = useForm({
@@ -47,7 +49,7 @@ function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
       setError(
         caught instanceof ApiError
           ? caught.message
-          : "Impossible de rattacher cet enfant.",
+          : t("profile.linkChildError"),
       );
     }
   });
@@ -55,21 +57,27 @@ function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
   return (
     <form onSubmit={submit} noValidate className="space-y-4">
       {error !== null && <Alert tone="danger">{error}</Alert>}
-      {isDone && <Alert tone="success">L'enfant a été rattaché à votre compte.</Alert>}
+      {isDone && <Alert tone="success">{t("profile.linkChildDone")}</Alert>}
 
       <Input
-        label="Code d'accès"
+        label={t("form.accessCode")}
         placeholder="MAM-XXXXX"
         autoComplete="off"
         spellCheck={false}
-        hint="Le code remis par la crèche pour votre autre enfant."
+        dir="ltr"
+        hint={t("profile.linkChildCodeHint")}
         error={form.formState.errors.access_code?.message}
-        {...form.register("access_code", { required: "Le code est requis." })}
+        {...form.register("access_code", {
+          required: "validation.codeRequiredShort",
+        })}
       />
 
       <Select
-        label="Lien avec l'enfant"
-        options={RELATIONSHIPS.map((r) => ({ value: r.value, label: r.label }))}
+        label={t("form.relationship")}
+        options={RELATIONSHIPS.map((r) => ({
+          value: r.value,
+          label: t(r.key),
+        }))}
         {...form.register("relationship")}
       />
 
@@ -79,31 +87,30 @@ function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
         isLoading={form.formState.isSubmitting}
         leftIcon={<LinkIcon className="size-4" />}
       >
-        Rattacher l'enfant
+        {t("profile.linkChildAction")}
       </Button>
     </form>
   );
 }
 
 export function ParentProfilePage() {
+  const { t } = useTranslation();
   const { user, refreshUser, logout } = useAuth();
 
   if (user === null) return null;
 
   return (
     <PageShell size="form">
-      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Mon profil</h1>
-      <p className="mt-1 text-sm text-ink-500">
-        Vos informations et celles de vos enfants.
-      </p>
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+        {t("profile.title")}
+      </h1>
+      <p className="mt-1 text-sm text-ink-500">{t("profile.lead")}</p>
 
       <Card className="mt-6">
-        <CardHeader title="Mes enfants" />
+        <CardHeader title={t("profile.myChildren")} />
         <CardBody>
           {user.children.length === 0 ? (
-            <p className="text-sm text-ink-500">
-              Aucun enfant rattaché à votre compte.
-            </p>
+            <p className="text-sm text-ink-500">{t("profile.noChildren")}</p>
           ) : (
             <ul className="space-y-3">
               {user.children.map((child) => (
@@ -125,7 +132,7 @@ export function ParentProfilePage() {
       </Card>
 
       <Card className="mt-5">
-        <CardHeader title="Mes informations" />
+        <CardHeader title={t("profile.myInfo")} />
         <CardBody>
           <ProfileForm user={user} onSaved={refreshUser} />
         </CardBody>
@@ -133,8 +140,8 @@ export function ParentProfilePage() {
 
       <Card className="mt-5">
         <CardHeader
-          title="Rattacher un autre enfant"
-          description="Si vous avez plusieurs enfants à la crèche."
+          title={t("profile.linkChild")}
+          description={t("profile.linkChildHint")}
         />
         <CardBody>
           <LinkChildForm onLinked={refreshUser} />
@@ -143,10 +150,10 @@ export function ParentProfilePage() {
 
       <Card className="mt-5">
         <CardHeader
-          title="Sécurité"
+          title={t("settings.security")}
           action={
             user.can_send_messages ? undefined : (
-              <Badge tone="warning">Messagerie désactivée</Badge>
+              <Badge tone="warning">{t("profile.messagingDisabled")}</Badge>
             )
           }
         />
@@ -166,7 +173,7 @@ export function ParentProfilePage() {
               leftIcon={<LogOut className="size-4" />}
               onClick={() => void logout()}
             >
-              Se déconnecter
+              {t("settings.signOut")}
             </Button>
           </div>
         </CardBody>

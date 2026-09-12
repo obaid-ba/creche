@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
 import { Card, CardBody, ErrorState, LoadingState } from "@/components/ui";
@@ -25,6 +26,7 @@ import type { TimelineFilter } from "@/features/timeline/types";
  * few steps as possible.
  */
 export function ParentTimelinePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [date, setDate] = useState(todayISO());
   const [filter, setFilter] = useState<TimelineFilter>("all");
@@ -40,8 +42,8 @@ export function ParentTimelinePage() {
     return (
       <PageShell size="form">
         <ErrorState
-          title="Aucun enfant rattaché"
-          description="Contactez la crèche pour rattacher votre enfant à votre compte."
+          title={t("day.noChildLinked")}
+          description={t("day.noChildLinkedHint")}
         />
       </PageShell>
     );
@@ -76,10 +78,10 @@ export function ParentTimelinePage() {
       <Card>
         <CardBody>
           {timeline.isPending ? (
-            <LoadingState label="Chargement de la journée…" />
+            <LoadingState label={t("day.loading")} />
           ) : timeline.isError ? (
             <ErrorState
-              description="Impossible de charger la journée."
+              description={t("day.loadError")}
               onRetry={() => void timeline.refetch()}
             />
           ) : (
@@ -87,8 +89,8 @@ export function ParentTimelinePage() {
               events={timeline.data.results}
               emptyMessage={
                 isDraft
-                  ? "La journée n'a pas encore été publiée par la crèche."
-                  : "Aucun événement enregistré pour cette journée."
+                  ? t("day.notPublishedYet")
+                  : t("day.noEvents")
               }
             />
           )}
@@ -100,7 +102,7 @@ export function ParentTimelinePage() {
           <Card className="mt-5">
             <CardBody>
               <h2 className="text-sm font-bold uppercase tracking-wide text-ink-400">
-                Mot de l'équipe
+                {t("day.teamNote")}
               </h2>
               <p className="mt-2 whitespace-pre-wrap text-ink-700">
                 {record.data.general_notes}

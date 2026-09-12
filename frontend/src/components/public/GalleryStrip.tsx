@@ -27,7 +27,7 @@ export function GalleryStrip() {
           >
             <img
               src={photo.thumb}
-              alt={photo.alt}
+              alt={t(photo.altKey)}
               width={600}
               height={600}
               loading="lazy"

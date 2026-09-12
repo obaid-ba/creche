@@ -49,7 +49,10 @@ describe("AgeGroupSection", () => {
 
     expect(screen.getByRole("heading", { name: "1 → 2 ans" })).toBeInTheDocument();
     expect(screen.getByText(/aucun enfant dans ce groupe/i)).toBeInTheDocument();
-    expect(screen.getByText("0 enfants")).toBeInTheDocument();
+    // "0 enfant", not "0 enfants": French puts zero in the singular, which
+    // the hand-rolled `count === 1 ? "" : "s"` this replaced got wrong.
+    // CLDR knows, so i18next does.
+    expect(screen.getByText("0 enfant")).toBeInTheDocument();
   });
 
   it("associates the list with its heading for screen readers", () => {

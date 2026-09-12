@@ -9,6 +9,7 @@ Call these inside the transaction that performs the change.
 from __future__ import annotations
 
 from django.db import models
+from django.utils.translation import gettext, gettext_lazy as _
 
 from .models import Notification, NotificationType
 
@@ -67,8 +68,9 @@ def notify_day_published(daily_record) -> int:
     return _create_many(
         _guardian_users(child),
         type=NotificationType.DAY_PUBLISHED,
-        title=f"La journée de {child.first_name} est disponible",
-        body="Consultez le détail de la journée.",
+        title=gettext("La journée de %(name)s est disponible")
+        % {"name": child.first_name},
+        body=_("Consultez le détail de la journée."),
         link="/parent/timeline",
         child=child,
     )
@@ -81,7 +83,8 @@ def notify_activity(activity, children) -> int:
         total += _create_many(
             _guardian_users(child),
             type=NotificationType.NEW_ACTIVITY,
-            title=f"{child.first_name} a participé à une activité",
+            title=gettext("%(name)s a participé à une activité")
+            % {"name": child.first_name},
             body=activity.title,
             link="/parent/activities",
             child=child,

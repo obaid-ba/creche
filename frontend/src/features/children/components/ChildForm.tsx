@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Input, Select } from "@/components/ui";
 import { ApiError } from "@/services/errors";
@@ -9,10 +10,10 @@ import { childSchema, type ChildFormValues } from "../schemas";
 import type { ChildDetail } from "../types";
 
 const GENDERS = [
-  { value: "", label: "Non précisé" },
-  { value: "M", label: "Garçon" },
-  { value: "F", label: "Fille" },
-  { value: "OTHER", label: "Autre" },
+  { value: "", key: "child.genderUnspecified" },
+  { value: "M", key: "child.boy" },
+  { value: "F", key: "child.girl" },
+  { value: "OTHER", key: "child.genderOther" },
 ] as const;
 
 export function ChildForm({
@@ -24,6 +25,7 @@ export function ChildForm({
   onSubmit: (values: ChildFormValues) => Promise<unknown>;
   submitLabel: string;
 }) {
+  const { t } = useTranslation();
   const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<ChildFormValues>({
@@ -73,13 +75,13 @@ export function ChildForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prénom"
+          label={t("form.firstName")}
           autoComplete="off"
           error={errors.first_name?.message}
           {...form.register("first_name")}
         />
         <Input
-          label="Nom"
+          label={t("form.lastName")}
           autoComplete="off"
           error={errors.last_name?.message}
           {...form.register("last_name")}
@@ -88,22 +90,22 @@ export function ChildForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Date de naissance"
+          label={t("child.birthDate")}
           type="date"
-          hint="L'âge et le groupe sont calculés automatiquement."
+          hint={t("child.birthDateHint")}
           error={errors.date_of_birth?.message}
           {...form.register("date_of_birth")}
         />
 
         <Select
-          label="Genre"
-          options={GENDERS.map((g) => ({ value: g.value, label: g.label }))}
+          label={t("child.gender")}
+          options={GENDERS.map((g) => ({ value: g.value, label: t(g.key) }))}
           {...form.register("gender")}
         />
       </div>
 
       <Input
-        label="Date d'inscription"
+        label={t("child.registrationDate")}
         type="date"
         error={errors.registration_date?.message}
         {...form.register("registration_date")}
@@ -114,17 +116,17 @@ export function ChildForm({
           htmlFor="allergies"
           className="mb-1.5 block text-sm font-semibold text-ink-700"
         >
-          Allergies
+          {t("child.allergiesField")}
         </label>
         <textarea
           id="allergies"
           rows={2}
-          placeholder="Arachides, lactose…"
-          className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+          placeholder={t("child.allergiesPlaceholder")}
+          className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
           {...form.register("allergies")}
         />
         <p className="mt-1.5 text-xs text-ink-500">
-          Visible par les parents — information de sécurité.
+          {t("child.allergiesHint")}
         </p>
       </div>
 
@@ -133,17 +135,15 @@ export function ChildForm({
           htmlFor="medical_notes"
           className="mb-1.5 block text-sm font-semibold text-ink-700"
         >
-          Notes médicales
+          {t("child.medicalNotes")}
         </label>
         <textarea
           id="medical_notes"
           rows={3}
-          className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+          className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
           {...form.register("medical_notes")}
         />
-        <p className="mt-1.5 text-xs text-ink-500">
-          Réservé à l'équipe — non visible par les parents.
-        </p>
+        <p className="mt-1.5 text-xs text-ink-500">{t("child.medicalHint")}</p>
       </div>
 
       <div>
@@ -151,12 +151,12 @@ export function ChildForm({
           htmlFor="notes"
           className="mb-1.5 block text-sm font-semibold text-ink-700"
         >
-          Notes internes
+          {t("child.internalNotes")}
         </label>
         <textarea
           id="notes"
           rows={3}
-          className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+          className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
           {...form.register("notes")}
         />
       </div>

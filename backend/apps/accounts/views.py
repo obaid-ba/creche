@@ -7,6 +7,7 @@ httpOnly cookie the browser manages. See docs/authentication.md 2.
 from __future__ import annotations
 
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -90,7 +91,7 @@ class RefreshView(APIView):
         raw = get_refresh_token(request)
         if not raw:
             return Response(
-                {"detail": "Session expirée."}, status=status.HTTP_401_UNAUTHORIZED
+                {"detail": _("Session expirée.")}, status=status.HTTP_401_UNAUTHORIZED
             )
 
         try:
@@ -101,7 +102,7 @@ class RefreshView(APIView):
             user_id = refresh["user_id"]
         except TokenError:
             response = Response(
-                {"detail": "Session expirée."}, status=status.HTTP_401_UNAUTHORIZED
+                {"detail": _("Session expirée.")}, status=status.HTTP_401_UNAUTHORIZED
             )
             return clear_refresh_cookie(response)
 
@@ -110,7 +111,7 @@ class RefreshView(APIView):
         user = User.objects.filter(pk=user_id, is_active=True).first()
         if user is None:
             response = Response(
-                {"detail": "Session expirée."}, status=status.HTTP_401_UNAUTHORIZED
+                {"detail": _("Session expirée.")}, status=status.HTTP_401_UNAUTHORIZED
             )
             return clear_refresh_cookie(response)
 

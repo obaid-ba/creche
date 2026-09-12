@@ -4,6 +4,7 @@ import {
   MessageSquareWarning,
   Palette,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { PageShell } from "@/components/app";
@@ -36,7 +37,7 @@ function CountTile({
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 rounded-card border border-ink-100 bg-white p-4 shadow-soft transition-colors hover:border-primary-200"
+      className="flex items-center gap-3 rounded-card bg-shell p-4 shadow-soft transition-shadow hover:shadow-lifted"
     >
       <span className="grid size-10 shrink-0 place-items-center rounded-card bg-primary-100 text-primary-700">
         <Icon aria-hidden="true" className="size-5" />
@@ -50,15 +51,16 @@ function CountTile({
 }
 
 export function ParentHomePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const query = useParentDashboard();
 
-  if (query.isPending) return <LoadingState label="Chargement…" />;
+  if (query.isPending) return <LoadingState label={t("common.loading")} />;
   if (query.isError) {
     return (
       <PageShell size="form">
         <ErrorState
-          description="Impossible de charger votre tableau de bord."
+          description={t("parentHome.loadError")}
           onRetry={() => void query.refetch()}
         />
       </PageShell>
@@ -69,8 +71,10 @@ export function ParentHomePage() {
 
   return (
     <PageShell size="form">
-      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Bonjour {user?.first_name}</h1>
-      <p className="mt-1 text-ink-500">Voici la journée de votre enfant.</p>
+      <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+        {t("parentHome.greeting", { name: user?.first_name ?? "" })}
+      </h1>
+      <p className="mt-1 text-ink-500">{t("parentHome.lead")}</p>
 
       {children.length === 0 ? (
         <div className="mt-8">
@@ -97,7 +101,7 @@ export function ParentHomePage() {
               </div>
               <LinkButton to="/parent/timeline" size="sm" variant="outline">
                 <CalendarClock aria-hidden="true" className="size-4" />
-                Voir la journée
+                {t("parentHome.seeDay")}
               </LinkButton>
             </div>
 
@@ -136,7 +140,7 @@ export function ParentHomePage() {
                   <Card className="mt-4">
                     <CardBody>
                       <h3 className="text-sm font-bold uppercase tracking-wide text-ink-400">
-                        Mot de l'équipe
+                        {t("parentHome.teamNote")}
                       </h3>
                       <p className="mt-2 whitespace-pre-wrap text-ink-700">
                         {child.general_notes}
@@ -147,8 +151,7 @@ export function ParentHomePage() {
               </>
             ) : (
               <Alert tone="info">
-                L'équipe n'a pas encore publié la journée de{" "}
-                {child.first_name}. Revenez un peu plus tard.
+                {t("parentHome.notPublished", { name: child.first_name })}
               </Alert>
             )}
           </section>
@@ -158,13 +161,13 @@ export function ParentHomePage() {
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         <CountTile
           icon={MessageCircle}
-          label="Messages non lus"
+          label={t("parentHome.unreadMessages")}
           count={unread_messages}
           to="/parent/messages"
         />
         <CountTile
           icon={MessageSquareWarning}
-          label="Réclamations en cours"
+          label={t("parentHome.openComplaints")}
           count={open_complaints}
           to="/parent/complaints"
         />
@@ -178,7 +181,7 @@ export function ParentHomePage() {
             <Palette aria-hidden="true" className="size-5" />
           </span>
           <span className="text-sm font-bold text-ink-800">
-            Voir les activités
+            {t("parentHome.seeActivities")}
           </span>
         </Link>
       </div>

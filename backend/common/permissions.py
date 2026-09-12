@@ -9,6 +9,7 @@ user touch *this row*" - that is ownership, and it is enforced by queryset
 scoping in ``Child.objects.visible_to()`` (docs/authentication.md 5).
 """
 from rest_framework.permissions import BasePermission
+from django.utils.translation import gettext_lazy as _
 
 
 class IsParent(BasePermission):
@@ -22,7 +23,7 @@ class IsParent(BasePermission):
 class IsStaff(BasePermission):
     """Staff or admin - admin is a superset of staff."""
 
-    message = "Réservé au personnel de la crèche."
+    message = _("Réservé au personnel de la crèche.")
 
     def has_permission(self, request, view):
         user = request.user

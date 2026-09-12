@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Input } from "@/components/ui";
 import { ApiError } from "@/services/errors";
@@ -13,6 +14,7 @@ interface Values {
 }
 
 export function PasswordForm({ onChanged }: { onChanged?: () => void }) {
+  const { t } = useTranslation();
   const [formError, setFormError] = useState<string | null>(null);
   const [isDone, setIsDone] = useState(false);
 
@@ -73,30 +75,30 @@ export function PasswordForm({ onChanged }: { onChanged?: () => void }) {
       )}
 
       <Input
-        label="Mot de passe actuel"
+        label={t("password.current")}
         type="password"
         autoComplete="current-password"
         error={errors.current_password?.message}
-        {...form.register("current_password", { required: "Requis." })}
+        {...form.register("current_password", { required: "settings.required" })}
       />
       <Input
-        label="Nouveau mot de passe"
+        label={t("password.new")}
         type="password"
         autoComplete="new-password"
-        hint="Au moins 10 caractères."
+        hint={t("form.passwordHint")}
         error={errors.new_password?.message}
-        {...form.register("new_password", { required: "Requis." })}
+        {...form.register("new_password", { required: "settings.required" })}
       />
       <Input
-        label="Confirmer le nouveau mot de passe"
+        label={t("password.confirm")}
         type="password"
         autoComplete="new-password"
         error={errors.confirm_password?.message}
-        {...form.register("confirm_password", { required: "Requis." })}
+        {...form.register("confirm_password", { required: "settings.required" })}
       />
 
       <Button type="submit" variant="outline" isLoading={isSubmitting}>
-        Changer le mot de passe
+        {t("password.change")}
       </Button>
     </form>
   );

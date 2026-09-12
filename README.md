@@ -35,6 +35,7 @@ Read these before changing anything structural.
 | [docs/api.md](docs/api.md) | REST surface, error envelope, pagination |
 | [docs/authentication.md](docs/authentication.md) | Tokens, roles, access codes, ownership |
 | [docs/timeline.md](docs/timeline.md) | The timeline architectural decision |
+| [docs/i18n.md](docs/i18n.md) | French and Arabic, plurals, direction, fonts |
 | [docs/implementation-plan.md](docs/implementation-plan.md) | Phased roadmap |
 
 ---

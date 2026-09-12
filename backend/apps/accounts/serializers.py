@@ -8,6 +8,7 @@ from __future__ import annotations
 from django.contrib.auth import authenticate, password_validation
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.audit.models import AuditAction
@@ -19,12 +20,12 @@ from .models import Guardianship, ParentProfile, Relationship, Role, User
 # One message for every credential failure. Distinguishing "unknown email"
 # from "wrong password" would let an attacker enumerate which parents have
 # accounts at this nursery.
-INVALID_CREDENTIALS = "Identifiants invalides."
+INVALID_CREDENTIALS = _("Identifiants invalides.")
 
 # Likewise, every access-code failure (unknown, expired, claimed, revoked)
 # returns this single message, so the endpoint cannot be used as an oracle
 # for which codes exist (docs/authentication.md 4.4).
-INVALID_CODE = "Ce code d'accès est invalide, expiré ou déjà utilisé."
+INVALID_CODE = _("Ce code d'accès est invalide, expiré ou déjà utilisé.")
 
 
 class ChildSummarySerializer(serializers.Serializer):
@@ -242,7 +243,7 @@ class ParentClaimSerializer(serializers.Serializer):
                 attrs["password"]
             ):
                 raise serializers.ValidationError(
-                    {"email": "Cette adresse e-mail est déjà utilisée."}
+                    {"email": _("Cette adresse e-mail est déjà utilisée.")}
                 )
             attrs["existing_user"] = existing
 

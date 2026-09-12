@@ -8,6 +8,7 @@ a field cannot leak by being added to a shared ``fields`` list
 from __future__ import annotations
 
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from common.age import AgeGroup, age_display, age_group_for, age_in_months
@@ -133,7 +134,7 @@ class ChildDetailSerializer(BaseChildSerializer):
         # 400 with a French message instead of a 409 from the constraint.
         if value > timezone.localdate():
             raise serializers.ValidationError(
-                "La date de naissance ne peut pas être dans le futur."
+                _("La date de naissance ne peut pas être dans le futur.")
             )
         return value
 
@@ -149,7 +150,7 @@ class ChildWriteSerializer(serializers.ModelSerializer):
     def validate_date_of_birth(self, value):
         if value > timezone.localdate():
             raise serializers.ValidationError(
-                "La date de naissance ne peut pas être dans le futur."
+                _("La date de naissance ne peut pas être dans le futur.")
             )
         return value
 
@@ -179,7 +180,7 @@ class GuardianLinkSerializer(serializers.Serializer):
         user = User.objects.filter(email=value.lower().strip()).first()
         if user is None or user.role != Role.PARENT:
             raise serializers.ValidationError(
-                "Aucun compte parent ne correspond à cette adresse."
+                _("Aucun compte parent ne correspond à cette adresse.")
             )
         return user
 

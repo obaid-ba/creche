@@ -1,5 +1,6 @@
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 import { PageShell } from "@/components/app";
@@ -35,6 +36,7 @@ import {
 import type { TimelineFilter } from "@/features/timeline/types";
 
 export function StaffChildTimelinePage() {
+  const { t } = useTranslation();
   const { childId = "" } = useParams<{ childId: string }>();
   const [date, setDate] = useState(todayISO());
   const [filter, setFilter] = useState<TimelineFilter>("all");
@@ -54,8 +56,8 @@ export function StaffChildTimelinePage() {
   if (childQuery.isError) {
     return (
       <ErrorState
-        title="Enfant introuvable"
-        description="Ce dossier n'existe pas ou vous n'y avez pas accès."
+        title={t("day.childNotFound")}
+        description={t("day.childNotFoundHint")}
       />
     );
   }
@@ -78,9 +80,9 @@ export function StaffChildTimelinePage() {
 
         <div className="flex items-center gap-2">
           {isPublished ? (
-            <Badge tone="success">Journée publiée</Badge>
+            <Badge tone="success">{t("day.published")}</Badge>
           ) : (
-            <Badge tone="warning">Brouillon</Badge>
+            <Badge tone="warning">{t("day.draft")}</Badge>
           )}
           <Button
             size="sm"
@@ -88,7 +90,7 @@ export function StaffChildTimelinePage() {
             onClick={() => publishDay.mutate(date)}
             leftIcon={<Send className="size-4" />}
           >
-            {isPublished ? "Republier" : "Publier la journée"}
+            {t(isPublished ? "day.republish" : "day.publish")}
           </Button>
         </div>
       </header>
@@ -98,15 +100,15 @@ export function StaffChildTimelinePage() {
       {!isPublished && (
         <div className="mb-5">
           <Alert tone="info">
-            Les parents ne verront cette journée qu'une fois publiée.
+            {t("day.draftWarning")}
           </Alert>
         </div>
       )}
 
       <Card className="mb-5">
         <CardHeader
-          title="Enregistrement rapide"
-          description="L'événement est daté de l'heure actuelle."
+          title={t("day.quickAdd")}
+          description={t("day.quickAddHint")}
         />
         <CardBody>
           <QuickAddBar
@@ -141,10 +143,10 @@ export function StaffChildTimelinePage() {
       <Card>
         <CardBody>
           {timeline.isPending ? (
-            <LoadingState label="Chargement de la journée…" />
+            <LoadingState label={t("day.loading")} />
           ) : timeline.isError ? (
             <ErrorState
-              description="Impossible de charger la journée."
+              description={t("day.loadError")}
               onRetry={() => void timeline.refetch()}
             />
           ) : (
@@ -152,7 +154,7 @@ export function StaffChildTimelinePage() {
               events={timeline.data.results}
               onEnd={(eventId) => endEvent.mutate(eventId)}
               endingId={endEvent.isPending ? endEvent.variables : null}
-              emptyMessage="Aucun événement enregistré pour cette journée."
+              emptyMessage={t("day.noEvents")}
             />
           )}
         </CardBody>
@@ -160,20 +162,20 @@ export function StaffChildTimelinePage() {
 
       <Card className="mt-5">
         <CardHeader
-          title="Mot de l'équipe"
-          description="Visible par les parents une fois la journée publiée."
+          title={t("day.teamNote")}
+          description={t("day.teamNoteHint")}
         />
         <CardBody className="space-y-3">
           <label className="sr-only" htmlFor="general-notes">
-            Mot de l'équipe
+            {t("day.teamNote")}
           </label>
           <textarea
             id="general-notes"
             rows={3}
             value={notesValue}
             onChange={(event) => setNotes(event.target.value)}
-            placeholder="Très bonne journée, Mohamed a bien mangé…"
-            className="w-full rounded-card border border-ink-200 bg-white px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
+            placeholder={t("day.teamNotePlaceholder")}
+            className="w-full rounded-card border border-ink-200 bg-shell px-3.5 py-2.5 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25"
           />
           <Button
             variant="outline"
@@ -187,7 +189,7 @@ export function StaffChildTimelinePage() {
               )
             }
           >
-            Enregistrer la note
+            {t("day.saveNote")}
           </Button>
         </CardBody>
       </Card>

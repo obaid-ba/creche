@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: creche-mamati\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-12 11:42+0100\n"
+"POT-Creation-Date: 2026-09-12 12:23+0100\n"
 "PO-Revision-Date: 2026-09-12\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -19,8 +19,16 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+msgid "Impossible de générer un code unique."
+msgstr "تعذّر إنشاء رمز فريد."
+
+msgid "Cette adresse e-mail est déjà utilisée."
+msgstr "عنوان البريد الإلكتروني هذا مستعمل بالفعل."
+
+msgid "Vous ne pouvez pas désactiver votre propre compte."
+msgstr "لا يمكنك تعطيل حسابك الخاص."
 
 msgid "Parent"
 msgstr "ولي"
@@ -43,6 +51,15 @@ msgstr "الوصي"
 msgid "Autre"
 msgstr "أخرى"
 
+msgid "Identifiants invalides."
+msgstr "بيانات دخول غير صحيحة."
+
+msgid "Ce code d'accès est invalide, expiré ou déjà utilisé."
+msgstr "رمز الدخول هذا غير صالح أو منتهي الصلاحية أو مستعمل من قبل."
+
+msgid "Session expirée."
+msgstr "انتهت صلاحية الجلسة."
+
 msgid "Arts plastiques"
 msgstr "فنون تشكيلية"
 
@@ -60,6 +77,15 @@ msgstr "حركة"
 
 msgid "Éveil éducatif"
 msgstr "إيقاظ تربوي"
+
+msgid "L'heure de fin ne peut pas précéder l'heure de début."
+msgstr "لا يمكن أن يسبق وقت النهاية وقت البداية."
+
+msgid "Une activité ne peut pas être datée dans le futur."
+msgstr "لا يمكن أن يكون تاريخ النشاط في المستقبل."
+
+msgid "Aucun enfant valide dans la sélection."
+msgstr "لا يوجد طفل صالح ضمن الاختيار."
 
 msgid "Repas"
 msgstr "وجبة"
@@ -100,11 +126,36 @@ msgstr "الصحة"
 msgid "Hygiène"
 msgstr "النظافة"
 
+msgid "Les données de l'événement doivent être un objet."
+msgstr "يجب أن تكون بيانات الحدث كائناً."
+
+msgid "Ce champ n'est pas attendu pour ce type d'événement."
+msgstr "هذا الحقل غير متوقع لهذا النوع من الأحداث."
+
 msgid "Brouillon"
 msgstr "مسودة"
 
 msgid "Publié"
 msgstr "منشور"
+
+#, python-format
+msgid "Les événements de type %(type)s sont créés automatiquement."
+msgstr "تُنشأ أحداث النوع %(type)s تلقائياً."
+
+msgid "Un événement ne peut pas être enregistré dans le futur."
+msgstr "لا يمكن تسجيل حدث في المستقبل."
+
+msgid "Ce type d'événement n'a pas de durée."
+msgstr "هذا النوع من الأحداث ليس له مدة."
+
+msgid "La fin ne peut pas précéder le début."
+msgstr "لا يمكن أن تسبق النهاية البداية."
+
+msgid "La fin ne peut pas être dans le futur."
+msgstr "لا يمكن أن تكون النهاية في المستقبل."
+
+msgid "Seul le personnel peut enregistrer un événement."
+msgstr "الموظفون وحدهم يمكنهم تسجيل حدث."
 
 msgid "Actif"
 msgstr "نشط"
@@ -120,6 +171,24 @@ msgstr "ذكر"
 
 msgid "Fille"
 msgstr "أنثى"
+
+msgid "La date de naissance ne peut pas être dans le futur."
+msgstr "لا يمكن أن يكون تاريخ الولادة في المستقبل."
+
+msgid "Aucun compte parent ne correspond à cette adresse."
+msgstr "لا يوجد حساب ولي مطابق لهذا العنوان."
+
+msgid "Seul un administrateur peut supprimer définitivement un enfant."
+msgstr "المدير وحده يمكنه حذف طفل نهائياً."
+
+msgid "Cet enfant est déjà archivé."
+msgstr "هذا الطفل مؤرشف بالفعل."
+
+msgid "Seul un administrateur peut restaurer un enfant archivé."
+msgstr "المدير وحده يمكنه استعادة طفل مؤرشف."
+
+msgid "Cet enfant n'est pas archivé."
+msgstr "هذا الطفل غير مؤرشف."
 
 msgid "Nouvelle"
 msgstr "جديدة"
@@ -150,6 +219,17 @@ msgstr "تحديث شكوى"
 
 msgid "Réponse à une réclamation"
 msgstr "رد على شكوى"
+
+#, python-format
+msgid "La journée de %(name)s est disponible"
+msgstr "يومية %(name)s متاحة الآن"
+
+msgid "Consultez le détail de la journée."
+msgstr "اطّلع على تفاصيل اليومية."
+
+#, python-format
+msgid "%(name)s a participé à une activité"
+msgstr "شارك %(name)s في نشاط"
 
 msgid "2 → 6 mois"
 msgstr "شهران ← 6 أشهر"
@@ -196,3 +276,49 @@ msgstr[5] "%(count)d سنة"
 #, python-format
 msgid "%(years)s et %(months)s"
 msgstr "%(years)s و%(months)s"
+
+msgid "Les données envoyées sont invalides."
+msgstr "البيانات المرسلة غير صالحة."
+
+msgid "Authentification requise ou session expirée."
+msgstr "يلزم تسجيل الدخول أو انتهت صلاحية الجلسة."
+
+msgid "Vous n'avez pas l'autorisation d'effectuer cette action."
+msgstr "لا تملك صلاحية القيام بهذا الإجراء."
+
+msgid "La ressource demandée est introuvable."
+msgstr "المورد المطلوب غير موجود."
+
+msgid "Méthode non autorisée."
+msgstr "طريقة غير مسموح بها."
+
+msgid "Cette opération entre en conflit avec l'état actuel."
+msgstr "هذه العملية تتعارض مع الحالة الراهنة."
+
+msgid "Le fichier envoyé est trop volumineux."
+msgstr "الملف المرسل كبير جداً."
+
+msgid "Ce type de fichier n'est pas accepté."
+msgstr "هذا النوع من الملفات غير مقبول."
+
+msgid "Trop de tentatives. Veuillez réessayer plus tard."
+msgstr "محاولات كثيرة. يرجى إعادة المحاولة لاحقاً."
+
+msgid "Une erreur interne est survenue. Veuillez réessayer."
+msgstr "حدث خطأ داخلي. يرجى إعادة المحاولة."
+
+msgid "Une erreur est survenue."
+msgstr "حدث خطأ."
+
+#, python-format
+msgid "Le fichier dépasse la taille maximale de %(max)s Mo."
+msgstr "حجم الملف يتجاوز الحد الأقصى %(max)s ميغابايت."
+
+msgid "Ce fichier n'est pas une image valide."
+msgstr "هذا الملف ليس صورة صالحة."
+
+msgid "Format non accepté. Utilisez JPEG, PNG ou WebP."
+msgstr "صيغة غير مقبولة. استعمل JPEG أو PNG أو WebP."
+
+msgid "Réservé au personnel de la crèche."
+msgstr "مخصّص لموظفي الحضانة."

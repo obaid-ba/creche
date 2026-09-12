@@ -6,6 +6,7 @@ import uuid
 from django.db import transaction
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -112,7 +113,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         )
         if not children:
             return Response(
-                {"detail": "Aucun enfant valide dans la sélection."},
+                {"detail": _("Aucun enfant valide dans la sélection.")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

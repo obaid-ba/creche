@@ -127,6 +127,7 @@ export function ClaimForm() {
         label={t("form.email")}
         type="email"
         autoComplete="email"
+        dir="ltr"
         leftIcon={<Mail className="size-4" />}
         error={errors.email?.message}
         {...form.register("email")}

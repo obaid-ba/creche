@@ -1,7 +1,9 @@
 import { Check, Copy, KeyRound } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Modal } from "@/components/ui";
+import { useLocale } from "@/i18n/useLocale";
 
 import type { IssuedAccessCode } from "../types";
 
@@ -19,6 +21,8 @@ export function AccessCodeModal({
   issued: IssuedAccessCode | null;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
+  const locale = useLocale();
   const [hasCopied, setHasCopied] = useState(false);
 
   async function copyCode() {
@@ -37,22 +41,22 @@ export function AccessCodeModal({
     <Modal
       isOpen={issued !== null}
       onClose={onClose}
-      title="Code d'accès généré"
-      description="Transmettez ce code au parent pour qu'il active son compte."
-      footer={
-        <Button onClick={onClose}>J'ai noté le code</Button>
-      }
+      title={t("child.codeIssued")}
+      description={t("child.codeIssuedHint")}
+      footer={<Button onClick={onClose}>{t("child.codeNoted")}</Button>}
     >
       {issued !== null && (
         <div className="space-y-4">
-          <Alert tone="danger">
-            Ce code ne sera plus jamais affiché. Notez-le ou copiez-le
-            maintenant.
-          </Alert>
+          <Alert tone="danger">{t("child.codeOnceWarning")}</Alert>
 
           <div className="flex items-center gap-3 rounded-card border-2 border-dashed border-primary-300 bg-primary-50 p-4">
             <KeyRound aria-hidden="true" className="size-5 text-primary-600" />
-            <code className="flex-1 font-mono text-2xl font-bold tracking-widest text-primary-800">
+            {/* The code is Latin letters and digits whatever the
+                interface language. */}
+            <code
+              dir="ltr"
+              className="flex-1 font-mono text-2xl font-bold tracking-widest text-primary-800"
+            >
               {issued.code}
             </code>
             <Button
@@ -67,18 +71,18 @@ export function AccessCodeModal({
                 )
               }
             >
-              {hasCopied ? "Copié" : "Copier"}
+              {t(hasCopied ? "child.copied" : "child.copy")}
             </Button>
           </div>
 
           <p className="text-sm text-ink-500">
-            Valable jusqu'au{" "}
-            {new Date(issued.expires_at).toLocaleDateString("fr-FR", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
+            {t("child.codeValidUntil", {
+              date: new Date(issued.expires_at).toLocaleDateString(locale, {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }),
             })}
-            . Le code ne peut être utilisé qu'une seule fois.
           </p>
         </div>
       )}

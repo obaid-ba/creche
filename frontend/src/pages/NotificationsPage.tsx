@@ -1,4 +1,5 @@
 import { Bell, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { PageShell } from "@/components/app";
@@ -22,6 +23,7 @@ import { useState } from "react";
 
 /** Full history behind the bell (brief §16). Shared by both roles. */
 export function NotificationsPage() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"all" | "unread">("all");
   const navigate = useNavigate();
 
@@ -37,11 +39,13 @@ export function NotificationsPage() {
     <PageShell size="form">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">Notifications</h1>
+          <h1 className="font-display text-2xl font-extrabold text-secondary-900 sm:text-[1.75rem]">
+            {t("notifications.title")}
+          </h1>
           <p className="mt-1 text-sm text-ink-500">
             {unread === 0
-              ? "Tout est à jour."
-              : `${unread} notification${unread > 1 ? "s" : ""} non lue${unread > 1 ? "s" : ""}.`}
+              ? t("notifications.allRead")
+              : t("notifications.unread", { count: unread })}
           </p>
         </div>
 
@@ -53,34 +57,38 @@ export function NotificationsPage() {
             isLoading={markAllRead.isPending}
             onClick={() => markAllRead.mutate()}
           >
-            Tout marquer comme lu
+            {t("notifications.markAllRead")}
           </Button>
         )}
       </div>
 
       <Tabs
-        label="Filtrer les notifications"
+        label={t("notifications.filter")}
         value={tab}
         onChange={(key) => setTab(key as "all" | "unread")}
         items={[
-          { key: "all", label: "Toutes" },
-          { key: "unread", label: "Non lues", count: unread },
+          { key: "all", label: t("notifications.all") },
+          { key: "unread", label: t("notifications.unreadTab"), count: unread },
         ]}
       />
 
       <div className="mt-5">
         {query.isPending ? (
-          <LoadingState label="Chargement…" />
+          <LoadingState label={t("common.loading")} />
         ) : query.isError ? (
           <ErrorState
-            description="Impossible de charger les notifications."
+            description={t("notifications.loadError")}
             onRetry={() => void query.refetch()}
           />
         ) : items.length === 0 ? (
           <EmptyState
             icon={<Bell className="size-6" />}
-            title={tab === "unread" ? "Aucune notification non lue" : "Aucune notification"}
-            description="Vous serez prévenu ici des nouveaux messages et des mises à jour."
+            title={t(
+              tab === "unread"
+                ? "notifications.emptyUnread"
+                : "notifications.empty",
+            )}
+            description={t("notifications.emptyHint")}
           />
         ) : (
           <Card>

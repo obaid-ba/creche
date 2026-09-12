@@ -22,6 +22,7 @@ from hashlib import sha256
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from common.models import BaseModel
 
@@ -142,7 +143,7 @@ class ChildAccessCode(BaseModel):
             if not cls.objects.filter(code_lookup=lookup).exists():
                 break
         else:  # pragma: no cover - implies a broken CSPRNG
-            raise RuntimeError("Impossible de générer un code unique.")
+            raise RuntimeError(_("Impossible de générer un code unique."))
 
         instance = cls.objects.create(
             child=child,

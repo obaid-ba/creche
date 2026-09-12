@@ -49,8 +49,10 @@ export class ApiError extends Error {
 
 /** French fallbacks for failures that never reach the API. */
 const NETWORK_MESSAGE =
-  "Impossible de contacter le serveur. Vérifiez votre connexion.";
-const TIMEOUT_MESSAGE = "Le serveur met trop de temps à répondre. Réessayez.";
+  "network.offline";
+/** Translation keys, resolved where they are displayed: this module is
+ *  imported by the axios client, which has no React context. */
+const TIMEOUT_MESSAGE = "network.timeout";
 const UNKNOWN_MESSAGE = "Une erreur inattendue est survenue.";
 
 export function normaliseError(error: unknown): ApiError {

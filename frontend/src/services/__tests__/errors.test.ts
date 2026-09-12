@@ -36,11 +36,14 @@ describe("normaliseError", () => {
     expect(result.isValidationError).toBe(true);
   });
 
-  it("reports a network failure in French when there is no response", () => {
+  it("reports a network failure when there is no response", () => {
     const result = normaliseError(new AxiosError("Network Error"));
 
     expect(result.code).toBe("network_error");
-    expect(result.message).toMatch(/connexion/i);
+    // A translation key, not a sentence: this module is imported by the
+    // axios client, which has no React context to translate in. Alert
+    // resolves it where it is displayed.
+    expect(result.message).toBe("network.offline");
     expect(result.status).toBe(0);
   });
 

@@ -7,6 +7,7 @@ approach the same data from the adult's side rather than the child's.
 from __future__ import annotations
 
 from django.db.models import Prefetch, Q
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.decorators import action
@@ -170,7 +171,7 @@ class StaffCreateSerializer(serializers.Serializer):
     def validate_email(self, value: str) -> str:
         email = value.lower().strip()
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("Cette adresse e-mail est déjà utilisée.")
+            raise serializers.ValidationError(_("Cette adresse e-mail est déjà utilisée."))
         return email
 
     def validate_password(self, value: str) -> str:
@@ -237,7 +238,7 @@ class StaffViewSet(
 
         if profile.user_id == request.user.id:
             return Response(
-                {"detail": "Vous ne pouvez pas désactiver votre propre compte."},
+                {"detail": _("Vous ne pouvez pas désactiver votre propre compte.")},
                 status=status.HTTP_409_CONFLICT,
             )
 

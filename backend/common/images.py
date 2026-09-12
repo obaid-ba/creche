@@ -17,6 +17,7 @@ import io
 
 from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.utils.translation import gettext, gettext_lazy as _
 from PIL import Image, ImageOps, UnidentifiedImageError
 from rest_framework import serializers
 
@@ -30,12 +31,13 @@ MAX_PIXELS = 40_000_000
 
 
 def validate_image(uploaded) -> Image.Image:
-    """Return a decoded image, or raise a French ValidationError."""
+    """Return a decoded image, or raise a ValidationError in the request's
+    language."""
     max_bytes = settings.MAX_UPLOAD_SIZE_BYTES
     if uploaded.size > max_bytes:
         raise serializers.ValidationError(
-            f"Le fichier dépasse la taille maximale de "
-            f"{settings.MAX_UPLOAD_SIZE_MB} Mo."
+            gettext("Le fichier dépasse la taille maximale de %(max)s Mo.")
+            % {"max": settings.MAX_UPLOAD_SIZE_MB}
         )
 
     try:
@@ -48,12 +50,12 @@ def validate_image(uploaded) -> Image.Image:
         image = Image.open(uploaded)
     except (UnidentifiedImageError, OSError, ValueError) as exc:
         raise serializers.ValidationError(
-            "Ce fichier n'est pas une image valide."
+            _("Ce fichier n'est pas une image valide.")
         ) from exc
 
     if image.format not in ALLOWED_FORMATS:
         raise serializers.ValidationError(
-            "Format non accepté. Utilisez JPEG, PNG ou WebP."
+            _("Format non accepté. Utilisez JPEG, PNG ou WebP.")
         )
 
     width, height = image.size
