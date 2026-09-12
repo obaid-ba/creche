@@ -22,6 +22,11 @@ export const NURSERY = {
 
   facebook: "https://www.facebook.com/profile.php?id=100054364788852",
 
+  /** ⚠️ UNVERIFIED — the design mock showed a placeholder address and the
+   *  nursery has not supplied a real one. Confirm or remove before the
+   *  site is published; a wrong address silently loses enquiries. */
+  email: "contact@creche-mamati.tn",
+
   location: {
     mapsUrl: "https://maps.app.goo.gl/5uyJERbH2px3cdB48",
     latitude: 37.283058,
@@ -59,6 +64,9 @@ export const NURSERY_FACTS = {
 
   /** "Crèche privée" in the hero badge. */
   kind: { label: "Crèche privée", verified: false },
+
+  /** Shown in the footer and on /contact. */
+  email: { value: "contact@creche-mamati.tn", verified: false },
 
   /** Services listed on the home page. Remove any the nursery does not
    *  actually offer. */

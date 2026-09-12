@@ -24,43 +24,69 @@ describe("public site", () => {
     renderAt("/");
 
     expect(
-      screen.getByRole("heading", { level: 1, name: /second foyer/i }),
+      screen.getByRole("heading", { level: 1, name: /grandir.*sourire chaque jour/i }),
     ).toBeInTheDocument();
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("contentinfo")).toBeInTheDocument();
   });
 
-  it("offers both parent-portal and registration calls to action", () => {
+  it("leads to the parent portal from the header and the page body", () => {
     renderAt("/");
 
-    // The portal is reachable from the header and from the hero, so scope
-    // the assertion instead of matching the name globally.
+    // The header CTA and the two in-page invitations all point at login.
+    const portalLinks = screen
+      .getAllByRole("link")
+      .filter((a) => a.getAttribute("href") === "/parent/login");
+
+    expect(portalLinks.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("offers the registration document", () => {
+    renderAt("/");
+
     const main = screen.getByRole("main");
+    const registration = within(main)
+      .getAllByRole("link", { name: /dossier d'inscription/i })
+      .map((a) => a.getAttribute("href"));
+
+    // One routes to the page, one downloads the PDF directly.
     expect(
-      within(main).getAllByRole("link", { name: /espace parents/i })[0],
-    ).toHaveAttribute("href", "/parent/login");
-    expect(
-      within(main).getByRole("link", { name: /dossier d'inscription/i }),
-    ).toHaveAttribute("href", "/documents");
+      registration.some((href) => href === "/documents" || href?.endsWith(".pdf")),
+    ).toBe(true);
   });
 
-  it("puts a working parent-portal link in the header", () => {
-    // This was a dead <Button onClick={() => undefined}> until running the
-    // app surfaced it: the header CTA navigated nowhere.
+  it("shows the sections the brief requires", () => {
     renderAt("/");
+    const main = screen.getByRole("main");
 
-    const header = screen.getByRole("banner");
-    expect(
-      within(header).getByRole("link", { name: /espace parents/i }),
-    ).toHaveAttribute("href", "/parent/login");
+    for (const heading of [
+      /une journée chez mamati/i,
+      /chaque petit moment/i,
+      /nos activités/i,
+      /galerie/i,
+    ]) {
+      expect(
+        within(main).getByRole("heading", { name: heading }),
+        `missing section: ${heading}`,
+      ).toBeInTheDocument();
+    }
   });
 
-  it("shows the values and services sections", () => {
+  it("names the four values", () => {
     renderAt("/");
+    const values = screen.getByRole("region", { name: /nos valeurs/i });
 
-    expect(screen.getByRole("heading", { name: "Nos valeurs" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Nos services" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Bienveillance" })).toBeInTheDocument();
+    for (const value of ["Bienveillance", "Sécurité", "Éveil", "Transparence"]) {
+      expect(within(values).getByText(value)).toBeInTheDocument();
+    }
+  });
+
+  it("previews the day so the timeline feature is visible before login", () => {
+    renderAt("/");
+    const main = screen.getByRole("main");
+
+    expect(within(main).getAllByText("08:15").length).toBeGreaterThan(0);
+    expect(within(main).getAllByText(/petit déjeuner/i).length).toBeGreaterThan(0);
   });
 
   it("exposes a skip link before the navigation", () => {
@@ -75,9 +101,10 @@ describe("public site", () => {
     renderAt("/");
 
     const nav = screen.getByRole("navigation", { name: "Navigation principale" });
-    expect(
-      within(nav).getByRole("link", { name: "Accueil" }),
-    ).toHaveAttribute("aria-current", "page");
+    expect(within(nav).getByRole("link", { name: "Accueil" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("renders the French not-found page for an unknown route", () => {

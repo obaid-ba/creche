@@ -152,8 +152,24 @@
   }
 }
 
+@keyframes decor-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @layer utilities {
   .text-balance { text-wrap: balance; }
+
+  /* Sections fade up as they enter. Applied through a small hook so the
+     animation only runs once and only when motion is welcome. */
+  .rise {
+    animation: rise-in 0.7s var(--ease-soft) both;
+  }
 
   /* Respect the visitor's setting rather than overriding it. Decorative
      motion stops entirely; nothing essential depends on it. */
