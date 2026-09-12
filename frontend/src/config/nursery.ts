@@ -51,19 +51,22 @@ export const NURSERY = {
  * this warning.
  */
 export const NURSERY_FACTS = {
-  /** Shown in the hero badge and on /about. */
-  ageRange: { from: "2 mois", to: "4 ans", verified: false },
+  /** Shown in the hero badge and on /about. The wording lives in the
+   *  locale files, because "2 mois" has to be said in Arabic too; what
+   *  stays here is the record of whether the nursery has confirmed it. */
+  ageRange: { fromKey: "facts.ageFrom", toKey: "facts.ageTo", verified: false },
 
-  /** Shown on /about and in the services list. */
+  /** Shown on /about and in the services list. Clock times are the same
+   *  in both languages, so they are data rather than copy. */
   openingHours: {
-    days: "Du lundi au vendredi",
+    daysKey: "facts.openingDays",
     from: "07:30",
     to: "18:30",
     verified: false,
   },
 
   /** "Crèche privée" in the hero badge. */
-  kind: { label: "Crèche privée", verified: false },
+  kind: { labelKey: "facts.kind", verified: false },
 
   /** Shown in the footer and on /contact. */
   email: { value: "contact@creche-mamati.tn", verified: false },
@@ -71,8 +74,8 @@ export const NURSERY_FACTS = {
   /** Services listed on the home page. Remove any the nursery does not
    *  actually offer. */
   services: {
-    meals: { label: "Repas équilibrés", verified: false },
-    activities: { label: "Activités d'éveil", verified: true },
+    meals: { labelKey: "facts.meals", verified: false },
+    activities: { labelKey: "facts.activities", verified: true },
   },
 } as const;
 

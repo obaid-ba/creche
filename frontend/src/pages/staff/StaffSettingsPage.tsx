@@ -227,7 +227,7 @@ export function StaffSettingsPage() {
                       <p className="font-semibold text-ink-900">
                         {member.first_name} {member.last_name}
                         {isSelf && (
-                          <span className="ml-2 text-xs font-normal text-ink-400">
+                          <span className="ms-2 text-xs font-normal text-ink-400">
                             (vous)
                           </span>
                         )}

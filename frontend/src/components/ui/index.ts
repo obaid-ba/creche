@@ -10,6 +10,7 @@ export { Dropdown, type DropdownItem } from "./Dropdown";
 export { FileUpload } from "./FileUpload";
 export { ImagePreview, type PreviewImage } from "./ImagePreview";
 export { Input, type InputProps } from "./Input";
+export { LanguageSwitcher } from "./LanguageSwitcher";
 export { LinkButton } from "./LinkButton";
 export { Logo } from "./Logo";
 export { Modal } from "./Modal";

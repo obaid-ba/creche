@@ -1,17 +1,18 @@
 import { Menu, Phone, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, NavLink } from "react-router-dom";
 
 import { Wordmark } from "@/components/brand/Wordmark";
-import { Container } from "@/components/ui";
+import { Container, LanguageSwitcher } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 const LINKS = [
-  { to: "/", label: "Accueil", end: true },
-  { to: "/about", label: "La crèche", end: false },
-  { to: "/gallery", label: "Galerie", end: false },
-  { to: "/documents", label: "Inscription", end: false },
-  { to: "/contact", label: "Contact", end: false },
+  { to: "/", key: "home", end: true },
+  { to: "/about", key: "about", end: false },
+  { to: "/gallery", key: "gallery", end: false },
+  { to: "/documents", key: "registration", end: false },
+  { to: "/contact", key: "contact", end: false },
 ] as const;
 
 /**
@@ -23,6 +24,7 @@ const LINKS = [
  * hero, since both are near-white.
  */
 export function SiteNavbar() {
+  const { t } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -50,13 +52,12 @@ export function SiteNavbar() {
             isScrolled ? "shadow-lifted" : "shadow-soft",
           )}
         >
-          <div className="flex h-16 items-center justify-between gap-4 px-4 sm:h-[4.5rem] sm:px-6">
-            <Link to="/" className="shrink-0" aria-label="Crèche Mamati — accueil">
-              <Wordmark variant="compact" className="hidden sm:flex" />
-              <Wordmark variant="compact" className="flex sm:hidden" />
+          <div className="flex h-16 items-center justify-between gap-3 px-4 sm:h-[4.5rem] sm:px-6">
+            <Link to="/" className="shrink-0" aria-label={t("nav.homeAria")}>
+              <Wordmark variant="compact" />
             </Link>
 
-            <nav aria-label="Navigation principale" className="hidden lg:block">
+            <nav aria-label={t("nav.main")} className="hidden lg:block">
               <ul className="flex items-center gap-1">
                 {LINKS.map((link) => (
                   <li key={link.to}>
@@ -72,50 +73,55 @@ export function SiteNavbar() {
                         )
                       }
                     >
-                      {link.label}
+                      {t(`nav.${link.key}`)}
                     </NavLink>
                   </li>
                 ))}
               </ul>
             </nav>
 
-            <div className="hidden shrink-0 items-center gap-2 md:flex">
+            <div className="flex shrink-0 items-center gap-2">
+              {/* Visible at every width, including mobile: someone who
+                  reads only Arabic must not have to open a menu to find
+                  out the site speaks their language. */}
+              <LanguageSwitcher />
+
               <Link
                 to="/parent/login"
-                className="inline-flex h-10 items-center gap-2 rounded-pill bg-primary-600 px-4 text-sm font-bold text-white shadow-soft transition-colors hover:bg-primary-700"
+                className="hidden h-10 items-center gap-2 rounded-pill bg-primary-600 px-4 text-sm font-bold text-white shadow-soft transition-colors hover:bg-primary-700 md:inline-flex"
               >
                 <UserRound aria-hidden="true" className="size-4" />
-                Espace parents
+                {t("nav.parentPortal")}
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex h-10 items-center gap-2 rounded-pill bg-secondary-600 px-4 text-sm font-bold text-white shadow-soft transition-colors hover:bg-secondary-700"
+                className="hidden h-10 items-center gap-2 rounded-pill bg-secondary-600 px-4 text-sm font-bold text-white shadow-soft transition-colors hover:bg-secondary-700 lg:inline-flex"
               >
                 <Phone aria-hidden="true" className="size-4" />
-                Nous contacter
+                {t("nav.contactUs")}
               </Link>
-            </div>
 
-            <button
-              type="button"
-              className="rounded-pill p-2 text-ink-600 hover:bg-ink-50 lg:hidden"
-              aria-expanded={isMenuOpen}
-              aria-controls="site-menu"
-              aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-              onClick={() => setIsMenuOpen((open) => !open)}
-            >
-              {isMenuOpen ? (
-                <X aria-hidden="true" className="size-5" />
-              ) : (
-                <Menu aria-hidden="true" className="size-5" />
-              )}
-            </button>
+              <button
+                type="button"
+                className="rounded-pill p-2 text-ink-600 hover:bg-ink-50 lg:hidden"
+                aria-expanded={isMenuOpen}
+                aria-controls="site-menu"
+                aria-label={isMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
+                onClick={() => setIsMenuOpen((open) => !open)}
+              >
+                {isMenuOpen ? (
+                  <X aria-hidden="true" className="size-5" />
+                ) : (
+                  <Menu aria-hidden="true" className="size-5" />
+                )}
+              </button>
+            </div>
           </div>
 
           {isMenuOpen && (
             <nav
               id="site-menu"
-              aria-label="Navigation mobile"
+              aria-label={t("nav.mobile")}
               className="border-t border-ink-100 px-4 pb-4 pt-2 lg:hidden"
             >
               <ul className="flex flex-col gap-1">
@@ -134,7 +140,7 @@ export function SiteNavbar() {
                         )
                       }
                     >
-                      {link.label}
+                      {t(`nav.${link.key}`)}
                     </NavLink>
                   </li>
                 ))}
@@ -144,10 +150,10 @@ export function SiteNavbar() {
                 <Link
                   to="/parent/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary-600 px-4 text-sm font-bold text-white"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-primary-600 px-4 text-sm font-bold text-white md:hidden"
                 >
                   <UserRound aria-hidden="true" className="size-4" />
-                  Espace parents
+                  {t("nav.parentPortal")}
                 </Link>
                 <Link
                   to="/contact"
@@ -155,7 +161,7 @@ export function SiteNavbar() {
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-pill bg-secondary-600 px-4 text-sm font-bold text-white"
                 >
                   <Phone aria-hidden="true" className="size-4" />
-                  Nous contacter
+                  {t("nav.contactUs")}
                 </Link>
               </div>
             </nav>

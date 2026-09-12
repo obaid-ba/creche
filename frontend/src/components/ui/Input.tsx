@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {leftIcon !== undefined && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400"
+            className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-ink-400"
           >
             {leftIcon}
           </span>
@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             "h-11 w-full rounded-card border bg-white px-3.5 text-sm text-ink-800",
             "placeholder:text-ink-300",
             "transition-colors focus:outline-none focus:ring-2",
-            leftIcon !== undefined && "pl-10",
+            leftIcon !== undefined && "ps-10",
             error !== undefined
               ? "border-danger-500 focus:ring-danger-500/30"
               : "border-ink-200 focus:border-primary-400 focus:ring-primary-500/25",

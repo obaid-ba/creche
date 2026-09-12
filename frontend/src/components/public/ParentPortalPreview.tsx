@@ -1,4 +1,5 @@
 import { ArrowRight, Smile, Thermometer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Decor, Heart, Sparkle } from "@/components/public/Decorations";
@@ -14,21 +15,23 @@ import { Container } from "@/components/ui";
  * application delivers.
  */
 const TIMELINE = [
-  { time: "08:15", icon: "🍼", label: "Petit déjeuner", detail: "Biberon 180 ml" },
-  { time: "09:00", icon: "🎨", label: "Atelier peinture", detail: "Activité créative" },
-  { time: "10:30", icon: "🌙", label: "Sieste", detail: "Durée 1h15" },
-  { time: "12:00", icon: "🍽️", label: "Déjeuner", detail: "Purée + yaourt" },
+  { time: "08:15", icon: "🍼", key: "breakfast", detail: "portal.bottle" },
+  { time: "09:00", icon: "🎨", key: "painting", detail: "portal.creative" },
+  { time: "10:30", icon: "🌙", key: "nap", detail: "portal.duration" },
+  { time: "12:00", icon: "🍽️", key: "lunch", detail: "portal.lunchMenu" },
 ] as const;
 
 export function ParentPortalPreview() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative overflow-hidden py-14 md:py-20">
       <Container size="wide">
         <div className="relative overflow-hidden rounded-panel bg-gradient-to-br from-secondary-50 via-primary-50/60 to-secondary-100/70 px-5 py-10 md:px-10 md:py-12">
-          <Decor className="right-8 top-8 text-accent-300">
+          <Decor className="end-8 top-8 text-accent-300">
             <Sparkle className="size-6" />
           </Decor>
-          <Decor className="bottom-10 left-8 text-primary-200" float>
+          <Decor className="bottom-10 start-8 text-primary-200" float>
             <Heart className="size-6" />
           </Decor>
 
@@ -36,21 +39,21 @@ export function ParentPortalPreview() {
             {/* ── Pitch ───────────────────────────────────────────── */}
             <div className="relative z-10">
               <h2 className="text-3xl leading-tight md:text-[2.1rem]">
-                Gardez un œil sur
+                {t("portal.titleLine1")}
                 <br />
-                chaque <span className="text-primary-500">petit moment</span>
+                {t("portal.titleLine2Prefix")}{" "}
+                <span className="text-primary-500">
+                  {t("portal.titleHighlight")}
+                </span>
               </h2>
 
-              <p className="mt-4 max-w-sm text-ink-500">
-                Depuis votre espace parent, découvrez la journée de votre
-                enfant : repas, sommeil, activités, humeur et bien plus encore.
-              </p>
+              <p className="mt-4 max-w-sm text-ink-500">{t("portal.lead")}</p>
 
               <Link
                 to="/parent/login"
                 className="group mt-7 inline-flex h-12 items-center gap-2 rounded-pill bg-primary-600 px-6 text-sm font-bold text-white shadow-soft transition-colors hover:bg-primary-700"
               >
-                Accéder à mon espace
+                {t("portal.cta")}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform group-hover:translate-x-0.5"
@@ -66,7 +69,7 @@ export function ParentPortalPreview() {
               aria-hidden="true"
               className="rounded-panel bg-shell/95 p-5 shadow-float backdrop-blur"
             >
-              <p className="font-display text-lg font-bold">Bonjour, maman 👋</p>
+              <p className="font-display text-lg font-bold">{t("portal.greeting")}</p>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-[auto_1fr_1fr_1fr] sm:items-center">
                 <div className="flex items-center gap-2.5">
@@ -77,25 +80,33 @@ export function ParentPortalPreview() {
                     <span className="block text-sm font-bold text-ink-900">
                       Mohamed
                     </span>
-                    <span className="block text-xs text-ink-400">18 mois</span>
+                    <span className="block text-xs text-ink-400">
+                      {t("portal.months", { count: 18 })}
+                    </span>
                   </span>
                 </div>
 
                 <Stat
-                  label="Humeur du jour"
-                  value="Heureux"
+                  label={t("portal.mood")}
+                  value={t("portal.happy")}
                   icon={<Smile className="size-4 text-accent-500" />}
                 />
-                <Stat label="Sieste" value="1h15" detail="10:30 – 11:45" />
                 <Stat
-                  label="Température"
-                  value="36,6 °C"
+                  label={t("portal.sleep")}
+                  value={<span dir="ltr">1h15</span>}
+                  detail="10:30 – 11:45"
+                />
+                {/* A measurement keeps its Latin order in Arabic:
+                    without the isolate "36,6 °C" is rendered "C° 36,6". */}
+                <Stat
+                  label={t("portal.temperature")}
+                  value={<span dir="ltr">36,6 °C</span>}
                   icon={<Thermometer className="size-4 text-primary-500" />}
                 />
               </div>
 
               <p className="mt-5 text-xs font-bold uppercase tracking-wide text-ink-400">
-                Aujourd'hui
+                {t("portal.today")}
               </p>
               <ul className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                 {TIMELINE.map((item) => (
@@ -105,13 +116,13 @@ export function ParentPortalPreview() {
                   >
                     <span className="flex items-center gap-1.5 text-xs font-bold text-ink-900">
                       <span>{item.icon}</span>
-                      {item.time}
+                      <span dir="ltr">{item.time}</span>
                     </span>
                     <span className="mt-0.5 block text-xs font-semibold text-ink-700">
-                      {item.label}
+                      {t(`dailyLife.${item.key}`)}
                     </span>
                     <span className="block text-[0.7rem] text-ink-400">
-                      {item.detail}
+                      {t(item.detail, { ml: 180, value: "1h15" })}
                     </span>
                   </li>
                 ))}
@@ -130,8 +141,8 @@ function Stat({
   detail,
   icon,
 }: {
-  label: string;
-  value: string;
+  label: React.ReactNode;
+  value: React.ReactNode;
   detail?: string;
   icon?: React.ReactNode;
 }) {
@@ -145,7 +156,9 @@ function Stat({
         {value}
       </span>
       {detail !== undefined && (
-        <span className="block text-[0.7rem] text-ink-400">{detail}</span>
+        <span dir="ltr" className="block text-start text-[0.7rem] text-ink-400">
+          {detail}
+        </span>
       )}
     </div>
   );

@@ -51,7 +51,7 @@ export function Table<T>({
                 scope="col"
                 className={cn(
                   "px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-ink-500",
-                  column.align === "right" ? "text-right" : "text-left",
+                  column.align === "right" ? "text-end" : "text-start",
                   column.hideOnMobile === true && "hidden sm:table-cell",
                 )}
               >
@@ -76,7 +76,7 @@ export function Table<T>({
                   key={column.key}
                   className={cn(
                     "px-3 py-3 text-ink-700",
-                    column.align === "right" ? "text-right" : "text-left",
+                    column.align === "right" ? "text-end" : "text-start",
                     column.hideOnMobile === true && "hidden sm:table-cell",
                   )}
                 >

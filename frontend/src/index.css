@@ -182,3 +182,45 @@
     }
   }
 }
+
+/* ── Right-to-left ─────────────────────────────────────────────────────
+   Layout mirroring is handled by logical properties (ms/me, start/end,
+   text-start) throughout the components, so nothing here needs to undo
+   a physical direction. What logical properties cannot mirror is the
+   *drawing* inside an icon: an arrow pointing right still points right
+   in Arabic, where "forward" is leftwards.
+
+   `scale` is used rather than `transform: scaleX(-1)` because Tailwind
+   writes hover motion into the `translate` property; the two individual
+   transform properties compose, whereas a `transform` here would
+   silently discard the translation. */
+[dir="rtl"] :is(
+  .lucide-arrow-right, .lucide-arrow-left,
+  .lucide-chevron-right, .lucide-chevron-left,
+  .lucide-chevrons-right, .lucide-chevrons-left,
+  .lucide-move-right, .lucide-move-left,
+  .lucide-arrow-up-right, .lucide-arrow-down-right,
+  .lucide-log-out, .lucide-log-in,
+  .lucide-reply, .lucide-share-2, .lucide-send
+) {
+  scale: -1 1;
+}
+
+/* The Latin stack has no Arabic coverage, so the Arabic faces are put
+   first rather than relying on a fallback. Baloo Bhaijaan 2 is Baloo's
+   own Arabic sibling, which keeps the headings recognisably the same
+   voice across the two languages. Arabic also runs optically smaller
+   than Latin at the same pixel size, hence the slight size bump. */
+[dir="rtl"] {
+  --font-display: "Baloo Bhaijaan 2", "Baloo 2", "Segoe UI", Tahoma, sans-serif;
+  --font-sans: "Tajawal", "Segoe UI", Tahoma, sans-serif;
+
+  font-size: 1.05em;
+}
+
+/* Numerals stay Western Arabic (0-9) rather than Eastern (٠-٩): the
+   nursery's own documents, phone number and price lists use them, and
+   mixing the two inside one interface is worse than either alone. */
+[dir="rtl"] {
+  font-variant-numeric: lining-nums;
+}

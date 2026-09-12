@@ -1,4 +1,5 @@
 import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Wordmark } from "@/components/brand/Wordmark";
@@ -6,19 +7,21 @@ import { Container } from "@/components/ui";
 import { NURSERY, NURSERY_FACTS } from "@/config/nursery";
 
 const NAVIGATION = [
-  { to: "/", label: "Accueil" },
-  { to: "/about", label: "La crèche" },
-  { to: "/gallery", label: "Galerie" },
-  { to: "/documents", label: "Inscription" },
-  { to: "/contact", label: "Contact" },
+  { to: "/", key: "nav.home" },
+  { to: "/about", key: "nav.about" },
+  { to: "/gallery", key: "nav.gallery" },
+  { to: "/documents", key: "nav.registration" },
+  { to: "/contact", key: "nav.contact" },
 ] as const;
 
 const PARENT_LINKS = [
-  { to: "/parent/login", label: "Connexion parent" },
-  { to: "/parent/activation", label: "Activer mon compte" },
+  { to: "/parent/login", key: "footer.login" },
+  { to: "/parent/activation", key: "footer.activate" },
 ] as const;
 
 export function SiteFooter() {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-shell pb-8 pt-12">
       <Container size="wide">
@@ -27,40 +30,42 @@ export function SiteFooter() {
             <Wordmark variant="full" />
           </div>
 
-          <FooterColumn title="Navigation">
+          <FooterColumn title={t("footer.navigation")}>
             {NAVIGATION.map((link) => (
               <li key={link.to}>
                 <Link
                   to={link.to}
                   className="text-sm text-ink-500 transition-colors hover:text-primary-600"
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               </li>
             ))}
           </FooterColumn>
 
-          <FooterColumn title="Espace parents">
+          <FooterColumn title={t("footer.parentSpace")}>
             {PARENT_LINKS.map((link) => (
               <li key={link.to}>
                 <Link
                   to={link.to}
                   className="text-sm text-ink-500 transition-colors hover:text-primary-600"
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               </li>
             ))}
           </FooterColumn>
 
-          <FooterColumn title="Nous contacter">
+          <FooterColumn title={t("footer.contact")}>
             <li>
               <a
                 href={NURSERY.phone.href}
                 className="flex items-center gap-2 text-sm text-ink-500 transition-colors hover:text-primary-600"
               >
                 <Phone aria-hidden="true" className="size-3.5 shrink-0" />
-                {NURSERY.phone.display}
+                {/* A phone number is dialled left-to-right whatever the
+                    surrounding script. */}
+                <span dir="ltr">{NURSERY.phone.display}</span>
               </a>
             </li>
             <li>
@@ -69,7 +74,7 @@ export function SiteFooter() {
                 className="flex items-center gap-2 text-sm text-ink-500 transition-colors hover:text-primary-600"
               >
                 <Mail aria-hidden="true" className="size-3.5 shrink-0" />
-                {NURSERY.email}
+                <span dir="ltr">{NURSERY.email}</span>
               </a>
             </li>
             <li>
@@ -80,24 +85,27 @@ export function SiteFooter() {
                 className="flex items-center gap-2 text-sm text-ink-500 transition-colors hover:text-primary-600"
               >
                 <MapPin aria-hidden="true" className="size-3.5 shrink-0" />
-                Tunis, Tunisie
+                {t("facts.city")}
               </a>
             </li>
           </FooterColumn>
 
-          <FooterColumn title="Horaires">
+          <FooterColumn title={t("footer.hours")}>
             <li className="flex items-start gap-2 text-sm text-ink-500">
               <Clock aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
               <span>
-                {NURSERY_FACTS.openingHours.days}
+                {t(NURSERY_FACTS.openingHours.daysKey)}
                 <br />
-                {NURSERY_FACTS.openingHours.from} – {NURSERY_FACTS.openingHours.to}
+                <span dir="ltr" className="inline-block">
+                  {NURSERY_FACTS.openingHours.from} –{" "}
+                  {NURSERY_FACTS.openingHours.to}
+                </span>
               </span>
             </li>
 
             <li className="pt-2">
               <span className="mb-2 block text-xs font-bold text-ink-900">
-                Suivez-nous
+                {t("footer.followUs")}
               </span>
               <span className="flex gap-2">
                 <a
@@ -111,7 +119,7 @@ export function SiteFooter() {
                 </a>
                 <span
                   aria-hidden="true"
-                  title="Instagram — à venir"
+                  title={t("footer.instagramSoon")}
                   className="grid size-8 place-items-center rounded-full bg-ink-50 text-ink-300"
                 >
                   <Instagram className="size-4" />
@@ -122,7 +130,10 @@ export function SiteFooter() {
         </div>
 
         <p className="mt-10 border-t border-ink-100 pt-5 text-center text-xs text-ink-400">
-          © {new Date().getFullYear()} {NURSERY.name}. Tous droits réservés.
+          {t("footer.rights", {
+            year: new Date().getFullYear(),
+            name: t("brand.name"),
+          })}
         </p>
       </Container>
     </footer>
@@ -133,7 +144,7 @@ function FooterColumn({
   title,
   children,
 }: {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (

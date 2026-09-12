@@ -1,4 +1,5 @@
 import { FileText, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Container } from "@/components/ui";
@@ -10,6 +11,8 @@ import { NURSERY } from "@/config/nursery";
  * what makes it read as the end of the page.
  */
 export function RegistrationCta() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative mt-10 pt-10">
       {/* The wave is decorative; it sits above the band and bleeds full
@@ -28,9 +31,9 @@ export function RegistrationCta() {
 
       <div className="bg-primary-400 pb-10 pt-4">
         <Container size="wide">
-          <div className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-left">
+          <div className="flex flex-col items-center gap-5 text-center md:flex-row md:justify-between md:text-start">
             <h2 className="text-xl text-secondary-900 md:text-2xl">
-              Prêt à faire découvrir Mamati à votre enfant&nbsp;?
+              {t("cta.title")}
             </h2>
 
             <div className="flex flex-wrap justify-center gap-3">
@@ -40,7 +43,7 @@ export function RegistrationCta() {
                 className="inline-flex h-11 items-center gap-2 rounded-pill bg-shell px-5 text-sm font-bold text-ink-800 shadow-soft transition-transform hover:-translate-y-0.5"
               >
                 <FileText aria-hidden="true" className="size-4 text-secondary-600" />
-                Dossier d'inscription
+                {t("cta.registration")}
               </a>
 
               <Link
@@ -48,7 +51,7 @@ export function RegistrationCta() {
                 className="inline-flex h-11 items-center gap-2 rounded-pill bg-accent-300 px-5 text-sm font-bold text-ink-900 shadow-soft transition-transform hover:-translate-y-0.5"
               >
                 <Phone aria-hidden="true" className="size-4" />
-                Nous contacter
+                {t("cta.contact")}
               </Link>
             </div>
           </div>

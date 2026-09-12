@@ -93,7 +93,7 @@ export function NotificationsPage() {
                       if (item.link !== "") navigate(item.link);
                     }}
                     className={cn(
-                      "flex w-full gap-3 px-5 py-4 text-left transition-colors hover:bg-ink-50",
+                      "flex w-full gap-3 px-5 py-4 text-start transition-colors hover:bg-ink-50",
                       !item.is_read && "bg-primary-50/60",
                     )}
                   >

@@ -1,0 +1,214 @@
+{
+  "brand": {
+    "name": "Crèche Mamati",
+    "tagline": "Grandir avec amour"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "La crèche",
+    "gallery": "Galerie",
+    "registration": "Inscription",
+    "contact": "Contact",
+    "parentPortal": "Espace parents",
+    "contactUs": "Nous contacter",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "skipToContent": "Aller au contenu principal",
+    "homeAria": "Crèche Mamati — accueil",
+    "main": "Navigation principale",
+    "mobile": "Navigation mobile"
+  },
+  "hero": {
+    "badge": "{{kind}} · De {{from}} à {{to}}",
+    "titleLine1": "Grandir, s'éveiller,",
+    "titleHighlight": "sourire",
+    "titleRest": "chaque jour",
+    "lead": "À la {{name}}, nous accompagnons chaque enfant avec bienveillance et douceur, dans un environnement sécurisé et stimulant.",
+    "discover": "Découvrir la crèche",
+    "registration": "Dossier d'inscription",
+    "hours": "Horaires",
+    "location": "Localisation",
+    "city": "Tunis, Tunisie"
+  },
+  "facts": {
+    "kind": "Crèche privée",
+    "ageFrom": "2 mois",
+    "ageTo": "4 ans",
+    "openingDays": "Du lundi au vendredi",
+    "city": "Tunis, Tunisie",
+    "meals": "Repas équilibrés",
+    "activities": "Activités d'éveil"
+  },
+  "about": {
+    "title": "La crèche",
+    "lead": "{{name}} accueille les tout-petits de {{from}} à {{to}} dans un cadre chaleureux et sécurisé, et tient les parents informés de chaque moment de la journée.",
+    "approach": "Notre approche",
+    "care": {
+      "title": "Bienveillance",
+      "text": "Chaque enfant est accueilli avec douceur et au respect de son rythme."
+    },
+    "awakening": {
+      "title": "Éveil",
+      "text": "Des activités quotidiennes pensées pour la curiosité et l'autonomie."
+    },
+    "tracking": {
+      "title": "Suivi individuel",
+      "text": "Repas, sommeil, santé et humeur consignés chaque jour pour chaque enfant."
+    },
+    "groups": "Nos groupes",
+    "groupsLead": "Les enfants sont répartis en quatre groupes, déterminés automatiquement à partir de leur date de naissance.",
+    "group": {
+      "infant": {
+        "label": "2 → 6 mois",
+        "text": "Pouponnière : rythme individuel, sommeil et biberons à la demande."
+      },
+      "crawler": {
+        "label": "7 mois → 1 an",
+        "text": "Premiers déplacements, diversification alimentaire, éveil sensoriel."
+      },
+      "toddler": {
+        "label": "1 → 2 ans",
+        "text": "Marche, langage, motricité libre et premiers jeux collectifs."
+      },
+      "preschool": {
+        "label": "2 ans et +",
+        "text": "Autonomie, activités créatives et préparation à l'école."
+      }
+    },
+    "practical": "Informations pratiques",
+    "hours": "Horaires",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "viewOnMaps": "Voir sur Google Maps",
+    "premises": "Nos locaux",
+    "premisesLead": "Des espaces d'éveil, de repos et de jeu, pensés pour les tout-petits.",
+    "meetTitle": "Envie de nous rencontrer ?",
+    "meetLead": "Contactez-nous pour visiter la crèche ou retirer un dossier d'inscription."
+  },
+  "values": {
+    "sectionLabel": "Nos valeurs",
+    "care": {
+      "title": "Bienveillance",
+      "line1": "Un accueil chaleureux",
+      "line2": "et attentif"
+    },
+    "safety": {
+      "title": "Sécurité",
+      "line1": "Un environnement sûr",
+      "line2": "et adapté"
+    },
+    "awakening": {
+      "title": "Éveil",
+      "line1": "Des activités stimulantes",
+      "line2": "et éducatives"
+    },
+    "transparency": {
+      "title": "Transparence",
+      "line1": "Une communication claire",
+      "line2": "avec les parents"
+    }
+  },
+  "dailyLife": {
+    "title": "Une journée chez Mamati",
+    "cta": "Découvrir le suivi de mon enfant",
+    "breakfast": "Petit déjeuner",
+    "painting": "Atelier peinture",
+    "nap": "Sieste",
+    "lunch": "Déjeuner",
+    "temperature": "Température",
+    "snack": "Goûter"
+  },
+  "portal": {
+    "titleLine1": "Gardez un œil sur",
+    "titleLine2Prefix": "chaque",
+    "titleHighlight": "petit moment",
+    "lead": "Depuis votre espace parent, découvrez la journée de votre enfant : repas, sommeil, activités, humeur et bien plus encore.",
+    "cta": "Accéder à mon espace",
+    "greeting": "Bonjour, maman 👋",
+    "months": "{{count}} mois",
+    "mood": "Humeur du jour",
+    "happy": "Heureux",
+    "sleep": "Sieste",
+    "temperature": "Température",
+    "today": "Aujourd'hui",
+    "bottle": "Biberon {{ml}} ml",
+    "creative": "Activité créative",
+    "duration": "Durée {{value}}",
+    "lunchMenu": "Purée + yaourt"
+  },
+  "activities": {
+    "title": "Nos activités",
+    "seeAll": "Voir toutes nos activités",
+    "arts": "Arts créatifs",
+    "music": "Éveil musical",
+    "stories": "Histoires",
+    "discovery": "Découverte",
+    "motor": "Jeux moteurs"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "seeAll": "Voir toute la galerie",
+    "seeAllShort": "Voir toute\nla galerie",
+    "enlarge": "Agrandir : {{alt}}",
+    "close": "Fermer"
+  },
+  "galleryPage": {
+    "lead": "Nos espaces d'éveil, de repos et de jeu.",
+    "videos": "Vidéos"
+  },
+  "cta": {
+    "title": "Prêt à faire découvrir Mamati à votre enfant ?",
+    "registration": "Dossier d'inscription",
+    "contact": "Nous contacter"
+  },
+  "contactPage": {
+    "lead": "Une question sur l'inscription ou une visite ? Appelez-nous.",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "openInMaps": "Ouvrir dans Google Maps",
+    "facebook": "Facebook",
+    "followPage": "Suivre notre page",
+    "findUs": "Nous trouver",
+    "mapTitle": "Localisation de {{name}}"
+  },
+  "documents": {
+    "title": "Inscription",
+    "lead": "Téléchargez le dossier d'inscription, complétez-le et rapportez-le à la crèche.",
+    "fileTitle": "Dossier d'inscription 2026 – 2027",
+    "fileKind": "Document PDF",
+    "download": "Télécharger",
+    "question": "Une question ? Appelez-nous au"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "lead": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "back": "Retour à l'accueil"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "parentSpace": "Espace parents",
+    "contact": "Nous contacter",
+    "hours": "Horaires",
+    "followUs": "Suivez-nous",
+    "login": "Connexion parent",
+    "activate": "Activer mon compte",
+    "rights": "© {{year}} {{name}}. Tous droits réservés.",
+    "instagramSoon": "Instagram — à venir"
+  },
+  "language": {
+    "label": "Langue",
+    "switchTo": "Passer en {{language}}"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "search": "Rechercher",
+    "close": "Fermer",
+    "back": "Retour",
+    "child_one": "{{count}} enfant",
+    "child_other": "{{count}} enfants"
+  }
+}

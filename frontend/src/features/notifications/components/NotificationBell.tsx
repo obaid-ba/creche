@@ -70,14 +70,14 @@ export function NotificationBell() {
       >
         <Bell aria-hidden="true" className="size-5" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-primary-600 px-1 text-[0.65rem] font-bold text-white">
+          <span className="absolute -end-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-primary-600 px-1 text-[0.65rem] font-bold text-white">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-card border border-ink-100 bg-white shadow-lifted">
+        <div className="absolute end-0 z-50 mt-2 w-80 overflow-hidden rounded-card border border-ink-100 bg-white shadow-lifted">
           <div className="flex items-center justify-between border-b border-ink-100 px-4 py-2.5">
             <p className="font-bold text-ink-900">Notifications</p>
             {unread > 0 && (
@@ -108,7 +108,7 @@ export function NotificationBell() {
                       if (item.link !== "") navigate(item.link);
                     }}
                     className={cn(
-                      "flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-ink-50",
+                      "flex w-full gap-3 px-4 py-3 text-start transition-colors hover:bg-ink-50",
                       !item.is_read && "bg-primary-50/60",
                     )}
                   >

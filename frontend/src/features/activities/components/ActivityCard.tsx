@@ -83,7 +83,7 @@ export function ActivityCard({
   if (onClick === undefined) return content;
 
   return (
-    <button type="button" onClick={onClick} className="w-full text-left">
+    <button type="button" onClick={onClick} className="w-full text-start">
       {content}
     </button>
   );

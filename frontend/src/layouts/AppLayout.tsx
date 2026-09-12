@@ -39,7 +39,7 @@ export function AppLayout({ area }: { area: "parent" | "staff" }) {
     <div className="flex min-h-screen flex-col">
       <a
         href="#contenu"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-pill focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-50 focus:rounded-pill focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-white"
       >
         Aller au contenu principal
       </a>

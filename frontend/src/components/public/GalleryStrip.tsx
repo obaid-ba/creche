@@ -1,4 +1,5 @@
 import { ArrowRight, Images } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { SectionHeading } from "@/components/ui";
@@ -11,11 +12,12 @@ import { GALLERY } from "@/config/nursery";
  * the brief rules out, and varying them gives the row a focal point.
  */
 export function GalleryStrip() {
+  const { t } = useTranslation();
   const photos = GALLERY.slice(1, 5);
 
   return (
     <div>
-      <SectionHeading title="Galerie" align="left" />
+      <SectionHeading title={t("gallery.title")} align="start" />
 
       <ul className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {photos.map((photo, index) => (
@@ -43,10 +45,10 @@ export function GalleryStrip() {
             className="group flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-card bg-primary-600 p-3 text-center text-white shadow-soft transition-colors hover:bg-primary-700"
           >
             <Images aria-hidden="true" className="size-5" />
-            <span className="text-xs font-bold leading-tight">
-              Voir toute
-              <br />
-              la galerie
+            {/* `whitespace-pre-line` so the break point travels with
+                the translation instead of being hard-coded in markup. */}
+            <span className="whitespace-pre-line text-xs font-bold leading-tight">
+              {t("gallery.seeAllShort")}
             </span>
             <ArrowRight
               aria-hidden="true"

@@ -30,7 +30,7 @@ export function ChildCard({ child }: { child: ChildListItem }) {
           // Allergy information is safety-critical, so it is visible at a
           // glance in the list rather than only on the profile.
           <Badge tone="warning">
-            <AlertTriangle aria-hidden="true" className="mr-1 size-3" />
+            <AlertTriangle aria-hidden="true" className="me-1 size-3" />
             Allergies
           </Badge>
         )}

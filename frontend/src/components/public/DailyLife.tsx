@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Container, SectionHeading } from "@/components/ui";
@@ -12,19 +13,21 @@ import { Container, SectionHeading } from "@/components/ui";
  * real feature and not a decorative illustration.
  */
 const MOMENTS = [
-  { time: "08:15", icon: "🍼", label: "Petit déjeuner" },
-  { time: "09:00", icon: "🎨", label: "Atelier peinture" },
-  { time: "10:30", icon: "🌙", label: "Sieste" },
-  { time: "12:00", icon: "🍽️", label: "Déjeuner" },
-  { time: "14:30", icon: "🌡️", label: "Température" },
-  { time: "16:00", icon: "🍼", label: "Goûter" },
+  { time: "08:15", icon: "🍼", key: "breakfast" },
+  { time: "09:00", icon: "🎨", key: "painting" },
+  { time: "10:30", icon: "🌙", key: "nap" },
+  { time: "12:00", icon: "🍽️", key: "lunch" },
+  { time: "14:30", icon: "🌡️", key: "temperature" },
+  { time: "16:00", icon: "🍼", key: "snack" },
 ] as const;
 
 export function DailyLife() {
+  const { t } = useTranslation();
+
   return (
     <section className="py-14 md:py-20">
       <Container size="wide">
-        <SectionHeading title="Une journée chez Mamati" />
+        <SectionHeading title={t("dailyLife.title")} />
 
         <div className="mt-9 flex flex-col gap-4 lg:flex-row lg:items-stretch">
           {/* The strip scrolls horizontally on narrow screens rather than
@@ -39,11 +42,17 @@ export function DailyLife() {
                   {moment.icon}
                 </span>
                 <span className="min-w-0">
-                  <time className="block font-display text-base font-bold text-primary-600">
+                  {/* A clock time is read left-to-right in Arabic too,
+                      so the isolate keeps "08:15" from being reordered
+                      by the bidi algorithm next to Arabic text. */}
+                  <time
+                    dir="ltr"
+                    className="block font-display text-base font-bold text-primary-600"
+                  >
                     {moment.time}
                   </time>
                   <span className="block truncate text-xs text-ink-500">
-                    {moment.label}
+                    {t(`dailyLife.${moment.key}`)}
                   </span>
                 </span>
 
@@ -51,7 +60,7 @@ export function DailyLife() {
                 {index < MOMENTS.length - 1 && (
                   <span
                     aria-hidden="true"
-                    className="absolute -right-3 top-1/2 hidden h-px w-3 border-t-2 border-dashed border-ink-200 lg:block"
+                    className="absolute -end-3 top-1/2 hidden h-px w-3 border-t-2 border-dashed border-ink-200 lg:block"
                   />
                 )}
               </li>
@@ -62,7 +71,7 @@ export function DailyLife() {
             to="/parent/login"
             className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-panel bg-secondary-600 px-6 py-4 text-center text-sm font-bold text-white shadow-soft transition-colors hover:bg-secondary-700 lg:max-w-[13rem]"
           >
-            Découvrir le suivi de mon enfant
+            {t("dailyLife.cta")}
             <ArrowRight
               aria-hidden="true"
               className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"

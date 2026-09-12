@@ -1,16 +1,18 @@
 import { Download, FileText } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Card, CardBody } from "@/components/ui";
 import { NURSERY } from "@/config/nursery";
 
 export function DocumentsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-16">
       <header className="mb-10 text-center">
-        <h1 className="text-3xl font-bold">Inscription</h1>
+        <h1 className="text-3xl font-bold">{t("documents.title")}</h1>
         <p className="mx-auto mt-3 max-w-xl text-ink-600">
-          Téléchargez le dossier d'inscription, complétez-le et rapportez-le
-          à la crèche.
+          {t("documents.lead")}
         </p>
       </header>
 
@@ -21,8 +23,8 @@ export function DocumentsPage() {
           </span>
 
           <div className="min-w-48 flex-1">
-            <h2 className="font-bold">Dossier d'inscription 2026 – 2027</h2>
-            <p className="mt-0.5 text-sm text-ink-500">Document PDF</p>
+            <h2 className="font-bold">{t("documents.fileTitle")}</h2>
+            <p className="mt-0.5 text-sm text-ink-500">{t("documents.fileKind")}</p>
           </div>
 
           <a
@@ -33,20 +35,20 @@ export function DocumentsPage() {
             className="inline-flex h-11 items-center gap-2 rounded-pill bg-primary-600 px-5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-primary-700"
           >
             <Download aria-hidden="true" className="size-4" />
-            Télécharger
+            {t("documents.download")}
           </a>
         </CardBody>
       </Card>
 
       <p className="mt-6 text-center text-sm text-ink-500">
-        Une question ? Appelez-nous au{" "}
+        {t("documents.question")}{" "}
         <a
           href={NURSERY.phone.href}
-          className="font-semibold text-primary-700 underline underline-offset-2"
+          dir="ltr"
+          className="inline-block font-semibold text-primary-700 underline underline-offset-2"
         >
           {NURSERY.phone.display}
         </a>
-        .
       </p>
     </div>
   );

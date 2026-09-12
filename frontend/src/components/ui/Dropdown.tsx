@@ -71,7 +71,7 @@ export function Dropdown({
           className={cn(
             "absolute z-40 mt-1 min-w-44 overflow-hidden rounded-card",
             "border border-ink-100 bg-white py-1 shadow-lifted",
-            align === "right" ? "right-0" : "left-0",
+            align === "right" ? "end-0" : "start-0",
           )}
         >
           {items.map((item) => (
@@ -84,7 +84,7 @@ export function Dropdown({
                 item.onSelect();
               }}
               className={cn(
-                "flex w-full items-center gap-2 px-3.5 py-2 text-left text-sm",
+                "flex w-full items-center gap-2 px-3.5 py-2 text-start text-sm",
                 item.tone === "danger"
                   ? "text-danger-700 hover:bg-danger-50"
                   : "text-ink-700 hover:bg-ink-50",

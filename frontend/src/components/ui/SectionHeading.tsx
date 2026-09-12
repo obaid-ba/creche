@@ -22,7 +22,9 @@ export function SectionHeading({
 }: {
   title: ReactNode;
   subtitle?: ReactNode;
-  align?: "left" | "center";
+  // "start" rather than "left": the heading already renders with
+  // `text-start`, so the name should not promise a physical side.
+  align?: "start" | "center";
   withHeart?: boolean;
   as?: "h2" | "h3";
   className?: string;
@@ -30,7 +32,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        align === "center" ? "text-center" : "text-left",
+        align === "center" ? "text-center" : "text-start",
         className,
       )}
     >

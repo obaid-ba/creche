@@ -1,4 +1,5 @@
 import { ArrowRight, Clock, FileText, MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import {
@@ -11,7 +12,7 @@ import {
   Sun,
 } from "@/components/public/Decorations";
 import { Container } from "@/components/ui";
-import { GALLERY, NURSERY, NURSERY_FACTS } from "@/config/nursery";
+import { GALLERY, NURSERY_FACTS } from "@/config/nursery";
 
 /**
  * The hero.
@@ -22,30 +23,31 @@ import { GALLERY, NURSERY, NURSERY_FACTS } from "@/config/nursery";
  * brand reads even before the logo is noticed.
  */
 export function Hero() {
+  const { t } = useTranslation();
   const cover = GALLERY[0];
 
   return (
     <section className="relative overflow-hidden pb-10 pt-8 md:pb-16 md:pt-12">
       {/* Decorative layer — all hidden from assistive technology. */}
-      <Decor className="left-2 top-10 md:left-6 md:top-14" float>
+      <Decor className="start-2 top-10 md:start-6 md:top-14" float>
         <Sun className="size-16 md:size-20" />
       </Decor>
-      <Decor className="left-[34%] top-4 hidden md:block">
+      <Decor className="start-[34%] top-4 hidden md:block">
         <Cloud className="w-20" />
       </Decor>
-      <Decor className="right-[6%] top-8 hidden text-primary-300 lg:block" float>
+      <Decor className="end-[6%] top-8 hidden text-primary-300 lg:block" float>
         <Heart className="size-7" />
       </Decor>
-      <Decor className="left-[41%] top-24 hidden text-primary-200 md:block">
+      <Decor className="start-[41%] top-24 hidden text-primary-200 md:block">
         <Heart className="size-5" />
       </Decor>
-      <Decor className="left-3 top-[46%] hidden text-secondary-300 md:block">
+      <Decor className="start-3 top-[46%] hidden text-secondary-300 md:block">
         <Sparkle className="size-5" />
       </Decor>
-      <Decor className="bottom-[22%] left-6 hidden md:block">
+      <Decor className="bottom-[22%] start-6 hidden md:block">
         <Leaf className="w-10" />
       </Decor>
-      <Decor className="bottom-[16%] left-[36%] hidden lg:block">
+      <Decor className="bottom-[16%] start-[36%] hidden lg:block">
         <FlightPath className="w-28" />
       </Decor>
 
@@ -55,20 +57,22 @@ export function Hero() {
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-pill bg-primary-50 px-3.5 py-1.5 text-sm font-bold text-primary-700 ring-1 ring-primary-100">
               <Heart className="size-3.5 text-primary-400" />
-              {NURSERY_FACTS.kind.label} · De {NURSERY_FACTS.ageRange.from} à{" "}
-              {NURSERY_FACTS.ageRange.to}
+              {t("hero.badge", {
+                kind: t(NURSERY_FACTS.kind.labelKey),
+                from: t(NURSERY_FACTS.ageRange.fromKey),
+                to: t(NURSERY_FACTS.ageRange.toKey),
+              })}
             </span>
 
             <h1 className="mt-5 text-[2.6rem] leading-[1.08] sm:text-5xl lg:text-[3.4rem]">
-              Grandir, s'éveiller,
+              {t("hero.titleLine1")}
               <br />
-              <span className="text-primary-500">sourire</span> chaque jour
+              <span className="text-primary-500">{t("hero.titleHighlight")}</span>{" "}
+              {t("hero.titleRest")}
             </h1>
 
             <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-500">
-              À la {NURSERY.name}, nous accompagnons chaque enfant avec
-              bienveillance et douceur, dans un environnement sécurisé et
-              stimulant.
+              {t("hero.lead", { name: t("brand.name") })}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -76,7 +80,7 @@ export function Hero() {
                 to="/about"
                 className="group inline-flex h-12 items-center gap-2 rounded-pill bg-primary-600 px-6 text-sm font-bold text-white shadow-soft transition-colors hover:bg-primary-700"
               >
-                Découvrir la crèche
+                {t("hero.discover")}
                 <ArrowRight
                   aria-hidden="true"
                   className="size-4 transition-transform group-hover:translate-x-0.5"
@@ -88,7 +92,7 @@ export function Hero() {
                 className="inline-flex h-12 items-center gap-2 rounded-pill bg-shell px-6 text-sm font-bold text-ink-700 shadow-soft ring-1 ring-ink-100 transition-colors hover:bg-ink-50"
               >
                 <FileText aria-hidden="true" className="size-4 text-secondary-500" />
-                Dossier d'inscription
+                {t("hero.registration")}
               </Link>
             </div>
           </div>
@@ -100,11 +104,11 @@ export function Hero() {
                 completely covered. */}
             <span
               aria-hidden="true"
-              className="absolute -bottom-4 right-0 z-0 hidden h-[62%] w-[46%] blob-b bg-secondary-300 md:block"
+              className="absolute -bottom-4 end-0 z-0 hidden h-[62%] w-[46%] blob-b bg-secondary-300 md:block"
             />
             <span
               aria-hidden="true"
-              className="absolute -left-8 top-2 z-0 hidden size-32 blob-c bg-primary-100 lg:block"
+              className="absolute -start-8 top-2 z-0 hidden size-32 blob-c bg-primary-100 lg:block"
             />
 
             <img
@@ -118,7 +122,7 @@ export function Hero() {
             />
 
             {/* Practical details, overlapping the photo's lower edge. */}
-            <div className="absolute -bottom-6 right-2 z-20 w-[15rem] rounded-panel bg-shell/95 p-4 shadow-float backdrop-blur sm:right-6">
+            <div className="absolute -bottom-6 end-2 z-20 w-[15rem] rounded-panel bg-shell/95 p-4 shadow-float backdrop-blur sm:end-6">
               {/* A two-column grid rather than wrapper <div>s: a <dl>
                   whose children are divs fails the definition-list rule,
                   and the icon can sit in its own column instead. */}
@@ -129,8 +133,13 @@ export function Hero() {
                 >
                   <Clock className="size-4" />
                 </span>
-                <dt className="self-end text-xs font-bold text-ink-900">Horaires</dt>
-                <dd className="self-start text-sm text-ink-500">
+                <dt className="self-end text-xs font-bold text-ink-900">
+                  {t("hero.hours")}
+                </dt>
+                {/* An opening-hours range reads left-to-right in Arabic
+                    as well; without the isolate the bidi algorithm
+                    swaps the two ends of the range. */}
+                <dd dir="ltr" className="self-start text-start text-sm text-ink-500">
                   {NURSERY_FACTS.openingHours.from} – {NURSERY_FACTS.openingHours.to}
                 </dd>
 
@@ -141,9 +150,11 @@ export function Hero() {
                   <MapPin className="size-4" />
                 </span>
                 <dt className="mt-3 self-end text-xs font-bold text-ink-900">
-                  Localisation
+                  {t("hero.location")}
                 </dt>
-                <dd className="self-start text-sm text-ink-500">Tunis, Tunisie</dd>
+                <dd className="self-start text-sm text-ink-500">
+                  {t("facts.city")}
+                </dd>
               </dl>
             </div>
           </div>

@@ -77,7 +77,7 @@ export function MessagesPage() {
                     onClick={() => setSelectedId(conversation.id)}
                     aria-current={selectedId === conversation.id}
                     className={cn(
-                      "w-full px-4 py-3 text-left transition-colors",
+                      "w-full px-4 py-3 text-start transition-colors",
                       selectedId === conversation.id
                         ? "bg-primary-50"
                         : "hover:bg-ink-50",

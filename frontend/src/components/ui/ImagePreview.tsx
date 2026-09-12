@@ -72,7 +72,7 @@ export function ImagePreview({
                 onClick={() => onRemove(image.id)}
                 aria-label="Supprimer cette image"
                 className={cn(
-                  "absolute -right-1.5 -top-1.5 grid size-6 place-items-center",
+                  "absolute -end-1.5 -top-1.5 grid size-6 place-items-center",
                   "rounded-full bg-white text-ink-500 shadow-soft",
                   "hover:bg-danger-50 hover:text-danger-700",
                 )}
@@ -96,7 +96,7 @@ export function ImagePreview({
             type="button"
             aria-label="Fermer"
             onClick={() => onOpenChange(null)}
-            className="absolute right-4 top-4 rounded-pill bg-white/10 p-2 text-white hover:bg-white/20"
+            className="absolute end-4 top-4 rounded-pill bg-white/10 p-2 text-white hover:bg-white/20"
           >
             <X aria-hidden="true" className="size-5" />
           </button>
