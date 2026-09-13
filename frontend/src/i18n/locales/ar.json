@@ -314,7 +314,9 @@
     "recentActivities": "أنشطة حديثة",
     "seeAll": "عرض الكل",
     "noActivities": "لا يوجد أي نشاط مسجّل.",
-    "loadError": "تعذّر تحميل لوحة القيادة."
+    "loadError": "تعذّر تحميل لوحة القيادة.",
+    "recordedRatio": "{{done}}/{{total}}",
+    "noChildrenShort": "—"
   },
   "auth": {
     "parentTitle": "فضاء الأولياء",
@@ -781,7 +783,16 @@
     "hoursAgo_two": "منذ ساعتين",
     "hoursAgo_few": "منذ {{count}} ساعات",
     "hoursAgo_many": "منذ {{count}} ساعة",
-    "hoursAgo_other": "منذ {{count}} س"
+    "hoursAgo_other": "منذ {{count}} س",
+    "seeAll": "عرض كل الإشعارات",
+    "emptyLine": "لا توجد إشعارات.",
+    "bellLabel": "الإشعارات",
+    "bellUnread_zero": "الإشعارات، لا شيء غير مقروء",
+    "bellUnread_one": "الإشعارات، واحد غير مقروء",
+    "bellUnread_two": "الإشعارات، اثنان غير مقروءين",
+    "bellUnread_few": "الإشعارات، {{count}} غير مقروءة",
+    "bellUnread_many": "الإشعارات، {{count}} غير مقروء",
+    "bellUnread_other": "الإشعارات، {{count}} غير مقروء"
   },
   "parentHome": {
     "greeting": "أهلاً {{name}}",

@@ -89,7 +89,7 @@ describe("NotificationBell", () => {
     mockApi([makeNotification()], 1);
     renderBell();
 
-    await userEvent.click(await screen.findByRole("button", { name: /non lues/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /^Notifications/ }));
 
     expect(screen.getByText("Nouveau message · Mohamed")).toBeInTheDocument();
     expect(screen.getByText(/tout s'est bien passé/)).toBeInTheDocument();
@@ -108,7 +108,7 @@ describe("NotificationBell", () => {
     const post = mockApi([makeNotification()], 1);
     renderBell();
 
-    await userEvent.click(await screen.findByRole("button", { name: /non lues/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /^Notifications/ }));
     await userEvent.click(screen.getByText("Nouveau message · Mohamed"));
 
     await waitFor(() =>
@@ -135,7 +135,7 @@ describe("NotificationBell", () => {
 
     mockApi([makeNotification()], 1);
     renderBell();
-    await userEvent.click(await screen.findByRole("button", { name: /non lues/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /^Notifications/ }));
     expect(screen.getByText(/tout marquer comme lu/i)).toBeInTheDocument();
   });
 
@@ -143,7 +143,7 @@ describe("NotificationBell", () => {
     mockApi([makeNotification()], 1);
     renderBell();
 
-    await userEvent.click(await screen.findByRole("button", { name: /non lues/i }));
+    await userEvent.click(await screen.findByRole("button", { name: /^Notifications/ }));
     expect(screen.getByText("Notifications")).toBeInTheDocument();
 
     await userEvent.keyboard("{Escape}");

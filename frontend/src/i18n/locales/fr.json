@@ -298,7 +298,9 @@
     "recentActivities": "Activités récentes",
     "seeAll": "Tout voir",
     "noActivities": "Aucune activité enregistrée.",
-    "loadError": "Impossible de charger le tableau de bord."
+    "loadError": "Impossible de charger le tableau de bord.",
+    "recordedRatio": "{{done}}/{{total}}",
+    "noChildrenShort": "—"
   },
   "auth": {
     "parentTitle": "Espace parents",
@@ -692,7 +694,12 @@
     "emptyHint": "Vous serez prévenu ici des nouveaux messages et des mises à jour.",
     "justNow": "à l'instant",
     "minutesAgo": "il y a {{count}} min",
-    "hoursAgo": "il y a {{count}} h"
+    "hoursAgo": "il y a {{count}} h",
+    "seeAll": "Voir toutes les notifications",
+    "emptyLine": "Aucune notification.",
+    "bellLabel": "Notifications",
+    "bellUnread_one": "Notifications, {{count}} non lue",
+    "bellUnread_other": "Notifications, {{count}} non lues"
   },
   "parentHome": {
     "greeting": "Bonjour {{name}}",

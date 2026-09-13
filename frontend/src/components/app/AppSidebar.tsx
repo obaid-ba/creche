@@ -57,7 +57,9 @@ export function AppSidebar({
           <p className="inline-flex rounded-pill bg-secondary-50 px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wide text-secondary-700">
             {t(area === "staff" ? "shell.staffArea" : "shell.parentArea")}
           </p>
-          {withBell && <NotificationBell />}
+          {/* Opens rightwards out of the rail; anchored to the other
+              edge it would run off the screen. */}
+          {withBell && <NotificationBell align="start" />}
         </div>
       </div>
 

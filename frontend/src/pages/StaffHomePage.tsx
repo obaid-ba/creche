@@ -128,13 +128,17 @@ export function StaffHomePage() {
   }
 
   const data = query.data;
-  const recordedShare =
-    data.total_children > 0
-      ? t("dashboard.childrenRecorded", {
-          done: data.children_with_events_today,
-          total: data.total_children,
-        })
-      : t("dashboard.noChildren");
+
+  // A bare ratio, not "6 / 10 enfants": the other three tiles show a
+  // single figure, and a sentence in the value slot made the row read as
+  // four different kinds of thing. The noun belongs on the detail line.
+  const hasChildren = data.total_children > 0;
+  const recordedShare = hasChildren
+    ? t("dashboard.recordedRatio", {
+        done: data.children_with_events_today,
+        total: data.total_children,
+      })
+    : t("dashboard.noChildrenShort");
 
   return (
     <PageShell>
@@ -157,9 +161,13 @@ export function StaffHomePage() {
           icon={CalendarCheck}
           label={t("dashboard.daysRecorded")}
           value={recordedShare}
-          detail={t("dashboard.daysPublished", {
-            count: data.days_published_today,
-          })}
+          detail={
+            hasChildren
+              ? t("dashboard.daysPublished", {
+                  count: data.days_published_today,
+                })
+              : t("dashboard.noChildren")
+          }
           to="/staff/children"
           field="bg-mint-100"
           ink="text-mint-700"
