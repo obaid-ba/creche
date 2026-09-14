@@ -114,7 +114,10 @@ export function StaffChildTimelinePage() {
           <QuickAddBar
             specs={eventTypes.data?.types ?? []}
             isPending={createEvent.isPending}
-            onAdd={(input) => createEvent.mutate(input)}
+            date={date}
+            // mutateAsync, so the dialog can stay open and show the
+            // reason when the server rejects the event.
+            onAdd={(input) => createEvent.mutateAsync(input)}
           />
           {createEvent.isError && (
             <div className="mt-3">

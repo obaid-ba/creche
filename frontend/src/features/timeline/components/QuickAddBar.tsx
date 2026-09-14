@@ -53,24 +53,47 @@ const CHOICES: Partial<
  * One-tap event recording for staff.
  *
  * Types needing no payload are recorded immediately; the rest open a
- * small dialog for the single value they require. Recording a nap is one
- * tap now and one tap later ("Terminer"), which is the two-interaction
- * workflow the brief implies while still storing a single row
- * (docs/timeline.md 4.2).
+ * small dialog for the value they require.
+ *
+ * Sleep is the exception, because a nap has two ends. Tapping it still
+ * starts an open interval to be closed later with "Terminer" — the
+ * two-interaction flow the brief implies (docs/timeline.md 4.2) — but a
+ * nap that has already finished by the time anyone reaches a screen is
+ * at least as common, and there was no way to record one. The dialog now
+ * takes both times, and leaving the end blank keeps the old behaviour.
+ *
+ * `date` is the day being viewed. Times entered here resolve against it
+ * rather than against today, so a nap logged on yesterday's page lands on
+ * yesterday.
  */
 export function QuickAddBar({
   specs,
   onAdd,
   isPending,
+  date,
 }: {
   specs: EventTypeSpec[];
-  onAdd: (input: CreateEventInput) => void;
+  onAdd: (input: CreateEventInput) => void | Promise<unknown>;
   isPending: boolean;
+  /** YYYY-MM-DD, the day the timeline is showing. */
+  date: string;
 }) {
   const { t } = useTranslation();
   const [active, setActive] = useState<EventTypeSpec | null>(null);
   const [value, setValue] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [quality, setQuality] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  /** "14:30" on the displayed day, as an instant. */
+  function at(time: string): string {
+    const [year, month, day] = date.split("-").map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
+    return new Date(
+      year ?? 1970, (month ?? 1) - 1, day ?? 1, hours ?? 0, minutes ?? 0,
+    ).toISOString();
+  }
 
   const quickTypes = specs.filter((spec) => spec.quick_add);
 
@@ -82,10 +105,44 @@ export function QuickAddBar({
     });
   }
 
+  /**
+   * Posts, and closes only once the server has accepted.
+   *
+   * Closing optimistically threw away whatever had been typed the moment
+   * anything was rejected, and left the reason to a banner elsewhere on
+   * the page carrying the generic envelope message rather than the
+   * specific one.
+   */
+  async function submit(input: CreateEventInput) {
+    try {
+      await onAdd(input);
+      setActive(null);
+    } catch (caught) {
+      const apiError = caught as {
+        fieldErrors?: Record<string, string[]>;
+        message?: string;
+      };
+      const field = Object.values(apiError.fieldErrors ?? {})[0]?.[0];
+      setError(field ?? apiError.message ?? t("common.error"));
+    }
+  }
+
   function handleClick(spec: EventTypeSpec) {
-    if (PROMPTS[spec.key] !== undefined || CHOICES[spec.key] !== undefined) {
+    if (
+      PROMPTS[spec.key] !== undefined ||
+      CHOICES[spec.key] !== undefined ||
+      spec.key === "SLEEP"
+    ) {
       setValue("");
       setError(null);
+      // Start defaults to now, which is right for "he has just gone
+      // down" and a sensible anchor to edit for anything else.
+      const now = new Date();
+      setStart(
+        `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`,
+      );
+      setEnd("");
+      setQuality("");
       setActive(spec);
       return;
     }
@@ -94,6 +151,34 @@ export function QuickAddBar({
 
   function submitDialog() {
     if (active === null) return;
+
+    if (active.key === "SLEEP") {
+      if (start === "") {
+        setError(t("timeline.startRequired"));
+        return;
+      }
+      if (end !== "" && end < start) {
+        setError(t("timeline.endBeforeStart"));
+        return;
+      }
+      // The server refuses a future event, and finding that out after a
+      // round-trip — with the dialog already closed and the times gone —
+      // is a poor way to learn it.
+      const latest = end === "" ? start : end;
+      if (new Date(at(latest)).getTime() > Date.now()) {
+        setError(t("timeline.futureTime"));
+        return;
+      }
+      void submit({
+        type: active.key,
+        occurred_at: at(start),
+        // Blank end means the nap is still going: an open interval, to
+        // be closed from the timeline later.
+        ...(end === "" ? {} : { ended_at: at(end) }),
+        ...(quality === "" ? {} : { data: { quality } }),
+      });
+      return;
+    }
 
     const prompt = PROMPTS[active.key];
     const choice = CHOICES[active.key];
@@ -121,10 +206,14 @@ export function QuickAddBar({
 
   return (
     <>
+      {/* A grid, not a wrapping row: seven chips of different word
+          lengths left the second line ragged and half empty. Equal
+          columns also give each one a bigger tap target, which is the
+          point of a bar staff use one-handed while holding a child. */}
       <div
         role="group"
         aria-label={t("timeline.recordEvent")}
-        className="flex flex-wrap gap-2"
+        className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4"
       >
         {quickTypes.map((spec) => (
           <button
@@ -133,8 +222,9 @@ export function QuickAddBar({
             disabled={isPending}
             onClick={() => handleClick(spec)}
             className={cn(
-              "flex items-center gap-2 rounded-pill px-3.5 py-2 text-sm font-semibold",
-              "ring-1 ring-ink-200 transition-colors hover:bg-ink-50",
+              "flex items-center gap-2 rounded-card px-3 py-2.5 text-sm font-semibold",
+              "bg-shell ring-1 ring-ink-200 transition-all",
+              "hover:bg-primary-50/60 hover:ring-primary-200",
               "disabled:cursor-not-allowed disabled:opacity-55",
             )}
           >
@@ -147,7 +237,7 @@ export function QuickAddBar({
             >
               {eventEmoji(spec.key)}
             </span>
-            {spec.label}
+            <span className="truncate">{spec.label}</span>
           </button>
         ))}
       </div>
@@ -156,7 +246,9 @@ export function QuickAddBar({
         isOpen={active !== null}
         onClose={() => setActive(null)}
         title={active?.label ?? ""}
-        description={t("timeline.recordedNow")}
+        description={t(
+          active?.key === "SLEEP" ? "timeline.onDate" : "timeline.recordedNow",
+        )}
         footer={
           <>
             <Button variant="outline" onClick={() => setActive(null)}>
@@ -168,6 +260,44 @@ export function QuickAddBar({
           </>
         }
       >
+        {active?.key === "SLEEP" && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label={t("timeline.sleepStart")}
+                type="time"
+                autoFocus
+                value={start}
+                onChange={(event) => setStart(event.target.value)}
+              />
+              <Input
+                label={t("timeline.sleepEnd")}
+                type="time"
+                value={end}
+                hint={t("timeline.sleepEndHint")}
+                onChange={(event) => setEnd(event.target.value)}
+              />
+            </div>
+
+            <Select
+              label={t("timeline.sleepQuality")}
+              value={quality}
+              placeholder={t("timeline.choose")}
+              options={["GOOD", "RESTLESS", "POOR"].map((key) => ({
+                value: key,
+                label: t(`timeline.quality${key}`),
+              }))}
+              onChange={(event) => setQuality(event.target.value)}
+            />
+
+            {error !== null && (
+              <p role="alert" className="text-sm font-semibold text-danger-700">
+                {error}
+              </p>
+            )}
+          </div>
+        )}
+
         {prompt !== undefined && (
           <Input
             label={t(prompt.labelKey)}

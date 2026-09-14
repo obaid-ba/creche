@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
@@ -25,6 +26,7 @@ export function Modal({
   footer?: ReactNode;
   className?: string;
 }) {
+  const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -54,7 +56,14 @@ export function Modal({
       ref={dialogRef}
       aria-labelledby="modal-title"
       className={cn(
-        "w-[min(32rem,calc(100vw-2rem))] rounded-card bg-white p-0 shadow-lifted",
+        "w-[min(32rem,calc(100vw-2rem))] rounded-card bg-shell p-0 shadow-float",
+        // The browser centres a modal <dialog> with `margin: auto`, and
+        // Tailwind's preflight resets every margin to 0 — so without
+        // this every dialog in the app opened pinned to the top-left
+        // corner instead of the middle of the screen.
+        "m-auto",
+        // A tall dialog scrolls inside itself rather than off the screen.
+        "max-h-[calc(100vh-2rem)] overflow-y-auto",
         "backdrop:bg-ink-900/40 backdrop:backdrop-blur-sm",
         className,
       )}
@@ -71,7 +80,7 @@ export function Modal({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fermer"
+          aria-label={t("common.close")}
           className="rounded-pill p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700"
         >
           <X aria-hidden="true" className="size-4" />

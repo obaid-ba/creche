@@ -24,7 +24,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.utils.functional import Promise
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from rest_framework import serializers
 from rest_framework.settings import api_settings
 
@@ -34,7 +34,8 @@ class TimelineEventType(models.TextChoices):
     MEAL = "MEAL", _("Repas")
     BOTTLE = "BOTTLE", _("Biberon")
     SLEEP = "SLEEP", _("Sommeil")
-    DIAPER = "DIAPER", _("Change")
+    # Context, not a bare msgid: see the note on the DIAPER spec below.
+    DIAPER = "DIAPER", pgettext_lazy("nappy change", "Change")
     TOILET = "TOILET", _("Toilettes")
     TEMPERATURE = "TEMPERATURE", _("Température")
     MOOD = "MOOD", _("Humeur")
@@ -181,7 +182,12 @@ REGISTRY: dict[str, EventTypeSpec] = {
             interval=True, quick_add=True,
         ),
         EventTypeSpec(
-            key=TimelineEventType.DIAPER, label=_("Change"), icon="baby",
+            key=TimelineEventType.DIAPER,
+            # A bare "Change" collides with django.contrib.admin's own
+            # msgid, whose French is "Modification" — so this chip read
+            # "Modification" to staff until it was given a context.
+            label=pgettext_lazy("nappy change", "Change"),
+            icon="baby",
             group=EventGroup.HYGIENE, schema=DiaperPayload, quick_add=True,
         ),
         EventTypeSpec(

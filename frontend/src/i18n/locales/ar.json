@@ -456,7 +456,18 @@
     "diaperState": "الحالة",
     "choose": "اختر…",
     "invalidValue": "يرجى إدخال قيمة صالحة.",
-    "chooseSomething": "يرجى الاختيار."
+    "chooseSomething": "يرجى الاختيار.",
+    "sleepStart": "البداية",
+    "sleepEnd": "النهاية",
+    "sleepQuality": "الجودة (اختياري)",
+    "qualityGOOD": "جيدة",
+    "qualityRESTLESS": "مضطربة",
+    "qualityPOOR": "سيئة",
+    "endBeforeStart": "لا يمكن أن تسبق النهاية البداية.",
+    "startRequired": "حدّد وقت البداية.",
+    "onDate": "يُسجَّل في اليوم المعروض.",
+    "futureTime": "لا يمكن تسجيل حدث في المستقبل.",
+    "sleepEndHint": "اتركها فارغة إذا كانت القيلولة متواصلة."
   },
   "children": {
     "title": "الأطفال",

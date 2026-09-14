@@ -421,7 +421,18 @@
     "diaperState": "État",
     "choose": "Choisir…",
     "invalidValue": "Veuillez saisir une valeur valide.",
-    "chooseSomething": "Veuillez faire un choix."
+    "chooseSomething": "Veuillez faire un choix.",
+    "sleepStart": "Début",
+    "sleepEnd": "Fin",
+    "sleepQuality": "Qualité (facultatif)",
+    "qualityGOOD": "Bonne",
+    "qualityRESTLESS": "Agitée",
+    "qualityPOOR": "Mauvaise",
+    "endBeforeStart": "La fin ne peut pas précéder le début.",
+    "startRequired": "Indiquez une heure de début.",
+    "onDate": "Enregistré sur la journée affichée.",
+    "futureTime": "Un événement ne peut pas être enregistré dans le futur.",
+    "sleepEndHint": "Laisser vide si la sieste continue."
   },
   "children": {
     "title": "Enfants",

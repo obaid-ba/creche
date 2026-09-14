@@ -145,7 +145,12 @@ class TestCompiledCatalogue:
 
     @staticmethod
     def _po_entries(path):
-        """Every non-plural msgid/msgstr pair in a `.po` file."""
+        """Every non-plural entry in a `.po` file, keyed by (context, msgid).
+
+        The context matters: a contextual entry is stored in the compiled
+        catalogue under "context\x04msgid", so looking it up by the bare
+        msgid finds nothing and the entry reads as stale when it is not.
+        """
         import re
 
         text = path.read_text(encoding="utf-8")
@@ -157,7 +162,8 @@ class TestCompiledCatalogue:
             msgstr = re.search(r'^msgstr "(.*)"$', block, re.M)
             if msgid is None or msgstr is None or msgid.group(1) == "":
                 continue
-            pairs[msgid.group(1)] = msgstr.group(1)
+            ctx = re.search(r'^msgctxt "(.*)"$', block, re.M)
+            pairs[(ctx.group(1) if ctx else None, msgid.group(1))] = msgstr.group(1)
         return pairs
 
     def test_the_compiled_catalogue_matches_its_source(self, settings):
@@ -172,10 +178,15 @@ class TestCompiledCatalogue:
         with mo.open("rb") as handle:
             compiled = gettext.GNUTranslations(handle)
 
+        def lookup(context, msgid):
+            if context is None:
+                return compiled.gettext(msgid)
+            return compiled.pgettext(context, msgid)
+
         stale = [
             msgid
-            for msgid, msgstr in self._po_entries(po).items()
-            if compiled.gettext(msgid) != msgstr
+            for (context, msgid), msgstr in self._po_entries(po).items()
+            if lookup(context, msgid) != msgstr
         ]
         assert stale == [], (
             "these translations are in django.po but not in django.mo; "
@@ -187,6 +198,67 @@ class TestCompiledCatalogue:
 
         po = Path(settings.LOCALE_PATHS[0]) / "ar" / "LC_MESSAGES" / "django.po"
         untranslated = [
-            msgid for msgid, msgstr in self._po_entries(po).items() if msgstr == ""
+            msgid
+            for (_context, msgid), msgstr in self._po_entries(po).items()
+            if msgstr == ""
         ]
         assert untranslated == [], "Arabic strings left empty would render as French"
+
+
+class TestMsgidCollisions:
+    """French is the source language, so it has no catalogue of its own.
+
+    That is what makes short msgids dangerous: Django resolves them
+    against *every* installed app's French catalogue, and a bare "Change"
+    matched django.contrib.admin's own — which is French for
+    "Modification". The nappy-change chip in the staff quick-add bar read
+    "Modification" until it was given a context.
+
+    Nothing fails when this happens. The string is simply wrong, in one
+    language, on one screen.
+    """
+
+    @staticmethod
+    def _msgids(path):
+        import re
+
+        text = path.read_text(encoding="utf-8")
+        # A msgid carrying a msgctxt is namespaced and cannot collide.
+        out = []
+        for block in text.split("\n\n"):
+            if "msgctxt" in block or "msgid_plural" in block:
+                continue
+            m = re.search(r'^msgid "(.+)"$', block, re.M)
+            if m:
+                out.append(m.group(1))
+        return out
+
+    def test_no_msgid_is_hijacked_by_another_catalogue(self, settings):
+        from pathlib import Path
+
+        from django.utils import translation
+        from django.utils.translation import gettext
+
+        po = Path(settings.LOCALE_PATHS[0]) / "ar" / "LC_MESSAGES" / "django.po"
+        with translation.override("fr"):
+            hijacked = {
+                msgid: gettext(msgid)
+                for msgid in self._msgids(po)
+                if gettext(msgid) != msgid
+            }
+
+        assert hijacked == {}, (
+            "these msgids resolve to someone else's French translation; "
+            "give them a context with pgettext"
+        )
+
+    def test_no_entry_is_marked_fuzzy(self, settings):
+        from pathlib import Path
+
+        po = Path(settings.LOCALE_PATHS[0]) / "ar" / "LC_MESSAGES" / "django.po"
+        # gettext ignores a fuzzy entry at runtime, so a translation that
+        # looks present in the .po silently does not apply. makemessages
+        # adds the marker whenever it guesses at a changed msgid.
+        assert "#, fuzzy" not in po.read_text(encoding="utf-8"), (
+            "a fuzzy entry is ignored at runtime; review it and remove the marker"
+        )
