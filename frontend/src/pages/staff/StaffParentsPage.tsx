@@ -1,4 +1,4 @@
-import { MessageCircleOff, Search, Users } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { PageShell } from "@/components/app";
 import {
   Badge,
-  Button,
   Card,
   CardBody,
   EmptyState,
@@ -15,7 +14,7 @@ import {
   LoadingState,
   Pagination,
 } from "@/components/ui";
-import { useParents, useSetParentMessaging } from "@/features/parents/hooks";
+import { useParents } from "@/features/parents/hooks";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 const RELATIONSHIP_KEYS: Record<string, string> = {
@@ -37,7 +36,6 @@ export function StaffParentsPage() {
     page,
     ...(onlyUnlinked ? { unlinked: "true" } : {}),
   });
-  const setMessaging = useSetParentMessaging();
 
   const rows = query.data?.results ?? [];
 
@@ -113,11 +111,6 @@ export function StaffParentsPage() {
                             {t("parents.accountDisabled")}
                           </Badge>
                         )}
-                        {!parent.can_send_messages && (
-                          <Badge tone="warning">
-                            {t("parents.messagingOff")}
-                          </Badge>
-                        )}
                       </div>
 
                       <p className="mt-0.5 text-sm text-ink-500">
@@ -157,28 +150,6 @@ export function StaffParentsPage() {
                         </ul>
                       )}
                     </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      isLoading={
-                        setMessaging.isPending &&
-                        setMessaging.variables?.id === parent.id
-                      }
-                      onClick={() =>
-                        setMessaging.mutate({
-                          id: parent.id,
-                          canSend: !parent.can_send_messages,
-                        })
-                      }
-                      leftIcon={<MessageCircleOff className="size-4" />}
-                    >
-                      {t(
-                        parent.can_send_messages
-                          ? "parents.cutMessaging"
-                          : "parents.restoreMessaging",
-                      )}
-                    </Button>
                   </CardBody>
                 </Card>
               </li>

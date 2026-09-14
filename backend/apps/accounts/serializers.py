@@ -44,7 +44,6 @@ class ChildSummarySerializer(serializers.Serializer):
 
 class CurrentUserSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
-    can_send_messages = serializers.SerializerMethodField()
 
     # Role-specific profile fields, flattened onto the user so the profile
     # screen is one request and one form rather than two of each.
@@ -64,11 +63,11 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "id", "email", "first_name", "last_name",
-            "phone", "role", "children", "can_send_messages",
+            "phone", "role", "children",
             "address", "emergency_phone", "job_title",
         )
         read_only_fields = (
-            "id", "email", "role", "children", "can_send_messages",
+            "id", "email", "role", "children",
             "job_title",
         )
 
@@ -99,18 +98,6 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             profile.save()
 
         return instance
-
-    def get_can_send_messages(self, obj) -> bool:
-        """Whether this user may post a message (brief 13).
-
-        Exposed so the UI can explain why the composer is unavailable,
-        rather than letting the parent type a message and only then get a
-        403. The server still enforces it - this is presentation only.
-        """
-        if not obj.is_parent:
-            return True
-        profile = getattr(obj, "parent_profile", None)
-        return profile is not None and profile.can_send_messages
 
     def get_children(self, obj) -> list[dict]:
         """The parent's own children.

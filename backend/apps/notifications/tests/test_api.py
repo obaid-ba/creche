@@ -21,10 +21,10 @@ def read_url(notification):
 class TestOwnership:
     def test_you_only_see_your_own(self, api_client, parent, other_parent):
         Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="À moi"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="À moi"
         )
         Notification.objects.create(
-            user=other_parent, type=NotificationType.NEW_MESSAGE, title="À eux"
+            user=other_parent, type=NotificationType.DAY_PUBLISHED, title="À eux"
         )
         api_client.force_authenticate(parent)
 
@@ -36,7 +36,7 @@ class TestOwnership:
         self, api_client, parent, other_parent
     ):
         theirs = Notification.objects.create(
-            user=other_parent, type=NotificationType.NEW_MESSAGE, title="À eux"
+            user=other_parent, type=NotificationType.DAY_PUBLISHED, title="À eux"
         )
         api_client.force_authenticate(parent)
 
@@ -50,10 +50,10 @@ class TestOwnership:
 class TestReadState:
     def test_unread_count(self, api_client, parent):
         Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="A"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="A"
         )
         Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="B"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="B"
         )
         api_client.force_authenticate(parent)
 
@@ -61,7 +61,7 @@ class TestReadState:
 
     def test_marking_one_read(self, api_client, parent):
         item = Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="A"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="A"
         )
         api_client.force_authenticate(parent)
 
@@ -75,7 +75,7 @@ class TestReadState:
         self, api_client, parent
     ):
         item = Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="A"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="A"
         )
         api_client.force_authenticate(parent)
         first = api_client.post(read_url(item)).data["read_at"]
@@ -87,7 +87,7 @@ class TestReadState:
     def test_read_all(self, api_client, parent):
         for i in range(3):
             Notification.objects.create(
-                user=parent, type=NotificationType.NEW_MESSAGE, title=str(i)
+                user=parent, type=NotificationType.DAY_PUBLISHED, title=str(i)
             )
         api_client.force_authenticate(parent)
 
@@ -98,7 +98,7 @@ class TestReadState:
         self, api_client, parent, other_parent
     ):
         theirs = Notification.objects.create(
-            user=other_parent, type=NotificationType.NEW_MESSAGE, title="À eux"
+            user=other_parent, type=NotificationType.DAY_PUBLISHED, title="À eux"
         )
         api_client.force_authenticate(parent)
 
@@ -109,10 +109,10 @@ class TestReadState:
 
     def test_unread_filter(self, api_client, parent):
         read = Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="lu"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="lu"
         )
         Notification.objects.create(
-            user=parent, type=NotificationType.NEW_MESSAGE, title="non lu"
+            user=parent, type=NotificationType.DAY_PUBLISHED, title="non lu"
         )
         read.mark_read()
         api_client.force_authenticate(parent)
@@ -120,82 +120,6 @@ class TestReadState:
         response = api_client.get(LIST_URL, {"unread": "true"})
 
         assert [n["title"] for n in response.data["results"]] == ["non lu"]
-
-
-@pytest.mark.django_db
-class TestMessageFanOut:
-    def test_staff_message_notifies_the_guardians(
-        self, api_client, staff, parent, owned_child
-    ):
-        api_client.force_authenticate(staff)
-        api_client.post(
-            reverse("conversation-list"),
-            {
-                "child_id": str(owned_child.id),
-                "body": "Bonjour, tout s'est bien passé.",
-            },
-        )
-
-        assert Notification.objects.filter(
-            user=parent, type=NotificationType.NEW_MESSAGE
-        ).count() == 1
-
-    def test_the_sender_is_not_notified(
-        self, api_client, staff, owned_child
-    ):
-        api_client.force_authenticate(staff)
-        api_client.post(
-            reverse("conversation-list"),
-            {"child_id": str(owned_child.id), "body": "Bonjour"},
-        )
-
-        assert Notification.objects.filter(user=staff).count() == 0
-
-    def test_another_family_is_not_notified(
-        self, api_client, staff, other_parent, owned_child
-    ):
-        api_client.force_authenticate(staff)
-        api_client.post(
-            reverse("conversation-list"),
-            {"child_id": str(owned_child.id), "body": "Bonjour"},
-        )
-
-        assert Notification.objects.filter(user=other_parent).count() == 0
-
-    def test_a_revoked_guardian_is_not_notified(
-        self, api_client, staff, parent, owned_child, link_parent_to_child
-    ):
-        """Access is revoked, so the notifications stop too."""
-        from apps.accounts.models import Guardianship
-
-        Guardianship.objects.filter(child=owned_child).update(
-            revoked_at="2026-01-01T00:00:00Z"
-        )
-        api_client.force_authenticate(staff)
-        api_client.post(
-            reverse("conversation-list"),
-            {"child_id": str(owned_child.id), "body": "Bonjour"},
-        )
-
-        assert Notification.objects.filter(user=parent).count() == 0
-
-    def test_parent_reply_notifies_staff(
-        self, api_client, staff, parent, owned_child
-    ):
-        api_client.force_authenticate(staff)
-        conversation_id = api_client.post(
-            reverse("conversation-list"),
-            {"child_id": str(owned_child.id), "body": "Bonjour"},
-        ).data["id"]
-        Notification.objects.all().delete()
-
-        api_client.force_authenticate(parent)
-        api_client.post(
-            reverse("conversation-messages", args=[conversation_id]),
-            {"body": "Merci !"},
-        )
-
-        assert Notification.objects.filter(user=staff).count() == 1
 
 
 @pytest.mark.django_db

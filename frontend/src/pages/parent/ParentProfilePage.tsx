@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { PageShell } from "@/components/app";
 import {
   Alert,
-  Badge,
   Button,
   Card,
   CardBody,
@@ -149,14 +148,7 @@ export function ParentProfilePage() {
       </Card>
 
       <Card className="mt-5">
-        <CardHeader
-          title={t("settings.security")}
-          action={
-            user.can_send_messages ? undefined : (
-              <Badge tone="warning">{t("profile.messagingDisabled")}</Badge>
-            )
-          }
-        />
+        <CardHeader title={t("settings.security")} />
         <CardBody className="space-y-6">
           <div className="flex items-start gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-card bg-ink-100 text-ink-600">

@@ -141,7 +141,7 @@ POSTGRES_HOST=127.0.0.1 POSTGRES_PORT=5433 python manage.py seed_demo
 ```
 
 Creates three staff accounts, five families with children across all four
-age groups, three days of recorded care events, activities, conversations
+age groups, three days of recorded care events, activities
 and complaints. It is idempotent, so it is safe to re-run.
 
 Today's day is deliberately left **unpublished** so the publish flow can be
@@ -215,7 +215,7 @@ backend/
     accounts/      User, profiles, Guardianship, ChildAccessCode
     children/      Child, age groups
     care/          TimelineEvent, DailyRecord
-    activities/  messaging/  complaints/  notifications/  audit/
+    activities/  complaints/  notifications/  audit/
 
 frontend/src/
   app/             router, providers, query client

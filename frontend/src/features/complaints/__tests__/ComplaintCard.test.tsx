@@ -41,7 +41,6 @@ function renderAs(role: Role, complaint: Complaint) {
     phone: "",
     role,
     children: [],
-    can_send_messages: true,
   };
   const value: AuthContextValue = {
     user,

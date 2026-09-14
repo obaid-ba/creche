@@ -43,7 +43,7 @@ class ParentListSerializer(serializers.ModelSerializer):
         model = ParentProfile
         fields = (
             "id", "first_name", "last_name", "email", "phone",
-            "address", "emergency_phone", "can_send_messages",
+            "address", "emergency_phone",
             "is_active", "last_login_at", "children",
         )
         read_only_fields = fields
@@ -60,12 +60,6 @@ class ParentListSerializer(serializers.ModelSerializer):
             }
             for link in obj.guardianships.all()
         ]
-
-
-class ParentUpdateSerializer(serializers.Serializer):
-    """The only parent attribute staff may change from here."""
-
-    can_send_messages = serializers.BooleanField()
 
 
 class ParentViewSet(
@@ -105,22 +99,6 @@ class ParentViewSet(
             queryset = queryset.filter(guardianships__isnull=True)
 
         return queryset
-
-    @extend_schema(request=ParentUpdateSerializer, responses=ParentListSerializer)
-    @action(detail=True, methods=["patch"], url_path="messaging")
-    def messaging(self, request, pk=None):
-        """Turn a parent's ability to send messages on or off (brief §13)."""
-        profile = self.get_object()
-        serializer = ParentUpdateSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        profile.can_send_messages = serializer.validated_data["can_send_messages"]
-        profile.save(update_fields=["can_send_messages"])
-
-        return Response(
-            ParentListSerializer(profile, context=self.get_serializer_context()).data
-        )
-
 
 class StaffMemberSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source="user.id", read_only=True)

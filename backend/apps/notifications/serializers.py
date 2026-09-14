@@ -28,7 +28,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class NotificationUnreadCountSerializer(serializers.Serializer):
-    """Named distinctly from the messaging one so the generated OpenAPI
-    client does not end up with two different `UnreadCount` components."""
+    """Kept explicitly named so the generated OpenAPI client gets a
+    component name that says what it counts."""
 
     unread = serializers.IntegerField(read_only=True)

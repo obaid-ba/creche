@@ -93,36 +93,6 @@ class TestParentDirectoryContent:
 
 
 @pytest.mark.django_db
-class TestParentMessagingToggle:
-    def test_staff_can_disable_messaging(self, api_client, staff, parent):
-        api_client.force_authenticate(staff)
-
-        response = api_client.patch(
-            reverse("parent-messaging", args=[parent.parent_profile.pk]),
-            {"can_send_messages": False},
-        )
-
-        assert response.status_code == 200
-        parent.parent_profile.refresh_from_db()
-        assert parent.parent_profile.can_send_messages is False
-
-    def test_a_parent_cannot_re_enable_their_own(self, api_client, parent):
-        profile = parent.parent_profile
-        profile.can_send_messages = False
-        profile.save(update_fields=["can_send_messages"])
-        api_client.force_authenticate(parent)
-
-        response = api_client.patch(
-            reverse("parent-messaging", args=[profile.pk]),
-            {"can_send_messages": True},
-        )
-
-        assert response.status_code == 403
-        profile.refresh_from_db()
-        assert profile.can_send_messages is False
-
-
-@pytest.mark.django_db
 class TestStaffDirectory:
     def test_parents_cannot_read_it(self, api_client, parent):
         api_client.force_authenticate(parent)

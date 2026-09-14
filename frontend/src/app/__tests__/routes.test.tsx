@@ -121,7 +121,6 @@ describe("application navigation", () => {
       "/parent",
       "/parent/timeline",
       "/parent/activities",
-      "/parent/messages",
       "/parent/complaints",
       "/parent/profile",
     ]) {
@@ -135,7 +134,6 @@ describe("application navigation", () => {
       "/staff",
       "/staff/children",
       "/staff/activities",
-      "/staff/messages",
       "/staff/complaints",
       "/staff/parents",
       "/staff/settings",

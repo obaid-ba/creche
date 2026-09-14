@@ -46,7 +46,6 @@ LOCAL_APPS = [
     "apps.children",
     "apps.care",
     "apps.activities",
-    "apps.messaging",
     "apps.complaints",
     "apps.notifications",
     "apps.audit",

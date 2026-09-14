@@ -41,28 +41,6 @@ def _create_many(users, **fields) -> int:
     return len(notifications)
 
 
-def notify_new_message(message) -> int:
-    """Everyone in the conversation except the sender."""
-    conversation = message.conversation
-    child = conversation.child
-
-    if message.sender is not None and message.sender.is_staff_member:
-        recipients = _guardian_users(child)
-    else:
-        recipients = _staff_users()
-
-    recipients = recipients.exclude(pk=getattr(message.sender, "pk", None))
-
-    return _create_many(
-        recipients,
-        type=NotificationType.NEW_MESSAGE,
-        title=f"Nouveau message · {child.first_name}",
-        body=message.body[:140],
-        link="/messages",
-        child=child,
-    )
-
-
 def notify_day_published(daily_record) -> int:
     child = daily_record.child
     return _create_many(

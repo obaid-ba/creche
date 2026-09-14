@@ -322,30 +322,6 @@ class TestCurrentUserChildren:
 
 
 @pytest.mark.django_db
-class TestCanSendMessagesFlag:
-    """Exposed so the UI can explain a disabled composer up front; the
-    server still enforces the rule (brief 13)."""
-
-    def test_true_by_default_for_a_parent(self, api_client, parent):
-        api_client.force_authenticate(parent)
-
-        assert api_client.get(reverse("auth-me")).data["can_send_messages"] is True
-
-    def test_false_when_the_nursery_disables_it(self, api_client, parent):
-        profile = parent.parent_profile
-        profile.can_send_messages = False
-        profile.save(update_fields=["can_send_messages"])
-        api_client.force_authenticate(parent)
-
-        assert api_client.get(reverse("auth-me")).data["can_send_messages"] is False
-
-    def test_always_true_for_staff(self, api_client, staff):
-        api_client.force_authenticate(staff)
-
-        assert api_client.get(reverse("auth-me")).data["can_send_messages"] is True
-
-
-@pytest.mark.django_db
 class TestProfileUpdate:
     """/auth/me/ writes through to the role-specific profile, so the
     profile screen is one request and one form (brief §20)."""

@@ -9,7 +9,6 @@ export interface ParentRow {
   phone: string;
   address: string;
   emergency_phone: string;
-  can_send_messages: boolean;
   is_active: boolean;
   last_login_at: string | null;
   children: {
@@ -44,14 +43,6 @@ export const directoryApi = {
     const { data } = await apiClient.get<PageResponse<ParentRow>>("/parents/", {
       params: query,
     });
-    return data;
-  },
-
-  async setMessaging(parentId: string, canSend: boolean) {
-    const { data } = await apiClient.patch<ParentRow>(
-      `/parents/${parentId}/messaging/`,
-      { can_send_messages: canSend },
-    );
     return data;
   },
 

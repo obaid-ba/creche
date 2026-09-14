@@ -16,7 +16,6 @@ from common.models import BaseModel
 
 
 class NotificationType(models.TextChoices):
-    NEW_MESSAGE = "NEW_MESSAGE", _("Nouveau message")
     DAY_PUBLISHED = "DAY_PUBLISHED", _("Journée publiée")
     NEW_ACTIVITY = "NEW_ACTIVITY", _("Nouvelle activité")
     COMPLAINT_CREATED = "COMPLAINT_CREATED", _("Nouvelle réclamation")

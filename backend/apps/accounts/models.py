@@ -122,7 +122,6 @@ class ParentProfile(models.Model):
     address = models.TextField(blank=True)
     emergency_phone = models.CharField(max_length=30, blank=True)
     # Per-nursery policy: the brief allows parents to message "if allowed".
-    can_send_messages = models.BooleanField(default=True)
     preferred_language = models.CharField(max_length=5, default="fr")
 
     class Meta:

@@ -43,7 +43,6 @@ class TimelineEventType(models.TextChoices):
 
     # Reference: another aggregate owns the content.
     ACTIVITY = "ACTIVITY", _("Activité")
-    MESSAGE = "MESSAGE", _("Message")
 
 
 class EventGroup(models.TextChoices):
@@ -211,11 +210,6 @@ REGISTRY: dict[str, EventTypeSpec] = {
             key=TimelineEventType.ACTIVITY, label=_("Activité"), icon="palette",
             group=EventGroup.ACTIVITIES, schema=EmptyPayload,
             interval=True, reference="activity", staff_creatable=False,
-        ),
-        EventTypeSpec(
-            key=TimelineEventType.MESSAGE, label=_("Message"),
-            icon="message-circle", group=EventGroup.OTHER,
-            schema=EmptyPayload, reference="message", staff_creatable=False,
         ),
     ]
 }

@@ -2,7 +2,6 @@ import {
   Bell,
   CalendarDays,
   LayoutDashboard,
-  MessageCircle,
   MessageSquareWarning,
   Palette,
   Settings,
@@ -47,7 +46,6 @@ export const NAVIGATION: Record<"parent" | "staff", readonly NavSection[]> = {
     {
       key: "people",
       items: [
-        { to: "/parent/messages", key: "messages", icon: MessageCircle },
         { to: "/parent/complaints", key: "complaints", icon: MessageSquareWarning },
         { to: "/parent/profile", key: "profile", icon: UserRound },
       ],
@@ -68,7 +66,6 @@ export const NAVIGATION: Record<"parent" | "staff", readonly NavSection[]> = {
     {
       key: "people",
       items: [
-        { to: "/staff/messages", key: "messages", icon: MessageCircle },
         { to: "/staff/complaints", key: "complaints", icon: MessageSquareWarning },
         { to: "/staff/parents", key: "parents", icon: UserRound },
       ],

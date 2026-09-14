@@ -10,15 +10,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('care', '0001_initial'),
-        ('messaging', '0001_initial'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='timelineevent',
-            name='message',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='timeline_events', to='messaging.message'),
-        ),
         migrations.AddIndex(
             model_name='dailyrecord',
             index=models.Index(fields=['child', '-date'], name='care_dailyr_child_i_73b4ec_idx'),
@@ -46,10 +40,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='timelineevent',
             constraint=models.CheckConstraint(condition=models.Q(models.Q(('type', 'ACTIVITY'), _negated=True), ('activity__isnull', False), _connector='OR'), name='timeline_activity_reference_required'),
-        ),
-        migrations.AddConstraint(
-            model_name='timelineevent',
-            constraint=models.CheckConstraint(condition=models.Q(models.Q(('type', 'MESSAGE'), _negated=True), ('message__isnull', False), _connector='OR'), name='timeline_message_reference_required'),
         ),
         migrations.AddConstraint(
             model_name='timelineevent',

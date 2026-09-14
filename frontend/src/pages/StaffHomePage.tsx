@@ -1,7 +1,6 @@
 import {
   ArrowRight,
   CalendarCheck,
-  MessageCircle,
   MessageSquareWarning,
   Palette,
   Users,
@@ -147,7 +146,7 @@ export function StaffHomePage() {
         description={t("dashboard.greeting", { name: user?.first_name ?? "" })}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatTile
           icon={Users}
           label={t("dashboard.children")}
@@ -182,14 +181,6 @@ export function StaffHomePage() {
           to="/staff/complaints"
           field="bg-accent-100"
           ink="text-accent-700"
-        />
-        <StatTile
-          icon={MessageCircle}
-          label={t("dashboard.unreadMessages")}
-          value={data.unread_messages}
-          to="/staff/messages"
-          field="bg-sky-100"
-          ink="text-sky-700"
         />
       </div>
 

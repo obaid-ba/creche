@@ -22,7 +22,6 @@ export interface ParentDashboardChild {
 
 export interface ParentDashboard {
   children: ParentDashboardChild[];
-  unread_messages: number;
   unread_notifications: number;
   open_complaints: number;
 }
@@ -32,7 +31,6 @@ export interface StaffDashboard {
   age_groups: { key: AgeGroupKey; label: string; count: number }[];
   new_complaints: number;
   in_progress_complaints: number;
-  unread_messages: number;
   days_published_today: number;
   children_with_events_today: number;
   recent_activities: {

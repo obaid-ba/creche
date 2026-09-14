@@ -104,9 +104,6 @@ const NotificationsPage = lazy(() =>
     default: m.NotificationsPage,
   })),
 );
-const MessagesPage = lazy(() =>
-  import("@/pages/MessagesPage").then((m) => ({ default: m.MessagesPage })),
-);
 const ComplaintsPage = lazy(() =>
   import("@/pages/ComplaintsPage").then((m) => ({ default: m.ComplaintsPage })),
 );
@@ -183,7 +180,6 @@ export const routeTable: RouteObject[] = [
           { index: true, element: withSuspense(<ParentHomePage />) },
           { path: "timeline", element: withSuspense(<ParentTimelinePage />) },
           { path: "activities", element: withSuspense(<ParentActivitiesPage />) },
-          { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "profile", element: withSuspense(<ParentProfilePage />) },
           { path: "notifications", element: withSuspense(<NotificationsPage />) },
@@ -217,7 +213,6 @@ export const routeTable: RouteObject[] = [
             element: withSuspense(<StaffChildTimelinePage />),
           },
           { path: "activities", element: withSuspense(<StaffActivitiesPage />) },
-          { path: "messages", element: withSuspense(<MessagesPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "parents", element: withSuspense(<StaffParentsPage />) },
           { path: "notifications", element: withSuspense(<NotificationsPage />) },

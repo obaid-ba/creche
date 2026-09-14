@@ -18,7 +18,7 @@ function makeNotification(
     type_label: "Nouveau message",
     title: "Nouveau message · Mohamed",
     body: "Bonjour, tout s'est bien passé.",
-    link: "/parent/messages",
+    link: "/parent/complaints",
     child: { id: "c1", first_name: "Mohamed" },
     is_read: false,
     read_at: null,

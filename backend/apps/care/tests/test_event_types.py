@@ -24,9 +24,8 @@ class TestRegistry:
             spec_for("NOT_A_TYPE")
 
     def test_reference_types_are_not_staff_creatable(self):
-        """ACTIVITY and MESSAGE rows come from their owning aggregate."""
+        """An ACTIVITY row comes from its owning aggregate, never the API."""
         assert REGISTRY[TimelineEventType.ACTIVITY].staff_creatable is False
-        assert REGISTRY[TimelineEventType.MESSAGE].staff_creatable is False
 
     def test_only_interval_types_are_marked_as_such(self):
         assert REGISTRY[TimelineEventType.SLEEP].interval is True

@@ -93,18 +93,6 @@ class TestParentDashboard:
         api_client.force_authenticate(parent)
         assert api_client.get(PARENT_URL).data["open_complaints"] == 0
 
-    def test_counts_unread_messages(
-        self, api_client, parent, staff, owned_child
-    ):
-        api_client.force_authenticate(staff)
-        api_client.post(
-            reverse("conversation-list"),
-            {"child_id": str(owned_child.id), "body": "Bonjour"},
-        )
-        api_client.force_authenticate(parent)
-
-        assert api_client.get(PARENT_URL).data["unread_messages"] == 1
-
     def test_a_parent_with_no_children_gets_an_empty_dashboard(
         self, api_client, parent
     ):

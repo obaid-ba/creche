@@ -67,7 +67,7 @@ export function ParentHomePage() {
     );
   }
 
-  const { children, unread_messages, open_complaints } = query.data;
+  const { children, open_complaints } = query.data;
 
   return (
     <PageShell size="form">
@@ -158,13 +158,7 @@ export function ParentHomePage() {
         ))
       )}
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        <CountTile
-          icon={MessageCircle}
-          label={t("parentHome.unreadMessages")}
-          count={unread_messages}
-          to="/parent/messages"
-        />
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
         <CountTile
           icon={MessageSquareWarning}
           label={t("parentHome.openComplaints")}

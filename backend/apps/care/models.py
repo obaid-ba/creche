@@ -2,7 +2,7 @@
 
 ``TimelineEvent`` is a single unified log: the source of truth for care
 events, and a thin typed *reference* for events whose content belongs to
-another aggregate (activity, message). ``DailyRecord`` holds only the
+another aggregate (an activity). ``DailyRecord`` holds only the
 day-scoped facts that are not derivable from events.
 
 Full rationale in docs/timeline.md.
@@ -41,7 +41,7 @@ class TimelineEventQuerySet(models.QuerySet):
 
     def with_related(self):
         """Bulk-resolve reference rows so the timeline stays O(1) queries."""
-        return self.select_related("created_by", "activity", "message").prefetch_related(
+        return self.select_related("created_by", "activity").prefetch_related(
             "activity__participations"
         )
 
@@ -73,11 +73,6 @@ class TimelineEvent(BaseModel):
         "activities.Activity", null=True, blank=True,
         on_delete=models.CASCADE, related_name="timeline_events",
     )
-    message = models.ForeignKey(
-        "messaging.Message", null=True, blank=True,
-        on_delete=models.CASCADE, related_name="timeline_events",
-    )
-
     is_published = models.BooleanField(default=False)
 
     created_by = models.ForeignKey(
@@ -101,10 +96,6 @@ class TimelineEvent(BaseModel):
                 condition=~models.Q(type="ACTIVITY")
                 | models.Q(activity__isnull=False),
                 name="timeline_activity_reference_required",
-            ),
-            models.CheckConstraint(
-                condition=~models.Q(type="MESSAGE") | models.Q(message__isnull=False),
-                name="timeline_message_reference_required",
             ),
             # An activity appears at most once per child's timeline.
             models.UniqueConstraint(

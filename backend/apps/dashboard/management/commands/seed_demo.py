@@ -22,7 +22,6 @@ from apps.activities.models import Activity, ActivityParticipation
 from apps.care.models import DailyRecord, TimelineEvent
 from apps.children.models import Child
 from apps.complaints.models import Complaint
-from apps.messaging.models import Conversation, Message
 
 DEMO_PASSWORD = "Demo!Passw0rd"
 
@@ -72,7 +71,6 @@ class Command(BaseCommand):
 
         self._record_days(children, recorder, options["days"])
         self._create_activities(children, recorder)
-        self._create_messages(children, recorder)
         self._create_complaints(children)
 
         self.stdout.write(self.style.SUCCESS("\nDemo data ready."))
@@ -215,23 +213,6 @@ class Command(BaseCommand):
 
                 sync_timeline_events(activity)
         self.stdout.write(f"  activities: {len(plan)}")
-
-    def _create_messages(self, children, recorder) -> None:
-        for child in children[:3]:
-            conversation, created = Conversation.objects.get_or_create(
-                child=child, subject="Nouvelles du jour"
-            )
-            if created:
-                message = Message.objects.create(
-                    conversation=conversation, sender=recorder,
-                    body=(
-                        f"Bonjour, {child.first_name} a participé à une "
-                        "activité de peinture aujourd'hui."
-                    ),
-                )
-                conversation.last_message_at = message.created_at
-                conversation.save(update_fields=["last_message_at"])
-        self.stdout.write("  conversations: 3")
 
     def _create_complaints(self, children) -> None:
         subjects = [

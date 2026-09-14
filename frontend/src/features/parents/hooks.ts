@@ -32,15 +32,6 @@ function useDirectoryInvalidation() {
   return () => queryClient.invalidateQueries({ queryKey: directoryKeys.all });
 }
 
-export function useSetParentMessaging() {
-  const invalidate = useDirectoryInvalidation();
-  return useMutation({
-    mutationFn: ({ id, canSend }: { id: string; canSend: boolean }) =>
-      directoryApi.setMessaging(id, canSend),
-    onSuccess: invalidate,
-  });
-}
-
 export function useCreateStaff() {
   const invalidate = useDirectoryInvalidation();
   return useMutation({

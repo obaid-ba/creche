@@ -22,8 +22,6 @@ from apps.care.models import DailyRecord, DailyRecordStatus, TimelineEvent
 from apps.care.summary import build_summary
 from apps.children.models import Child
 from apps.complaints.models import Complaint, ComplaintStatus
-from apps.messaging.models import Message
-from apps.messaging.views import visible_conversations
 from apps.notifications.models import Notification
 from common.age import AgeGroup, GROUP_BOUNDS, group_date_range
 from common.permissions import IsStaff
@@ -33,7 +31,6 @@ class ParentDashboardSerializer(serializers.Serializer):
     """Documented for the schema; the view builds the payload directly."""
 
     children = serializers.ListField(child=serializers.DictField())
-    unread_messages = serializers.IntegerField()
     unread_notifications = serializers.IntegerField()
     open_complaints = serializers.IntegerField()
 
@@ -42,18 +39,8 @@ class StaffDashboardSerializer(serializers.Serializer):
     total_children = serializers.IntegerField()
     age_groups = serializers.ListField(child=serializers.DictField())
     new_complaints = serializers.IntegerField()
-    unread_messages = serializers.IntegerField()
     days_published_today = serializers.IntegerField()
     recent_activities = serializers.ListField(child=serializers.DictField())
-
-
-def _unread_message_count(user) -> int:
-    return (
-        Message.objects.filter(conversation__in=visible_conversations(user))
-        .exclude(sender=user)
-        .exclude(reads__user=user)
-        .count()
-    )
 
 
 class ParentDashboardView(APIView):
@@ -123,7 +110,6 @@ class ParentDashboardView(APIView):
         return Response(
             {
                 "children": payload,
-                "unread_messages": _unread_message_count(user),
                 "unread_notifications": Notification.objects.for_user(user)
                 .unread()
                 .count(),
@@ -174,8 +160,7 @@ class StaffDashboardView(APIView):
                 "in_progress_complaints": Complaint.objects.filter(
                     status=ComplaintStatus.IN_PROGRESS
                 ).count(),
-                "unread_messages": _unread_message_count(request.user),
-                # "Attendance" in the brief is a placeholder; what is real
+                    # "Attendance" in the brief is a placeholder; what is real
                 # today is how many days have actually been published.
                 "days_published_today": DailyRecord.objects.filter(
                     date=today, status=DailyRecordStatus.PUBLISHED
