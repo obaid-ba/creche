@@ -72,9 +72,14 @@ class TestRoleGatedEndpoints:
         self, api_client, parent, foreign_child, phantom_id
     ):
         api_client.force_authenticate(parent)
+        guardian = parent.parent_profile.pk
 
-        real = api_client.post(reverse("child-access-code", args=[foreign_child.id]))
-        phantom = api_client.post(reverse("child-access-code", args=[phantom_id]))
+        real = api_client.post(
+            reverse("child-access-code", args=[foreign_child.id, guardian])
+        )
+        phantom = api_client.post(
+            reverse("child-access-code", args=[phantom_id, guardian])
+        )
 
         assert real.status_code == phantom.status_code == 403
         assert real.data["error"]["message"] == phantom.data["error"]["message"]

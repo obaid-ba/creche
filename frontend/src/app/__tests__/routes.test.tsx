@@ -22,7 +22,6 @@ const PUBLIC_ROUTES = [
   "/documents",
   "/contact",
   "/parent/login",
-  "/parent/activation",
   "/staff/login",
 ];
 

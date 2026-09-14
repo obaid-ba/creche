@@ -33,11 +33,6 @@ const ParentLoginPage = lazy(() =>
 const StaffLoginPage = lazy(() =>
   import("@/pages/StaffLoginPage").then((m) => ({ default: m.StaffLoginPage })),
 );
-const ParentActivationPage = lazy(() =>
-  import("@/pages/ParentActivationPage").then((m) => ({
-    default: m.ParentActivationPage,
-  })),
-);
 const ParentHomePage = lazy(() =>
   import("@/pages/ParentHomePage").then((m) => ({ default: m.ParentHomePage })),
 );
@@ -153,15 +148,7 @@ export const routeTable: RouteObject[] = [
       </RedirectIfAuthenticated>
     ),
   },
-  {
-    path: "/parent/activation",
-    element: (
-      <RedirectIfAuthenticated>
-        {withSuspense(<ParentActivationPage />)}
-      </RedirectIfAuthenticated>
-    ),
-  },
-  {
+    {
     path: "/staff/login",
     element: (
       <RedirectIfAuthenticated>

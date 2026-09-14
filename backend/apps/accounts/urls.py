@@ -4,11 +4,10 @@ from rest_framework.routers import DefaultRouter
 
 from .directory import ParentViewSet, StaffViewSet
 from .views import (
-    LinkChildView,
     LoginView,
     LogoutView,
     MeView,
-    ParentClaimView,
+    ParentCodeLoginView,
     PasswordChangeView,
     RefreshView,
 )
@@ -28,10 +27,9 @@ urlpatterns = [
         PasswordChangeView.as_view(),
         name="auth-password-change",
     ),
-    path("auth/parent/claim/", ParentClaimView.as_view(), name="auth-parent-claim"),
     path(
-        "auth/parent/link-child/",
-        LinkChildView.as_view(),
-        name="auth-parent-link-child",
+        "auth/parent/code-login/",
+        ParentCodeLoginView.as_view(),
+        name="auth-parent-code-login",
     ),
 ]

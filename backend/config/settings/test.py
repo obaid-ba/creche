@@ -12,7 +12,7 @@ DATABASES["default"]["NAME"] = "test_creche_mamati"  # noqa: F405
 # tests re-enable it explicitly via override_settings.
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"] = {  # noqa: F405
     "login": None,
-    "claim": None,
+    "code_login": None,
     "contact": None,
     "user": None,
 }

@@ -73,24 +73,19 @@ class TestLoginThrottle:
 
 
 @pytest.mark.django_db
-class TestClaimThrottle:
-    def test_code_guessing_is_throttled(self, api_client, make_child):
-        """The access code is short, so guessing must be rate-limited -
-        this is what makes ~24.8 bits of entropy acceptable."""
-        ChildAccessCode.issue(child=make_child())
+class TestCodeLoginThrottle:
+    def test_code_guessing_is_throttled(self, api_client, make_child, parent):
+        """The access code is the parent's standing credential, so guessing
+        at it is rate-limited by address as well as locked per code."""
+        child = make_child(first_name="Mohamed")
+        ChildAccessCode.issue(child=child, parent=parent.parent_profile)
 
-        with with_rates(login="100/hour", claim="3/hour", user="1000/hour"):
-            url = reverse("auth-parent-claim")
+        with with_rates(login="100/hour", code_login="3/hour", user="1000/hour"):
+            url = reverse("auth-parent-code-login")
             statuses = [
                 api_client.post(
                     url,
-                    {
-                        "access_code": f"MAM-ZZZZ{n}",
-                        "email": f"guess{n}@example.com",
-                        "password": PASSWORD,
-                        "first_name": "A",
-                        "last_name": "B",
-                    },
+                    {"access_code": f"MAM-ZZZZ-ZZZ{n}", "child_name": "Mohamed"},
                 ).status_code
                 for n in range(5)
             ]

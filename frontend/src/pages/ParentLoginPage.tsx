@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { LoginForm } from "@/features/auth/components/LoginForm";
+import { CodeLoginForm } from "@/features/auth/components/CodeLoginForm";
 import { AuthLayout } from "@/layouts/AuthLayout";
 
 export function ParentLoginPage() {
@@ -13,15 +13,7 @@ export function ParentLoginPage() {
       subtitle={t("auth.parentSubtitle")}
       footer={
         <>
-          <p>
-            {t("auth.firstLogin")}{" "}
-            <Link
-              to="/parent/activation"
-              className="font-semibold text-primary-700 underline underline-offset-2"
-            >
-              {t("auth.activateWithCode")}
-            </Link>
-          </p>
+          <p className="text-ink-600">{t("auth.noCode")}</p>
           <p className="mt-2 text-xs text-ink-500">
             {t("auth.areYouStaff")}{" "}
             <Link to="/staff/login" className="underline underline-offset-2">
@@ -31,7 +23,7 @@ export function ParentLoginPage() {
         </>
       }
     >
-      <LoginForm area="parent" />
+      <CodeLoginForm />
     </AuthLayout>
   );
 }

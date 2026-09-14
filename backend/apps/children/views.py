@@ -8,6 +8,7 @@ another family's child regardless of the id they send
 from __future__ import annotations
 
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +19,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from apps.accounts.access_codes import ChildAccessCode
-from apps.accounts.models import Guardianship
+from apps.accounts.models import Guardianship, ParentProfile, User
 from apps.audit.models import AuditAction
 from apps.audit.services import record as record_audit
 from common.age import AgeGroup, GROUP_BOUNDS, group_date_range
@@ -28,12 +29,12 @@ from .filters import ChildFilter
 from .models import Child, ChildStatus
 from .serializers import (
     AccessCodeResponseSerializer,
+    GuardianCreateSerializer,
     AgeGroupCountSerializer,
     ChildDetailSerializer,
     ChildListSerializer,
     ChildParentSerializer,
     ChildWriteSerializer,
-    GuardianLinkSerializer,
 )
 
 
@@ -211,8 +212,21 @@ class ChildViewSet(viewsets.ModelViewSet):
         return Response(ChildDetailSerializer(child, context={"request": request}).data)
 
     # ── Guardians ───────────────────────────────────────────────────────
+    @extend_schema(
+        request=GuardianCreateSerializer, responses=AccessCodeResponseSerializer
+    )
     @action(detail=True, methods=["get", "post"], permission_classes=[IsStaff])
     def guardians(self, request, pk=None):
+        """List a child's guardians, or enrol one from the paper form.
+
+        POST is the whole enrolment: the family hands staff the form, staff
+        type it in here, and the parent leaves with an access code. They
+        fill in nothing themselves and never choose a password.
+
+        Passing `parent_id` links a family that already has an account —
+        a second child joining — so both children sit behind one login
+        rather than the family ending up with two.
+        """
         child = self.get_object()
 
         if request.method == "GET":
@@ -222,42 +236,53 @@ class ChildViewSet(viewsets.ModelViewSet):
                 ]
             )
 
-        serializer = GuardianLinkSerializer(data=request.data)
+        serializer = GuardianCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        parent_user = serializer.validated_data["email"]
+        data = serializer.validated_data
 
         with transaction.atomic():
-            link, created = Guardianship.objects.get_or_create(
-                parent=parent_user.parent_profile,
+            if data.get("parent_id"):
+                profile = get_object_or_404(
+                    ParentProfile.objects.select_related("user"),
+                    pk=data["parent_id"],
+                )
+            else:
+                user = User.objects.create_parent(
+                    first_name=data["first_name"],
+                    last_name=data["last_name"],
+                    phone=data.get("phone", ""),
+                    email=data.get("email") or None,
+                )
+                profile = ParentProfile.objects.create(user=user)
+
+            link, _created = Guardianship.objects.update_or_create(
+                parent=profile,
                 child=child,
                 defaults={
-                    "relationship": serializer.validated_data["relationship"],
+                    "relationship": data["relationship"],
                     "granted_by": request.user,
+                    "revoked_at": None,
+                    # The first guardian on a child is the primary contact.
+                    "is_primary": not Guardianship.objects.filter(
+                        child=child, is_primary=True, revoked_at__isnull=True
+                    ).exclude(parent=profile).exists(),
                 },
             )
-            if not created and link.revoked_at is not None:
-                link.revoked_at = None
-                link.save(update_fields=["revoked_at", "updated_at"])
-
-            if serializer.validated_data["is_primary"]:
-                # The partial unique index allows only one primary guardian,
-                # so demote the incumbent in the same transaction.
-                Guardianship.objects.filter(
-                    child=child, is_primary=True, revoked_at__isnull=True
-                ).exclude(pk=link.pk).update(is_primary=False)
-                link.is_primary = True
-                link.save(update_fields=["is_primary", "updated_at"])
-
+            code, plain = ChildAccessCode.issue(
+                child=child, parent=profile, issued_by=request.user
+            )
             record_audit(
                 action=AuditAction.GUARDIAN_LINKED,
                 request=request,
                 obj=link,
                 child=child,
-                parent_email=parent_user.email,
+            )
+            record_audit(
+                action=AuditAction.CODE_ISSUED, request=request, obj=code, child=child
             )
 
         return Response(
-            ChildDetailSerializer(child, context={"request": request}).data,
+            self._code_payload(code, plain, child, profile),
             status=status.HTTP_201_CREATED,
         )
 
@@ -286,19 +311,37 @@ class ChildViewSet(viewsets.ModelViewSet):
             )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # ── Access codes ────────────────────────────────────────────────────
+    # ── Guardians and their access codes ────────────────────────────────
+    def _code_payload(self, code, plain, child, profile):
+        """The plaintext exists here and nowhere else — it is not stored
+        and cannot be retrieved again (docs/authentication.md 4.3)."""
+        return {
+            "code": plain,
+            "hint": code.code_hint,
+            "parent_id": profile.pk,
+            "parent_name": profile.user.get_full_name(),
+            "child_name": child.first_name,
+        }
+
     @extend_schema(request=None, responses=AccessCodeResponseSerializer)
     @action(
-        detail=True, methods=["post", "delete"], url_path="access-code",
+        detail=True, methods=["post", "delete"],
+        url_path="guardians/(?P<parent_id>[^/.]+)/access-code",
         permission_classes=[IsStaff],
     )
-    def access_code(self, request, pk=None):
+    def access_code(self, request, pk=None, parent_id=None):
+        """Reissue or revoke one guardian's code — for a lost paper."""
         child = self.get_object()
+        guardianship = get_object_or_404(
+            Guardianship.objects.select_related("parent__user"),
+            child=child, parent_id=parent_id, revoked_at__isnull=True,
+        )
+        profile = guardianship.parent
 
         if request.method == "DELETE":
             with transaction.atomic():
                 ChildAccessCode.objects.filter(
-                    child=child, claimed_at__isnull=True, revoked_at__isnull=True
+                    child=child, parent=profile, revoked_at__isnull=True
                 ).update(revoked_at=timezone.now())
                 record_audit(
                     action=AuditAction.CODE_REVOKED, request=request, child=child
@@ -306,22 +349,15 @@ class ChildViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         with transaction.atomic():
-            code, plain = ChildAccessCode.issue(child=child, issued_by=request.user)
+            code, plain = ChildAccessCode.issue(
+                child=child, parent=profile, issued_by=request.user
+            )
             record_audit(
-                action=AuditAction.CODE_ISSUED,
-                request=request,
-                obj=code,
-                child=child,
+                action=AuditAction.CODE_ISSUED, request=request, obj=code, child=child
             )
 
-        # The plaintext exists here and nowhere else - it is not stored and
-        # cannot be retrieved again (docs/authentication.md 4.3).
         return Response(
-            {
-                "code": plain,
-                "expires_at": code.expires_at,
-                "hint": code.code_hint,
-            },
+            self._code_payload(code, plain, child, profile),
             status=status.HTTP_201_CREATED,
         )
 

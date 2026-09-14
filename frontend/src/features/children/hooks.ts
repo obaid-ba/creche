@@ -13,6 +13,7 @@ import type {
   ChildDetail,
   ChildListItem,
   ChildListParams,
+  GuardianInput,
 } from "./types";
 
 /** One place that builds cache keys, so invalidation cannot drift. */
@@ -96,10 +97,20 @@ export function useRestoreChild() {
   });
 }
 
-export function useIssueAccessCode() {
+export function useAddGuardian(childId: string) {
   const invalidate = useChildInvalidation();
   return useMutation({
-    mutationFn: (id: string) => childrenApi.issueAccessCode(id),
+    mutationFn: (input: GuardianInput) =>
+      childrenApi.addGuardian(childId, input),
+    onSuccess: invalidate,
+  });
+}
+
+export function useIssueAccessCode(childId: string) {
+  const invalidate = useChildInvalidation();
+  return useMutation({
+    mutationFn: (parentId: string) =>
+      childrenApi.issueAccessCode(childId, parentId),
     onSuccess: invalidate,
   });
 }

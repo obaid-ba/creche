@@ -302,7 +302,7 @@
   },
   "auth": {
     "parentTitle": "Espace parents",
-    "parentSubtitle": "Connectez-vous pour suivre la journée de votre enfant.",
+    "parentSubtitle": "Entrez le code remis par la crèche et le prénom de votre enfant.",
     "staffTitle": "Espace personnel",
     "staffSubtitle": "Connectez-vous pour accéder au tableau de bord.",
     "activationTitle": "Activer mon compte",
@@ -314,7 +314,13 @@
     "areYouParent": "Vous êtes parent ?",
     "parentLogin": "Connexion parents",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "codeLabel": "Code d'accès",
+    "codeHint": "Le code figure sur le papier remis par la crèche.",
+    "childNameLabel": "Prénom de l'enfant",
+    "childNamePlaceholder": "Mohamed",
+    "childNameHint": "Le prénom tel qu'il est inscrit à la crèche.",
+    "noCode": "Vous n'avez pas de code ? Demandez-le à l'équipe de la crèche."
   },
   "ui": {
     "pagination": "Pagination",
@@ -363,7 +369,8 @@
     "dateRequired": "La date est requise.",
     "activityFuture": "Une activité ne peut pas être datée dans le futur.",
     "endBeforeStart": "La fin ne peut pas précéder le début.",
-    "codeRequiredShort": "Le code est requis."
+    "codeRequiredShort": "Le code est requis.",
+    "childNameRequired": "Le prénom de l'enfant est requis."
   },
   "event": {
     "mood": {
@@ -626,8 +633,8 @@
     "noGuardians": "Aucun parent rattaché pour le moment.",
     "primaryContact": "Contact principal",
     "accessCode": "Code d'accès parent",
-    "accessCodeHint": "Permet à un parent d'activer son compte.",
-    "codeActive": "Un code est déjà actif pour cet enfant. En générer un nouveau invalidera le précédent.",
+    "accessCodeHint": "Le code et le prénom de l'enfant sont les identifiants du parent.",
+    "codeActive": "Un code est actif. En générer un nouveau invalidera le précédent.",
     "noCodeActive": "Aucun code actif pour le moment.",
     "issueCode": "Générer un code",
     "internal": "Informations internes",
@@ -656,10 +663,16 @@
     "medicalHint": "Réservé à l'équipe — non visible par les parents.",
     "loadingRecord": "Chargement du dossier…",
     "editWithName": "Modifier {{name}}",
-    "codeIssuedHint": "Transmettez ce code au parent pour qu'il active son compte.",
+    "codeIssuedHint": "Remettez ce code au parent. C'est avec lui, et le prénom de l'enfant, qu'il se connectera.",
     "codeNoted": "J'ai noté le code",
     "codeOnceWarning": "Ce code ne sera plus jamais affiché. Notez-le ou copiez-le maintenant.",
-    "codeValidUntil": "Valable jusqu'au {{date}}. Le code ne peut être utilisé qu'une seule fois."
+    "codeUsage": "{{parent}} se connecte avec ce code et le prénom « {{child}} ». Le code reste valable ; régénérez-le si le papier est perdu.",
+    "addGuardian": "Ajouter un parent",
+    "addGuardianHint": "Recopiez les informations du dossier d'inscription. Le parent n'a rien à remplir.",
+    "emailOptional": "Adresse e-mail (facultatif)",
+    "emailOptionalHint": "Pour vous contacter seulement — ce n'est pas un identifiant.",
+    "noGuardianYet": "Aucun parent enregistré. Ajoutez-en un pour générer son code.",
+    "reissueCode": "Nouveau code"
   },
   "notifications": {
     "title": "Notifications",

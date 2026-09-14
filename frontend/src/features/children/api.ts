@@ -6,6 +6,7 @@ import type {
   ChildDetail,
   ChildListItem,
   ChildListParams,
+  GuardianInput,
   IssuedAccessCode,
 } from "./types";
 
@@ -73,27 +74,29 @@ export const childrenApi = {
     return data;
   },
 
-  /** The plaintext code is returned once and never again. */
-  async issueAccessCode(id: string): Promise<IssuedAccessCode> {
+  /** Enrol a parent from the paper form. The plaintext code comes back
+   *  once here and is never retrievable again. */
+  async addGuardian(id: string, input: GuardianInput): Promise<IssuedAccessCode> {
     const { data } = await apiClient.post<IssuedAccessCode>(
-      `/children/${id}/access-code/`,
-    );
-    return data;
-  },
-
-  async revokeAccessCode(id: string): Promise<void> {
-    await apiClient.delete(`/children/${id}/access-code/`);
-  },
-
-  async linkGuardian(
-    id: string,
-    input: { email: string; relationship: string; is_primary: boolean },
-  ): Promise<ChildDetail> {
-    const { data } = await apiClient.post<ChildDetail>(
       `/children/${id}/guardians/`,
       input,
     );
     return data;
+  },
+
+  /** Reissue one guardian's code — for a paper that has gone missing. */
+  async issueAccessCode(
+    id: string,
+    parentId: string,
+  ): Promise<IssuedAccessCode> {
+    const { data } = await apiClient.post<IssuedAccessCode>(
+      `/children/${id}/guardians/${parentId}/access-code/`,
+    );
+    return data;
+  },
+
+  async revokeAccessCode(id: string, parentId: string): Promise<void> {
+    await apiClient.delete(`/children/${id}/guardians/${parentId}/access-code/`);
   },
 
   async revokeGuardian(childId: string, guardianId: string): Promise<void> {

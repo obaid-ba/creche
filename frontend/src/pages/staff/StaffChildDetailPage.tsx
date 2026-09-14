@@ -3,6 +3,7 @@ import {
   ArchiveRestore,
   CalendarClock,
   KeyRound,
+  UserPlus,
   Pencil,
   ShieldAlert,
   Users,
@@ -24,6 +25,7 @@ import {
   LoadingState,
 } from "@/components/ui";
 import { AccessCodeModal } from "@/features/children/components/AccessCodeModal";
+import { AddGuardianModal } from "@/features/children/components/AddGuardianModal";
 import { ChildAvatar } from "@/features/children/components/ChildAvatar";
 import {
   useArchiveChild,
@@ -51,7 +53,8 @@ export function StaffChildDetailPage() {
 
   const archive = useArchiveChild();
   const restore = useRestoreChild();
-  const issueCode = useIssueAccessCode();
+  const issueCode = useIssueAccessCode(childId ?? "");
+  const [isAddingGuardian, setIsAddingGuardian] = useState(false);
   const [issued, setIssued] = useState<IssuedAccessCode | null>(null);
 
   if (query.isPending) return <LoadingState label={t("child.loading")} />;
@@ -205,23 +208,47 @@ export function StaffChildDetailPage() {
             description={t("child.accessCodeHint")}
           />
           <CardBody className="space-y-3">
-            {child.has_active_access_code ? (
-              <Alert tone="info">{t("child.codeActive")}</Alert>
+            {child.guardians.length === 0 ? (
+              <p className="text-sm text-ink-500">{t("child.noGuardianYet")}</p>
             ) : (
-              <p className="text-sm text-ink-500">{t("child.noCodeActive")}</p>
+              <ul className="space-y-2">
+                {child.guardians.map((guardian) => (
+                  <li
+                    key={guardian.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-card bg-ink-50 px-3 py-2"
+                  >
+                    <span className="text-sm font-semibold text-ink-800">
+                      {guardian.first_name} {guardian.last_name}
+                    </span>
+                    {/* Reissue is per guardian: a mother and a father hold
+                        separate codes, so a lost paper revokes one only. */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      isLoading={
+                        issueCode.isPending &&
+                        issueCode.variables === guardian.id
+                      }
+                      leftIcon={<KeyRound className="size-4" />}
+                      onClick={() =>
+                        issueCode.mutate(guardian.id, {
+                          onSuccess: (data) => setIssued(data),
+                        })
+                      }
+                    >
+                      {t("child.reissueCode")}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
             )}
 
             <Button
               variant="secondary"
-              isLoading={issueCode.isPending}
-              leftIcon={<KeyRound className="size-4" />}
-              onClick={() =>
-                issueCode.mutate(child.id, {
-                  onSuccess: (data) => setIssued(data),
-                })
-              }
+              leftIcon={<UserPlus className="size-4" />}
+              onClick={() => setIsAddingGuardian(true)}
             >
-              {t("child.issueCode")}
+              {t("child.addGuardian")}
             </Button>
           </CardBody>
         </Card>
@@ -252,6 +279,13 @@ export function StaffChildDetailPage() {
           </div>
         </CardBody>
       </Card>
+
+      <AddGuardianModal
+        childId={child.id}
+        isOpen={isAddingGuardian}
+        onClose={() => setIsAddingGuardian(false)}
+        onIssued={setIssued}
+      />
 
       <AccessCodeModal issued={issued} onClose={() => setIssued(null)} />
     </PageShell>

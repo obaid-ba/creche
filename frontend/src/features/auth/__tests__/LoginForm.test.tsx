@@ -28,7 +28,7 @@ function renderLogin(login: AuthContextValue["login"], at = "/parent/login") {
     isAuthenticated: false,
     isBootstrapping: false,
     login,
-    claim: async () => makeUser("PARENT"),
+    codeLogin: async () => makeUser("PARENT"),
     logout: async () => undefined,
     refreshUser: async () => undefined,
   };

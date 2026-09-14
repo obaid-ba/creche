@@ -33,7 +33,7 @@ function renderGuarded(
     isAuthenticated: role !== null,
     isBootstrapping,
     login: async () => makeUser("PARENT"),
-    claim: async () => makeUser("PARENT"),
+    codeLogin: async () => makeUser("PARENT"),
     logout: async () => undefined,
     refreshUser: async () => undefined,
   };

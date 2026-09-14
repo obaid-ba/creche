@@ -53,8 +53,22 @@ export interface ChildListParams {
   page_size?: number;
 }
 
+/** Returned once, when a code is issued — never retrievable afterwards. */
 export interface IssuedAccessCode {
   code: string;
-  expires_at: string;
   hint: string;
+  parent_id: string;
+  parent_name: string;
+  child_name: string;
+}
+
+/** What staff copy off the paper enrolment form. */
+export interface GuardianInput {
+  relationship: string;
+  /** Set to attach a family that already has an account to a second child. */
+  parent_id?: string | undefined;
+  first_name?: string | undefined;
+  last_name?: string | undefined;
+  phone?: string | undefined;
+  email?: string | undefined;
 }

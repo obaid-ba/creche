@@ -16,7 +16,6 @@ const NAVIGATION = [
 
 const PARENT_LINKS = [
   { to: "/parent/login", key: "footer.login" },
-  { to: "/parent/activation", key: "footer.activate" },
 ] as const;
 
 export function SiteFooter() {

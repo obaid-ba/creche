@@ -11,7 +11,12 @@ import { refreshAccessToken, setSessionExpiredHandler } from "@/services/client"
 import { clearAccessToken, setAccessToken } from "@/services/tokenStore";
 import type { CurrentUser, Role } from "@/types/api";
 
-import { authApi, type AuthSession, type ClaimInput, type LoginInput } from "./api";
+import {
+  authApi,
+  type AuthSession,
+  type CodeLoginInput,
+  type LoginInput,
+} from "./api";
 
 export interface AuthContextValue {
   user: CurrentUser | null;
@@ -20,7 +25,7 @@ export interface AuthContextValue {
   /** True only while the initial silent refresh is in flight. */
   isBootstrapping: boolean;
   login: (input: LoginInput) => Promise<CurrentUser>;
-  claim: (input: ClaimInput) => Promise<CurrentUser>;
+  codeLogin: (input: CodeLoginInput) => Promise<CurrentUser>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -83,8 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applySession],
   );
 
-  const claim = useCallback(
-    async (input: ClaimInput) => applySession(await authApi.claim(input)),
+  const codeLogin = useCallback(
+    async (input: CodeLoginInput) => applySession(await authApi.codeLogin(input)),
     [applySession],
   );
 
@@ -108,11 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: user !== null,
       isBootstrapping,
       login,
-      claim,
+      codeLogin,
       logout,
       refreshUser,
     }),
-    [user, isBootstrapping, login, claim, logout, refreshUser],
+    [user, isBootstrapping, login, codeLogin, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

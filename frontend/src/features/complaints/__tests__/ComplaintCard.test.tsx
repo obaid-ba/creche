@@ -48,7 +48,7 @@ function renderAs(role: Role, complaint: Complaint) {
     isAuthenticated: true,
     isBootstrapping: false,
     login: async () => user,
-    claim: async () => user,
+    codeLogin: async () => user,
     logout: async () => undefined,
     refreshUser: async () => undefined,
   };

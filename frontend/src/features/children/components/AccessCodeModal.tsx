@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Modal } from "@/components/ui";
-import { useLocale } from "@/i18n/useLocale";
 
 import type { IssuedAccessCode } from "../types";
 
@@ -22,7 +21,6 @@ export function AccessCodeModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
-  const locale = useLocale();
   const [hasCopied, setHasCopied] = useState(false);
 
   async function copyCode() {
@@ -76,12 +74,9 @@ export function AccessCodeModal({
           </div>
 
           <p className="text-sm text-ink-500">
-            {t("child.codeValidUntil", {
-              date: new Date(issued.expires_at).toLocaleDateString(locale, {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              }),
+            {t("child.codeUsage", {
+              parent: issued.parent_name,
+              child: issued.child_name,
             })}
           </p>
         </div>

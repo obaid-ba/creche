@@ -5,7 +5,7 @@ import pytest
 from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 
-from apps.accounts.models import Guardianship
+from apps.accounts.models import Guardianship, ParentProfile, Role, User
 from apps.audit.models import AuditAction, AuditLog
 from apps.children.models import Child
 
@@ -86,7 +86,9 @@ class TestOwnershipIsolation:
         link_parent_to_child(parent, child)
         api_client.force_authenticate(parent)
 
-        response = api_client.post(reverse("child-access-code", args=[child.id]))
+        response = api_client.post(
+            reverse("child-access-code", args=[child.id, parent.parent_profile.pk])
+        )
 
         assert response.status_code == 403
 
@@ -423,45 +425,132 @@ class TestAgeGroupsEndpoint:
 
 @pytest.mark.django_db
 class TestGuardiansAndCodes:
-    def test_staff_can_link_an_existing_parent(
-        self, api_client, staff, parent, make_child
+    """Staff enrol a family from the paper form; the parent fills in
+    nothing and leaves with a code."""
+
+    def test_enrolling_creates_the_parent_and_returns_a_code(
+        self, api_client, staff, make_child
     ):
-        child = make_child()
+        child = make_child(first_name="Mohamed")
         api_client.force_authenticate(staff)
 
         response = api_client.post(
             reverse("child-guardians", args=[child.id]),
-            {"email": parent.email, "relationship": "MOTHER", "is_primary": True},
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
         )
 
         assert response.status_code == 201
-        assert Child.objects.visible_to(parent).count() == 1
+        assert response.data["code"].startswith("MAM-")
+        assert response.data["child_name"] == "Mohamed"
+        assert response.data["parent_name"] == "Sarah Benali"
+        assert AuditLog.objects.filter(action=AuditAction.CODE_ISSUED).exists()
 
-    def test_linking_an_unknown_email_is_rejected(self, api_client, staff, make_child):
+    def test_the_new_parent_can_sign_in_with_it(
+        self, api_client, staff, make_child
+    ):
+        """The round trip that matters: what staff hand over actually works."""
+        child = make_child(first_name="Mohamed")
+        api_client.force_authenticate(staff)
+        code = api_client.post(
+            reverse("child-guardians", args=[child.id]),
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
+        ).data["code"]
+
+        api_client.force_authenticate(None)
+        response = api_client.post(
+            reverse("auth-parent-code-login"),
+            {"access_code": code, "child_name": "Mohamed"},
+        )
+
+        assert response.status_code == 200
+        assert response.data["user"]["first_name"] == "Sarah"
+
+    def test_a_parent_needs_no_email(self, api_client, staff, make_child):
+        """Staff type in what the form says; families without an address
+        are not made to invent one."""
         api_client.force_authenticate(staff)
 
         response = api_client.post(
             reverse("child-guardians", args=[make_child().id]),
-            {"email": "nobody@example.com", "relationship": "MOTHER"},
+            {"first_name": "Karim", "last_name": "Trabelsi", "relationship": "FATHER"},
         )
 
-        assert response.status_code == 400
+        assert response.status_code == 201
+        parent = ParentProfile.objects.get(pk=response.data["parent_id"])
+        assert parent.user.email is None
 
-    def test_a_staff_account_cannot_be_linked_as_a_guardian(
+    def test_a_second_child_reuses_the_same_parent(
+        self, api_client, staff, make_child
+    ):
+        """Otherwise the family ends up with two logins and half their
+        children behind each."""
+        api_client.force_authenticate(staff)
+        first = api_client.post(
+            reverse("child-guardians", args=[make_child(first_name="Lina").id]),
+            {"first_name": "Karim", "last_name": "Trabelsi", "relationship": "FATHER"},
+        ).data
+
+        second_child = make_child(first_name="Omar")
+        second = api_client.post(
+            reverse("child-guardians", args=[second_child.id]),
+            {"parent_id": first["parent_id"], "relationship": "FATHER"},
+        )
+
+        assert second.status_code == 201
+        assert second.data["parent_id"] == first["parent_id"]
+        assert User.objects.filter(role=Role.PARENT).count() == 1
+        # A code each, because the child's name is half the credential.
+        assert first["code"] != second.data["code"]
+
+    def test_the_detail_payload_reports_a_live_code(
+        self, api_client, staff, make_child
+    ):
+        """Every earlier test hit children with no codes at all, so a
+        serializer still reading the old `claimed_at` field went unnoticed
+        until the page was opened in a browser."""
+        child = make_child()
+        api_client.force_authenticate(staff)
+        api_client.post(
+            reverse("child-guardians", args=[child.id]),
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
+        )
+
+        detail = api_client.get(reverse("child-detail", args=[child.id]))
+
+        assert detail.status_code == 200
+        assert detail.data["has_active_access_code"] is True
+
+    def test_the_detail_payload_reports_a_revoked_code(
+        self, api_client, staff, make_child
+    ):
+        child = make_child()
+        api_client.force_authenticate(staff)
+        created = api_client.post(
+            reverse("child-guardians", args=[child.id]),
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
+        ).data
+        api_client.delete(
+            reverse("child-access-code", args=[child.id, created["parent_id"]])
+        )
+
+        detail = api_client.get(reverse("child-detail", args=[child.id]))
+
+        assert detail.data["has_active_access_code"] is False
+
+    def test_a_name_is_required_when_creating_a_new_parent(
         self, api_client, staff, make_child
     ):
         api_client.force_authenticate(staff)
 
         response = api_client.post(
             reverse("child-guardians", args=[make_child().id]),
-            {"email": staff.email, "relationship": "MOTHER"},
+            {"relationship": "MOTHER"},
         )
 
         assert response.status_code == 400
 
     def test_promoting_a_new_primary_demotes_the_previous_one(
-        self, api_client, staff, parent, other_parent, make_child,
-        link_parent_to_child,
+        self, api_client, staff, parent, make_child, link_parent_to_child
     ):
         """The partial unique index allows only one primary guardian."""
         child = make_child()
@@ -470,55 +559,49 @@ class TestGuardiansAndCodes:
 
         api_client.post(
             reverse("child-guardians", args=[child.id]),
-            {"email": other_parent.email, "relationship": "FATHER", "is_primary": True},
+            {"first_name": "Autre", "last_name": "Parent", "relationship": "FATHER"},
         )
 
         first.refresh_from_db()
-        assert first.is_primary is False
+        assert first.is_primary is True
         assert Guardianship.objects.filter(
             child=child, is_primary=True, revoked_at__isnull=True
         ).count() == 1
 
-    def test_access_code_is_returned_once_in_plaintext(
-        self, api_client, staff, make_child
-    ):
-        child = make_child()
-        api_client.force_authenticate(staff)
-
-        response = api_client.post(reverse("child-access-code", args=[child.id]))
-
-        assert response.status_code == 201
-        assert response.data["code"].startswith("MAM-")
-        assert AuditLog.objects.filter(action=AuditAction.CODE_ISSUED).exists()
-
-    def test_regenerating_invalidates_the_previous_code(
+    def test_reissuing_invalidates_the_previous_code(
         self, api_client, staff, make_child
     ):
         from apps.accounts.access_codes import ChildAccessCode
 
         child = make_child()
         api_client.force_authenticate(staff)
-        first = api_client.post(
-            reverse("child-access-code", args=[child.id])
-        ).data["code"]
+        created = api_client.post(
+            reverse("child-guardians", args=[child.id]),
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
+        ).data
 
-        api_client.post(reverse("child-access-code", args=[child.id]))
+        url = reverse("child-access-code", args=[child.id, created["parent_id"]])
+        second = api_client.post(url).data["code"]
 
-        assert ChildAccessCode.resolve(first) is None
+        assert ChildAccessCode.resolve(created["code"]) is None
+        assert ChildAccessCode.resolve(second) is not None
 
     def test_revoking_disables_the_code(self, api_client, staff, make_child):
         from apps.accounts.access_codes import ChildAccessCode
 
         child = make_child()
         api_client.force_authenticate(staff)
-        code = api_client.post(
-            reverse("child-access-code", args=[child.id])
-        ).data["code"]
+        created = api_client.post(
+            reverse("child-guardians", args=[child.id]),
+            {"first_name": "Sarah", "last_name": "Benali", "relationship": "MOTHER"},
+        ).data
 
-        response = api_client.delete(reverse("child-access-code", args=[child.id]))
+        response = api_client.delete(
+            reverse("child-access-code", args=[child.id, created["parent_id"]])
+        )
 
         assert response.status_code == 204
-        assert ChildAccessCode.resolve(code) is None
+        assert ChildAccessCode.resolve(created["code"]) is None
 
     def test_revoking_a_guardian_removes_access(
         self, api_client, staff, parent, make_child, link_parent_to_child

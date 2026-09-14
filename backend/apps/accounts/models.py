@@ -50,6 +50,32 @@ class UserManager(BaseUserManager):
         extra.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra)
 
+    def create_parent(self, *, first_name: str, last_name: str, **extra):
+        """A parent account created by staff from the paper enrolment form.
+
+        No email and no password: a parent signs in with their access code
+        and their child's name, and asking staff to invent an address for
+        a family that has not given one produces fake data, not security.
+        An address may still be supplied, and is only ever contact detail.
+        """
+        email = extra.pop("email", "") or None
+        if email:
+            email = self.normalize_email(email).lower()
+
+        user = self.model(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            role=Role.PARENT,
+            is_staff=False,
+            is_superuser=False,
+            **extra,
+        )
+        # Unusable, not blank: nothing should ever match a password check.
+        user.set_unusable_password()
+        user.save(using=self._db)
+        return user
+
     def create_staffuser(self, email: str, password: str | None = None, **extra):
         extra.setdefault("role", Role.STAFF)
         return self._create_user(email, password, **extra)
@@ -66,7 +92,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
-    email = models.EmailField(unique=True, db_index=True)
+    # Nullable because a parent account is created by staff from a paper
+    # form and signs in with an access code; Postgres allows many NULLs
+    # under a unique index, so staff addresses stay unique among
+    # themselves. Parents who do give an address still get one stored.
+    email = models.EmailField(unique=True, db_index=True, null=True, blank=True)
     first_name = models.CharField(max_length=80, blank=True)
     last_name = models.CharField(max_length=80, blank=True)
     phone = models.CharField(max_length=30, blank=True)

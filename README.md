@@ -145,9 +145,14 @@ age groups, three days of recorded care events, activities
 and complaints. It is idempotent, so it is safe to re-run.
 
 Today's day is deliberately left **unpublished** so the publish flow can be
-demonstrated. The command prints the accounts it created and refuses to run
-with `DEBUG=False` unless given `--force`, because every demo account shares
-one published password.
+demonstrated. The command prints what it created and refuses to run with
+`DEBUG=False` unless given `--force`, because staff accounts share one
+published password.
+
+Staff sign in with an e-mail and that password. **Parents have neither**: they
+sign in with an access code plus their child's first name, and the seeder
+prints the codes it issued — the plaintext exists nowhere else. See
+[docs/authentication.md](docs/authentication.md) §4.
 
 ---
 

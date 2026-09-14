@@ -21,31 +21,9 @@ export const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const claimSchema = z
-  .object({
-    access_code: z
-      .string()
-      .min(1, "validation.codeRequired")
-      .regex(
-        /^[A-Za-z]{2,4}[\s-]?[A-Za-z0-9]{4,6}$/,
-        "validation.codeFormat",
-      ),
-    first_name: z.string().min(1, "validation.firstNameRequired"),
-    last_name: z.string().min(1, "validation.lastNameRequired"),
-    email: z
-      .string()
-      .min(1, "validation.emailRequired")
-      .email("validation.emailInvalid"),
-    phone: z.string().optional(),
-    relationship: z.enum(["MOTHER", "FATHER", "GUARDIAN", "OTHER"]),
-    password: z
-      .string()
-      .min(10, "validation.passwordTooShort"),
-    password_confirm: z.string().min(1, "validation.passwordConfirmRequired"),
-  })
-  .refine((values) => values.password === values.password_confirm, {
-    message: "validation.passwordsDiffer",
-    path: ["password_confirm"],
-  });
+export const codeLoginSchema = z.object({
+  access_code: z.string().trim().min(1, "validation.codeRequired"),
+  child_name: z.string().trim().min(1, "validation.childNameRequired"),
+});
 
-export type ClaimFormValues = z.infer<typeof claimSchema>;
+export type CodeLoginFormValues = z.infer<typeof codeLoginSchema>;

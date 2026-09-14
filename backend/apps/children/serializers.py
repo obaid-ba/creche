@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from apps.accounts.models import Relationship, User
 from common.age import AgeGroup, age_display, age_group_for, age_in_months
 
 from .models import Child, ChildStatus
@@ -121,13 +122,8 @@ class ChildDetailSerializer(BaseChildSerializer):
         ]
 
     def get_has_active_access_code(self, obj: Child) -> bool:
-        now = timezone.now()
-        return any(
-            code.claimed_at is None
-            and code.revoked_at is None
-            and code.expires_at > now
-            for code in obj.access_codes.all()
-        )
+        """Codes no longer expire or get spent, so live means not revoked."""
+        return any(code.revoked_at is None for code in obj.access_codes.all())
 
     def validate_date_of_birth(self, value):
         # Mirrors the database CHECK constraint so the caller gets a clean
@@ -167,30 +163,55 @@ class ChildWriteSerializer(serializers.ModelSerializer):
         return cleaned
 
 
-class GuardianLinkSerializer(serializers.Serializer):
-    """Attach an existing parent account to a child."""
-
-    email = serializers.EmailField()
-    relationship = serializers.CharField(max_length=20)
-    is_primary = serializers.BooleanField(default=False)
-
-    def validate_email(self, value: str):
-        from apps.accounts.models import Role, User
-
-        user = User.objects.filter(email=value.lower().strip()).first()
-        if user is None or user.role != Role.PARENT:
-            raise serializers.ValidationError(
-                _("Aucun compte parent ne correspond à cette adresse.")
-            )
-        return user
-
-
 class AccessCodeResponseSerializer(serializers.Serializer):
     """The one and only time the plaintext code is exposed."""
 
     code = serializers.CharField(read_only=True)
-    expires_at = serializers.DateTimeField(read_only=True)
     hint = serializers.CharField(read_only=True)
+    parent_id = serializers.UUIDField(read_only=True)
+    parent_name = serializers.CharField(read_only=True)
+    child_name = serializers.CharField(read_only=True)
+
+
+class GuardianCreateSerializer(serializers.Serializer):
+    """A parent, typed in by staff from the paper enrolment form.
+
+    Everything here comes off the form the family handed in. The parent
+    does not fill anything in themselves and never picks a password —
+    they are handed a code and their child's first name.
+    """
+
+    #: Set when the family already has an account — a second child joining
+    #: the nursery. Without it staff would create a duplicate parent and
+    #: the family would end up with two logins and half their children
+    #: behind each.
+    parent_id = serializers.UUIDField(required=False, allow_null=True)
+
+    first_name = serializers.CharField(max_length=80, required=False)
+    last_name = serializers.CharField(max_length=80, required=False)
+    relationship = serializers.ChoiceField(choices=Relationship.choices)
+    phone = serializers.CharField(max_length=30, required=False, allow_blank=True)
+    # Optional, and only ever contact detail: it is not a login.
+    email = serializers.EmailField(required=False, allow_blank=True)
+
+    def validate(self, attrs):
+        if attrs.get("parent_id") is None:
+            missing = {
+                field: _("Ce champ est obligatoire.")
+                for field in ("first_name", "last_name")
+                if not attrs.get(field)
+            }
+            if missing:
+                raise serializers.ValidationError(missing)
+        return attrs
+
+    def validate_email(self, value: str):
+        cleaned = (value or "").strip().lower()
+        if cleaned and User.objects.filter(email=cleaned).exists():
+            raise serializers.ValidationError(
+                _("Cette adresse e-mail est déjà utilisée.")
+            )
+        return cleaned
 
 
 class ChildStatusSerializer(serializers.Serializer):

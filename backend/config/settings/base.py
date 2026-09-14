@@ -175,7 +175,8 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": ("rest_framework.throttling.ScopedRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
         "login": f"{env.int('THROTTLE_LOGIN', default=10)}/hour",
-        "claim": f"{env.int('THROTTLE_CLAIM', default=5)}/hour",
+        # The parent's only credential, so this is the one that matters.
+        "code_login": f"{env.int('THROTTLE_CODE_LOGIN', default=10)}/hour",
         "contact": f"{env.int('THROTTLE_CONTACT', default=5)}/hour",
         "user": f"{env.int('THROTTLE_USER', default=1000)}/hour",
     },
@@ -233,7 +234,15 @@ REFRESH_COOKIE_DOMAIN = env("REFRESH_COOKIE_DOMAIN", default=None) or None
 # not silently invalidate every unclaimed enrolment code, and a database
 # leak without this key reveals nothing about the codes.
 ACCESS_CODE_HMAC_KEY = env("ACCESS_CODE_HMAC_KEY", default="insecure-dev-hmac-key")
-ACCESS_CODE_TTL_DAYS = env.int("ACCESS_CODE_TTL_DAYS", default=30)
+# The code no longer expires: it is the parent's standing credential, and
+# a code that dies after 30 days locks a family out of their own child's
+# records. Staff revoke and reissue instead.
+#
+# What protects it is its size (~40 bits) plus a lockout on the code
+# itself, because throttling by IP alone does nothing against an attacker
+# with many addresses.
+ACCESS_CODE_MAX_ATTEMPTS = env.int("ACCESS_CODE_MAX_ATTEMPTS", default=10)
+ACCESS_CODE_LOCKOUT_MINUTES = env.int("ACCESS_CODE_LOCKOUT_MINUTES", default=60)
 ACCESS_CODE_PREFIX = env("ACCESS_CODE_PREFIX", default="MAM")
 
 # ── CORS ────────────────────────────────────────────────────────────────

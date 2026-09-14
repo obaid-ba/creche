@@ -318,7 +318,7 @@
   },
   "auth": {
     "parentTitle": "فضاء الأولياء",
-    "parentSubtitle": "سجّل الدخول لمتابعة يوم طفلك.",
+    "parentSubtitle": "أدخل الرمز الذي سلّمته لك الحضانة واسم طفلك.",
     "staffTitle": "فضاء الفريق",
     "staffSubtitle": "سجّل الدخول للوصول إلى لوحة القيادة.",
     "activationTitle": "تفعيل حسابي",
@@ -330,7 +330,13 @@
     "areYouParent": "هل أنت ولي؟",
     "parentLogin": "دخول الأولياء",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
-    "signIn": "تسجيل الدخول"
+    "signIn": "تسجيل الدخول",
+    "codeLabel": "رمز الدخول",
+    "codeHint": "يوجد الرمز على الورقة التي سلّمتها لك الحضانة.",
+    "childNameLabel": "اسم الطفل",
+    "childNamePlaceholder": "محمد",
+    "childNameHint": "الاسم كما هو مسجّل في الحضانة.",
+    "noCode": "ليس لديك رمز؟ اطلبه من فريق الحضانة."
   },
   "ui": {
     "pagination": "ترقيم الصفحات",
@@ -383,7 +389,8 @@
     "dateRequired": "التاريخ مطلوب.",
     "activityFuture": "لا يمكن أن يكون تاريخ النشاط في المستقبل.",
     "endBeforeStart": "لا يمكن أن تسبق النهاية البداية.",
-    "codeRequiredShort": "الرمز مطلوب."
+    "codeRequiredShort": "الرمز مطلوب.",
+    "childNameRequired": "اسم الطفل مطلوب."
   },
   "event": {
     "mood": {
@@ -701,8 +708,8 @@
     "noGuardians": "لا يوجد ولي مرتبط بعد.",
     "primaryContact": "جهة الاتصال الرئيسية",
     "accessCode": "رمز دخول الولي",
-    "accessCodeHint": "يتيح للولي تفعيل حسابه.",
-    "codeActive": "يوجد رمز نشط لهذا الطفل. إنشاء رمز جديد يُبطل السابق.",
+    "accessCodeHint": "الرمز واسم الطفل هما بيانات دخول الولي.",
+    "codeActive": "يوجد رمز نشط. إنشاء رمز جديد يُبطل السابق.",
     "noCodeActive": "لا يوجد رمز نشط حالياً.",
     "issueCode": "إنشاء رمز",
     "internal": "معلومات داخلية",
@@ -731,10 +738,16 @@
     "medicalHint": "مخصّصة للفريق — لا يراها الأولياء.",
     "loadingRecord": "جارٍ تحميل الملف…",
     "editWithName": "تعديل {{name}}",
-    "codeIssuedHint": "سلّم هذا الرمز إلى الولي ليفعّل حسابه.",
+    "codeIssuedHint": "سلّم هذا الرمز للولي. به وباسم الطفل يسجّل الدخول.",
     "codeNoted": "دوّنت الرمز",
     "codeOnceWarning": "لن يُعرض هذا الرمز مرة أخرى. دوّنه أو انسخه الآن.",
-    "codeValidUntil": "صالح إلى غاية {{date}}. لا يمكن استعمال الرمز إلا مرة واحدة."
+    "codeUsage": "يدخل {{parent}} بهذا الرمز واسم «{{child}}». يبقى الرمز صالحاً؛ أعد إنشاءه إذا ضاعت الورقة.",
+    "addGuardian": "إضافة ولي",
+    "addGuardianHint": "انسخ معلومات ملف التسجيل. الولي لا يملأ أي شيء.",
+    "emailOptional": "عنوان البريد الإلكتروني (اختياري)",
+    "emailOptionalHint": "للتواصل فقط — ليس معرّف دخول.",
+    "noGuardianYet": "لا يوجد ولي مسجّل. أضف واحداً لإنشاء رمزه.",
+    "reissueCode": "رمز جديد"
   },
   "notifications": {
     "title": "الإشعارات",

@@ -24,9 +24,8 @@ from common.permissions import IsParent
 from .cookies import clear_refresh_cookie, get_refresh_token, set_refresh_cookie
 from .serializers import (
     CurrentUserSerializer,
-    LinkChildSerializer,
     LoginSerializer,
-    ParentClaimSerializer,
+    ParentCodeLoginSerializer,
     PasswordChangeSerializer,
 )
 
@@ -187,46 +186,23 @@ class PasswordChangeView(APIView):
 
 
 @extend_schema(
-    request=ParentClaimSerializer,
-    responses={201: OpenApiResponse(description="Account activated")},
+    request=ParentCodeLoginSerializer,
+    responses={200: OpenApiResponse(description="Signed in")},
 )
-class ParentClaimView(APIView):
-    """First-time parent activation with a child access code."""
+class ParentCodeLoginView(APIView):
+    """The parent's only sign-in: an access code and their child's name."""
 
     permission_classes = [AllowAny]
     authentication_classes: list = []
     throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "claim"
+    throttle_scope = "code_login"
 
     def post(self, request):
-        serializer = ParentClaimSerializer(
+        serializer = ParentCodeLoginSerializer(
             data=request.data, context={"request": request}
         )
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
         body, refresh = _token_payload(user, request)
-        return set_refresh_cookie(
-            Response(body, status=status.HTTP_201_CREATED), refresh
-        )
-
-
-@extend_schema(request=LinkChildSerializer, responses=CurrentUserSerializer)
-class LinkChildView(APIView):
-    """An authenticated parent adding a second child with another code."""
-
-    permission_classes = [IsAuthenticated, IsParent]
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "claim"
-
-    def post(self, request):
-        serializer = LinkChildSerializer(
-            data=request.data, context={"request": request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(
-            CurrentUserSerializer(request.user, context={"request": request}).data,
-            status=status.HTTP_201_CREATED,
-        )
+        return set_refresh_cookie(Response(body, status=status.HTTP_200_OK), refresh)

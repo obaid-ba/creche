@@ -17,6 +17,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 
+from apps.accounts.access_codes import ChildAccessCode
 from apps.accounts.models import Guardianship, ParentProfile, Role, StaffProfile, User
 from apps.activities.models import Activity, ActivityParticipation
 from apps.care.models import DailyRecord, TimelineEvent
@@ -64,6 +65,7 @@ class Command(BaseCommand):
             )
 
         random.seed(42)  # reproducible demo data
+        self.codes: list[tuple[str, str, str]] = []
 
         staff_users = self._create_staff()
         recorder = staff_users[0]
@@ -74,13 +76,21 @@ class Command(BaseCommand):
         self._create_complaints(children)
 
         self.stdout.write(self.style.SUCCESS("\nDemo data ready."))
-        self.stdout.write(f"  Password for every demo account: {DEMO_PASSWORD}\n")
-        self.stdout.write("  Staff:")
+        self.stdout.write("  Staff sign in with e-mail + password:")
+        self.stdout.write(f"    password: {DEMO_PASSWORD}")
         for email, first, _, title, role in STAFF:
             self.stdout.write(f"    {email:32} {first} ({title}, {role})")
-        self.stdout.write("  Parents:")
-        for email, first, _, child_first, *_rest in FAMILIES:
-            self.stdout.write(f"    {email:32} {first} — enfant : {child_first}")
+
+        # Parents have neither: the code and the child's first name are
+        # the whole credential, and the plaintext exists only here.
+        self.stdout.write("\n  Parents sign in with a code + their child's name:")
+        for child_first, parent_name, plain in self.codes:
+            self.stdout.write(f"    {plain:18} {parent_name} — enfant : {child_first}")
+        if not self.codes:
+            self.stdout.write(
+                "    (codes already issued on a previous run; reissue from a "
+                "child's page to see one)"
+            )
 
     # ── builders ────────────────────────────────────────────────────────
     def _create_staff(self) -> list[User]:
@@ -128,6 +138,15 @@ class Command(BaseCommand):
                 parent=profile, child=child,
                 defaults={"relationship": relation, "is_primary": True},
             )
+
+            # The code is how a parent signs in, so the demo data is
+            # useless without one. Printed at the end with the accounts.
+            if not ChildAccessCode.objects.usable().filter(
+                child=child, parent=profile
+            ).exists():
+                _, plain = ChildAccessCode.issue(child=child, parent=profile)
+                self.codes.append((child.first_name, user.get_full_name(), plain))
+
             children.append(child)
 
         self.stdout.write(f"  families: {len(children)}")

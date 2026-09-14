@@ -44,8 +44,8 @@ class GuardianshipAdmin(admin.ModelAdmin):
 class ChildAccessCodeAdmin(admin.ModelAdmin):
     """Read-only: codes are issued through the API, never typed in by hand."""
 
-    list_display = ("code_hint", "child", "issued_at", "expires_at",
-                    "claimed_at", "revoked_at")
+    list_display = ("code_hint", "child", "parent", "issued_at",
+                    "last_used_at", "locked_until", "revoked_at")
     readonly_fields = ("code_lookup", "code_hint")
 
 

@@ -12,16 +12,10 @@ export interface LoginInput {
   password: string;
 }
 
-export interface ClaimInput {
+/** The whole of a parent's credential. There is no password. */
+export interface CodeLoginInput {
   access_code: string;
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-  // Explicit `| undefined` because exactOptionalPropertyTypes is on: an
-  // optional form field that is left blank arrives as undefined.
-  phone?: string | undefined;
-  relationship: string;
+  child_name: string;
 }
 
 export const authApi = {
@@ -30,9 +24,9 @@ export const authApi = {
     return data;
   },
 
-  async claim(input: ClaimInput): Promise<AuthSession> {
+  async codeLogin(input: CodeLoginInput): Promise<AuthSession> {
     const { data } = await apiClient.post<AuthSession>(
-      "/auth/parent/claim/",
+      "/auth/parent/code-login/",
       input,
     );
     return data;

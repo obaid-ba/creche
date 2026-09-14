@@ -14,7 +14,7 @@ from rest_framework import serializers
 from apps.audit.models import AuditAction
 from apps.audit.services import record as record_audit
 
-from .access_codes import ChildAccessCode
+from .access_codes import ChildAccessCode, fold_name
 from .models import Guardianship, ParentProfile, Relationship, Role, User
 
 # One message for every credential failure. Distinguishing "unknown email"
@@ -25,7 +25,60 @@ INVALID_CREDENTIALS = _("Identifiants invalides.")
 # Likewise, every access-code failure (unknown, expired, claimed, revoked)
 # returns this single message, so the endpoint cannot be used as an oracle
 # for which codes exist (docs/authentication.md 4.4).
-INVALID_CODE = _("Ce code d'accès est invalide, expiré ou déjà utilisé.")
+INVALID_CODE = _("Code d'accès ou prénom incorrect.")
+
+
+class ParentCodeLoginSerializer(serializers.Serializer):
+    """Sign a parent in with their access code and their child's name.
+
+    Parents never register themselves and never choose a password: staff
+    create the account from the paper enrolment form, and this is the only
+    thing the parent ever has to do. See `accounts/access_codes.py` for why
+    the code is sized the way it is.
+
+    Every failure returns the same message. A wrong code, a revoked one, a
+    locked one and a right code with the wrong child must be
+    indistinguishable, or the endpoint tells an attacker which codes exist.
+    """
+
+    access_code = serializers.CharField(max_length=32)
+    child_name = serializers.CharField(max_length=80)
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        code = ChildAccessCode.resolve(attrs["access_code"])
+
+        if code is None:
+            record_audit(action=AuditAction.CODE_CLAIM_FAILED, request=request)
+            raise serializers.ValidationError(INVALID_CODE)
+
+        if fold_name(attrs["child_name"]) != fold_name(code.child.first_name):
+            # Counted against the code, not just the caller's address: a
+            # standing credential is worth grinding from many addresses.
+            code.register_failure()
+            record_audit(action=AuditAction.CODE_CLAIM_FAILED, request=request)
+            raise serializers.ValidationError(INVALID_CODE)
+
+        parent = code.parent
+        if parent is None or not parent.user.is_active:
+            record_audit(action=AuditAction.CODE_CLAIM_FAILED, request=request)
+            raise serializers.ValidationError(INVALID_CODE)
+
+        attrs["code"] = code
+        return attrs
+
+    def save(self, **kwargs):
+        code: ChildAccessCode = self.validated_data["code"]
+        code.register_success()
+        # `actor`, not `user`: anything else lands in the JSON metadata
+        # column, and a User instance is not serialisable.
+        record_audit(
+            action=AuditAction.CODE_CLAIMED,
+            request=self.context.get("request"),
+            actor=code.parent.user,
+            child=code.child,
+        )
+        return code.parent.user
 
 
 class ChildSummarySerializer(serializers.Serializer):
@@ -181,159 +234,3 @@ class PasswordChangeSerializer(serializers.Serializer):
         return user
 
 
-class ParentClaimSerializer(serializers.Serializer):
-    """First-time parent activation using a child access code.
-
-    Creates the user, the parent profile and the guardianship in one
-    transaction, and consumes the code. Any failure rolls all of it back,
-    so there is no path to a half-created parent holding a spent code
-    (docs/authentication.md 4.4).
-    """
-
-    access_code = serializers.CharField(max_length=32)
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True, trim_whitespace=False)
-    first_name = serializers.CharField(max_length=80)
-    last_name = serializers.CharField(max_length=80)
-    phone = serializers.CharField(max_length=30, required=False, allow_blank=True)
-    relationship = serializers.ChoiceField(
-        choices=Relationship.choices, default=Relationship.GUARDIAN
-    )
-
-    def validate_password(self, value: str) -> str:
-        password_validation.validate_password(value)
-        return value
-
-    def validate(self, attrs):
-        request = self.context.get("request")
-        code = ChildAccessCode.resolve(attrs["access_code"])
-
-        if code is None:
-            record_audit(
-                action=AuditAction.CODE_CLAIM_FAILED,
-                request=request,
-                email=attrs["email"].lower().strip(),
-            )
-            # Attached to the field so the form can highlight it, but with
-            # a message that reveals nothing about why it failed.
-            raise serializers.ValidationError({"access_code": INVALID_CODE})
-
-        email = attrs["email"].lower().strip()
-        existing = User.objects.filter(email=email).first()
-
-        if existing is not None:
-            # An email already in use is only acceptable when it belongs to
-            # a parent who proves they own it with the right password -
-            # otherwise this endpoint would let anyone with a code attach
-            # a child to someone else's account.
-            if existing.role != Role.PARENT or not existing.check_password(
-                attrs["password"]
-            ):
-                raise serializers.ValidationError(
-                    {"email": _("Cette adresse e-mail est déjà utilisée.")}
-                )
-            attrs["existing_user"] = existing
-
-        attrs["code"] = code
-        attrs["email"] = email
-        return attrs
-
-    @transaction.atomic
-    def save(self, **kwargs) -> User:
-        request = self.context.get("request")
-        code: ChildAccessCode = self.validated_data["code"]
-        existing: User | None = self.validated_data.get("existing_user")
-
-        if existing is not None:
-            user = existing
-            parent_profile = user.parent_profile
-        else:
-            user = User.objects.create_user(
-                email=self.validated_data["email"],
-                password=self.validated_data["password"],
-                first_name=self.validated_data["first_name"],
-                last_name=self.validated_data["last_name"],
-                phone=self.validated_data.get("phone", ""),
-                role=Role.PARENT,
-            )
-            parent_profile = ParentProfile.objects.create(user=user)
-
-        guardianship, created = Guardianship.objects.get_or_create(
-            parent=parent_profile,
-            child=code.child,
-            defaults={
-                "relationship": self.validated_data["relationship"],
-                # The first guardian to claim becomes the primary contact.
-                "is_primary": not Guardianship.objects.filter(
-                    child=code.child, is_primary=True, revoked_at__isnull=True
-                ).exists(),
-            },
-        )
-        if not created and guardianship.revoked_at is not None:
-            # Re-claiming after a revocation restores the link.
-            guardianship.revoked_at = None
-            guardianship.save(update_fields=["revoked_at", "updated_at"])
-
-        code.claimed_at = timezone.now()
-        code.claimed_by = parent_profile
-        code.save(update_fields=["claimed_at", "claimed_by", "updated_at"])
-
-        record_audit(
-            action=AuditAction.CODE_CLAIMED,
-            request=request,
-            actor=user,
-            obj=code,
-            child=code.child,
-        )
-        return user
-
-
-class LinkChildSerializer(serializers.Serializer):
-    """An already-authenticated parent adding another child."""
-
-    access_code = serializers.CharField(max_length=32)
-    relationship = serializers.ChoiceField(
-        choices=Relationship.choices, default=Relationship.GUARDIAN
-    )
-
-    def validate_access_code(self, value: str):
-        code = ChildAccessCode.resolve(value)
-        if code is None:
-            record_audit(
-                action=AuditAction.CODE_CLAIM_FAILED,
-                request=self.context.get("request"),
-            )
-            raise serializers.ValidationError(INVALID_CODE)
-        return code
-
-    @transaction.atomic
-    def save(self, **kwargs) -> Guardianship:
-        request = self.context["request"]
-        code: ChildAccessCode = self.validated_data["access_code"]
-        parent_profile = request.user.parent_profile
-
-        guardianship, created = Guardianship.objects.get_or_create(
-            parent=parent_profile,
-            child=code.child,
-            defaults={
-                "relationship": self.validated_data["relationship"],
-                "is_primary": not Guardianship.objects.filter(
-                    child=code.child, is_primary=True, revoked_at__isnull=True
-                ).exists(),
-            },
-        )
-        if not created and guardianship.revoked_at is not None:
-            guardianship.revoked_at = None
-            guardianship.save(update_fields=["revoked_at", "updated_at"])
-
-        code.claimed_at = timezone.now()
-        code.claimed_by = parent_profile
-        code.save(update_fields=["claimed_at", "claimed_by", "updated_at"])
-
-        record_audit(
-            action=AuditAction.CODE_CLAIMED,
-            request=request,
-            obj=code,
-            child=code.child,
-        )
-        return guardianship
