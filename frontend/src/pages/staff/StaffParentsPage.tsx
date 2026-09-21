@@ -15,14 +15,8 @@ import {
   Pagination,
 } from "@/components/ui";
 import { useParents } from "@/features/parents/hooks";
+import { relationshipKey } from "@/features/children/relationships";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-
-const RELATIONSHIP_KEYS: Record<string, string> = {
-  MOTHER: "form.mother",
-  FATHER: "form.father",
-  GUARDIAN: "form.guardian",
-  OTHER: "form.other",
-};
 
 export function StaffParentsPage() {
   const { t } = useTranslation();
@@ -140,7 +134,7 @@ export function StaffParentsPage() {
                                       renders as its raw value rather
                                       than disappearing. */}
                                   {t(
-                                    RELATIONSHIP_KEYS[child.relationship] ??
+                                    relationshipKey(child.relationship) ??
                                       child.relationship,
                                   )}
                                 </span>

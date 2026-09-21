@@ -32,17 +32,6 @@ export const authApi = {
     return data;
   },
 
-  async linkChild(input: {
-    access_code: string;
-    relationship: string;
-  }): Promise<CurrentUser> {
-    const { data } = await apiClient.post<CurrentUser>(
-      "/auth/parent/link-child/",
-      input,
-    );
-    return data;
-  },
-
   async me(): Promise<CurrentUser> {
     const { data } = await apiClient.get<CurrentUser>("/auth/me/");
     return data;

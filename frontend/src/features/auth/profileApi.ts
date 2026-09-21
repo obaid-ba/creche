@@ -23,14 +23,4 @@ export const profileApi = {
   },
 
   /** Attach another child using a code the nursery issued. */
-  async linkChild(input: {
-    access_code: string;
-    relationship: string;
-  }): Promise<CurrentUser> {
-    const { data } = await apiClient.post<CurrentUser>(
-      "/auth/parent/link-child/",
-      input,
-    );
-    return data;
-  },
 };

@@ -19,7 +19,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.audit.models import AuditAction
 from apps.audit.services import record as record_audit
-from common.permissions import IsParent
 
 from .cookies import clear_refresh_cookie, get_refresh_token, set_refresh_cookie
 from .serializers import (

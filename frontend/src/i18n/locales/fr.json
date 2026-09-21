@@ -586,17 +586,13 @@
     "myChildren": "Mes enfants",
     "noChildren": "Aucun enfant rattaché à votre compte.",
     "myInfo": "Mes informations",
-    "linkChild": "Rattacher un autre enfant",
-    "linkChildHint": "Si vous avez plusieurs enfants à la crèche.",
-    "linkChildCodeHint": "Le code remis par la crèche pour votre autre enfant.",
-    "linkChildAction": "Rattacher l'enfant",
-    "linkChildDone": "L'enfant a été rattaché à votre compte.",
-    "linkChildError": "Impossible de rattacher cet enfant.",
     "saved": "Vos informations ont été enregistrées.",
     "emailReadOnly": "Contactez la crèche pour changer votre adresse e-mail.",
     "emergencyPhone": "Téléphone d'urgence",
     "emergencyPhoneHint": "Une deuxième personne à joindre si vous êtes injoignable.",
-    "address": "Adresse"
+    "address": "Adresse",
+    "access": "Accès à mon espace",
+    "accessHint": "Vous vous connectez avec le code remis par la crèche et le prénom de votre enfant. Si vous avez perdu le code, ou si un autre de vos enfants rejoint la crèche, demandez à l'équipe."
   },
   "parents": {
     "title": "Parents",

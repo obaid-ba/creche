@@ -1,96 +1,11 @@
-import { KeyRound, LinkIcon, LogOut } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { KeyRound, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { PageShell } from "@/components/app";
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Input,
-  Select,
-} from "@/components/ui";
+import { Button, Card, CardBody, CardHeader } from "@/components/ui";
 import { ChildAvatar } from "@/features/children/components/ChildAvatar";
-import { PasswordForm } from "@/features/auth/components/PasswordForm";
 import { ProfileForm } from "@/features/auth/components/ProfileForm";
-import { profileApi } from "@/features/auth/profileApi";
 import { useAuth } from "@/features/auth/useAuth";
-import { ApiError } from "@/services/errors";
-
-const RELATIONSHIPS = [
-  { value: "MOTHER", key: "form.mother" },
-  { value: "FATHER", key: "form.father" },
-  { value: "GUARDIAN", key: "form.guardian" },
-  { value: "OTHER", key: "form.other" },
-] as const;
-
-/** Attach a second child using a code the nursery issued. */
-function LinkChildForm({ onLinked }: { onLinked: () => Promise<void> | void }) {
-  const { t } = useTranslation();
-  const [error, setError] = useState<string | null>(null);
-  const [isDone, setIsDone] = useState(false);
-  const form = useForm({
-    defaultValues: { access_code: "", relationship: "MOTHER" },
-  });
-
-  const submit = form.handleSubmit(async (values) => {
-    setError(null);
-    setIsDone(false);
-    try {
-      await profileApi.linkChild(values);
-      await onLinked();
-      form.reset();
-      setIsDone(true);
-    } catch (caught) {
-      setError(
-        caught instanceof ApiError
-          ? caught.message
-          : t("profile.linkChildError"),
-      );
-    }
-  });
-
-  return (
-    <form onSubmit={submit} noValidate className="space-y-4">
-      {error !== null && <Alert tone="danger">{error}</Alert>}
-      {isDone && <Alert tone="success">{t("profile.linkChildDone")}</Alert>}
-
-      <Input
-        label={t("form.accessCode")}
-        placeholder="MAM-XXXXX"
-        autoComplete="off"
-        spellCheck={false}
-        dir="ltr"
-        hint={t("profile.linkChildCodeHint")}
-        error={form.formState.errors.access_code?.message}
-        {...form.register("access_code", {
-          required: "validation.codeRequiredShort",
-        })}
-      />
-
-      <Select
-        label={t("form.relationship")}
-        options={RELATIONSHIPS.map((r) => ({
-          value: r.value,
-          label: t(r.key),
-        }))}
-        {...form.register("relationship")}
-      />
-
-      <Button
-        type="submit"
-        variant="outline"
-        isLoading={form.formState.isSubmitting}
-        leftIcon={<LinkIcon className="size-4" />}
-      >
-        {t("profile.linkChildAction")}
-      </Button>
-    </form>
-  );
-}
 
 export function ParentProfilePage() {
   const { t } = useTranslation();
@@ -137,26 +52,22 @@ export function ParentProfilePage() {
         </CardBody>
       </Card>
 
+      {/* No password form and no self-service child linking: a parent has
+          neither a password nor a way to enrol a child. Both were left
+          behind by the move to code sign-in and staff-side enrolment, and
+          both failed on every click — one with a 404, the other with
+          "mot de passe actuel incorrect" for a password that does not
+          exist. What a parent can actually do is ask the nursery. */}
       <Card className="mt-5">
-        <CardHeader
-          title={t("profile.linkChild")}
-          description={t("profile.linkChildHint")}
-        />
-        <CardBody>
-          <LinkChildForm onLinked={refreshUser} />
-        </CardBody>
-      </Card>
-
-      <Card className="mt-5">
-        <CardHeader title={t("settings.security")} />
-        <CardBody className="space-y-6">
+        <CardHeader title={t("profile.access")} />
+        <CardBody className="space-y-5">
           <div className="flex items-start gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-card bg-ink-100 text-ink-600">
               <KeyRound aria-hidden="true" className="size-4" />
             </span>
-            <div className="min-w-0 flex-1">
-              <PasswordForm />
-            </div>
+            <p className="min-w-0 flex-1 text-sm text-ink-600">
+              {t("profile.accessHint")}
+            </p>
           </div>
 
           <div className="border-t border-ink-100 pt-5">

@@ -79,11 +79,6 @@ export const NURSERY_FACTS = {
   },
 } as const;
 
-/** True once every claim above has been checked with the nursery. */
-export const FACTS_VERIFIED = Object.values(NURSERY_FACTS).every((fact) =>
-  "verified" in fact ? fact.verified : true,
-);
-
 export interface GalleryItem {
   /** Full-size image, shown only in the lightbox. */
   src: string;

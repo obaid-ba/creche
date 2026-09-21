@@ -74,7 +74,7 @@ cmd_tunnel() {
   say "opening a tunnel…"
   cloudflared tunnel --url "http://localhost:${PORT}" --no-autoupdate >"$log" 2>&1 &
   local pid=$!
-  trap 'kill '"$pid"' 2>/dev/null || true' EXIT INT TERM
+  trap 'kill '"$pid"' 2>/dev/null || true; rm -f "'"$log"'"' EXIT INT TERM
 
   local url=""
   for _ in $(seq 1 45); do
@@ -87,19 +87,10 @@ cmd_tunnel() {
 
   local host="${url#https://}"
 
-  # A temporary env file rather than editing the real one: the hostname is
-  # good for this run only, and leaving a dead tunnel host in ALLOWED_HOSTS
-  # is confusing later.
-  local tmp_env; tmp_env="$(mktemp)"
-  cp "$ENV_FILE" "$tmp_env"
-  {
-    echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,frontend,backend,${host}"
-    echo "CSRF_TRUSTED_ORIGINS=${url}"
-    echo "CORS_ALLOWED_ORIGINS=${url}"
-  } >>"$tmp_env"
-  trap 'kill '"$pid"' 2>/dev/null || true; rm -f "'"$tmp_env"'" "'"$log"'"' EXIT INT TERM
-
-  docker compose -f docker-compose.prod.yml --env-file "$tmp_env" -p "$PROJECT" up -d --build
+  # No env juggling: .env.prod.local allows `.trycloudflare.com` as a
+  # wildcard, so the stack does not need restarting and a later rebuild
+  # cannot silently drop the host and 400 every request.
+  "${COMPOSE[@]}" up -d
   wait_healthy
 
   printf '\n'

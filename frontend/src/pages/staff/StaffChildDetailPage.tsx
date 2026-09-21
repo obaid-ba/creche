@@ -35,14 +35,8 @@ import {
 } from "@/features/children/hooks";
 import type { IssuedAccessCode } from "@/features/children/types";
 import { useAuth } from "@/features/auth/useAuth";
+import { relationshipKey } from "@/features/children/relationships";
 import { useLocale } from "@/i18n/useLocale";
-
-const RELATIONSHIP_KEYS: Record<string, string> = {
-  MOTHER: "form.mother",
-  FATHER: "form.father",
-  GUARDIAN: "form.guardian",
-  OTHER: "form.other",
-};
 
 export function StaffChildDetailPage() {
   const { t } = useTranslation();
@@ -189,7 +183,7 @@ export function StaffChildDetailPage() {
                       </p>
                       <p className="truncate text-sm text-ink-500">
                         {t(
-                          RELATIONSHIP_KEYS[guardian.relationship] ??
+                          relationshipKey(guardian.relationship) ??
                             guardian.relationship,
                         )}{" "}
                         · {guardian.email}

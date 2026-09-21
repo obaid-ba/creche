@@ -4,15 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Alert, Button, Input, Modal, Select } from "@/components/ui";
 
 import { useAddGuardian } from "../hooks";
+import { relationshipOptions } from "../relationships";
 import type { IssuedAccessCode } from "../types";
-
-/** Values are the API's enum; the wording comes from the locale files. */
-const RELATIONSHIPS = [
-  { value: "MOTHER", key: "form.mother" },
-  { value: "FATHER", key: "form.father" },
-  { value: "GUARDIAN", key: "form.guardian" },
-  { value: "OTHER", key: "form.other" },
-] as const;
 
 /**
  * Enrol a family, typed in by staff from the paper form.
@@ -126,10 +119,7 @@ export function AddGuardianModal({
         <Select
           label={t("form.relationship")}
           value={relationship}
-          options={RELATIONSHIPS.map((r) => ({
-            value: r.value,
-            label: t(r.key),
-          }))}
+          options={relationshipOptions(t)}
           onChange={(event) => setRelationship(event.target.value)}
         />
 
