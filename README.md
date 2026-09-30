@@ -36,6 +36,7 @@ Read these before changing anything structural.
 | [docs/authentication.md](docs/authentication.md) | Tokens, roles, access codes, ownership |
 | [docs/timeline.md](docs/timeline.md) | The timeline architectural decision |
 | [docs/i18n.md](docs/i18n.md) | French and Arabic, plurals, direction, fonts |
+| [docs/hosting-supabase.md](docs/hosting-supabase.md) | Supabase + Vercel: which env vars matter, and what breaks |
 | [docs/implementation-plan.md](docs/implementation-plan.md) | Phased roadmap |
 
 ---

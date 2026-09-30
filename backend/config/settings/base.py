@@ -90,17 +90,42 @@ TEMPLATES = [
 ]
 
 # ── Database ────────────────────────────────────────────────────────────
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB", default="creche_mamati"),
-        "USER": env("POSTGRES_USER", default="creche"),
-        "PASSWORD": env("POSTGRES_PASSWORD", default="creche_dev_password"),
-        "HOST": env("POSTGRES_HOST", default="localhost"),
-        "PORT": env.int("POSTGRES_PORT", default=5432),
-        "CONN_MAX_AGE": 60,
+# A single DATABASE_URL wins when it is set, because that is the shape
+# every managed provider hands you (Supabase, Neon, Railway, Heroku).
+# The discrete variables stay for Docker Compose, which builds them from
+# separate values.
+if env("DATABASE_URL", default=""):
+    DATABASES = {"default": env.db_url("DATABASE_URL")}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB", default="creche_mamati"),
+            "USER": env("POSTGRES_USER", default="creche"),
+            "PASSWORD": env("POSTGRES_PASSWORD", default="creche_dev_password"),
+            "HOST": env("POSTGRES_HOST", default="localhost"),
+            "PORT": env.int("POSTGRES_PORT", default=5432),
+        }
     }
-}
+
+# Persistent connections are right when the database is a container on the
+# same host. They are wrong behind a *transaction* pooler — Supabase's
+# port 6543, PgBouncer — which hands a different backend to every
+# transaction: Django would hold a connection the pooler has already given
+# away. Set 0 there.
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
+
+# Server-side cursors do not survive a transaction pooler either: the
+# cursor is opened on one backend and read from another. Django raises
+# InvalidCursorName, usually on the first large list a user opens.
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = env.bool(
+    "DB_DISABLE_SERVER_SIDE_CURSORS", default=False
+)
+
+# Managed providers require TLS and will refuse a plaintext connection.
+if env("DB_SSLMODE", default=""):
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"]["sslmode"] = env("DB_SSLMODE")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
