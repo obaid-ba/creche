@@ -1,0 +1,76 @@
+# One-click deploy of the Django API to Render's free tier.
+#
+# This is the piece Supabase cannot host: Supabase is Postgres plus
+# PostgREST, Auth, Storage and Deno Edge Functions, so there is nowhere
+# in it to run Python. The split ends up as:
+#
+#   Vercel     the React SPA   (static files)
+#   Render     this service    (Django + gunicorn)
+#   Supabase   Postgres        (the database only)
+#
+# To use it: Render → New → Blueprint → point at this repository.
+# Render reads this file, builds backend/Dockerfile, and asks for the
+# values marked `sync: false` below.
+#
+# The free plan sleeps after 15 minutes of inactivity and takes roughly
+# 50 seconds to wake. That is survivable for a demo and irritating for
+# daily use by staff; the starter plan removes it.
+services:
+  - type: web
+    name: creche-api
+    runtime: docker
+    plan: free
+    region: frankfurt          # closest to Tunisia of the free regions
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+
+      # Supabase → Project Settings → Database → Connection string.
+      # DATABASE_URL is the *pooled* one (port 6543); the migration URL is
+      # the direct one (port 5432). The entrypoint uses each for the right
+      # job — see backend/docker-entrypoint.sh.
+      - key: DATABASE_URL
+        sync: false
+      - key: MIGRATION_DATABASE_URL
+        sync: false
+
+      # Required behind the transaction pooler. Both fail silently when
+      # wrong: persistent connections hold a backend the pooler has
+      # already reassigned, and a server-side cursor opened on one backend
+      # and read from another raises InvalidCursorName.
+      - key: DB_CONN_MAX_AGE
+        value: "0"
+      - key: DB_DISABLE_SERVER_SIDE_CURSORS
+        value: "True"
+      - key: DB_SSLMODE
+        value: require
+
+      # Generated once by Render and then fixed. They must differ: one
+      # signs sessions, the other is the HMAC key that makes every stored
+      # access code unreadable without it. Rotating the second one locks
+      # every family out, so it is generated here and never touched again.
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: ACCESS_CODE_HMAC_KEY
+        generateValue: true
+
+      # Render gives the service a .onrender.com hostname; add your own
+      # domain here too once you have one.
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+
+      # Render terminates TLS in front of this container and sets
+      # X-Forwarded-Proto, which prod settings already trust — so Django
+      # must not redirect again or the request loops.
+      - key: DJANGO_SECURE_SSL_REDIRECT
+        value: "False"
+
+      - key: NURSERY_TIMEZONE
+        value: Africa/Tunis
