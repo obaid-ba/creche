@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://creche-api.onrender.com/api/:path*"
+      "destination": "https://creche-api-z9k5.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
