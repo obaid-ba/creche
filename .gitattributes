@@ -1,0 +1,13 @@
+# Shell scripts must reach Linux containers with LF endings. Committed
+# from a Windows checkout, `#!/bin/sh\r` makes the kernel look for an
+# interpreter named "sh\r", and the container dies at startup with an
+# error naming the script rather than the line ending.
+*.sh text eol=lf
+
+# Same reason, same consequence: these are read by a Linux shell or by
+# Docker, never by Notepad.
+Dockerfile      text eol=lf
+*.dockerfile    text eol=lf
+docker-entrypoint.sh text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf

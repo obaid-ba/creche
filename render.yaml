@@ -36,18 +36,26 @@ services:
         value: config.settings.prod
 
       # Supabase → Project Settings → Database → Connection string.
-      # DATABASE_URL is the *pooled* one (port 6543); the migration URL is
-      # the direct one (port 5432). The entrypoint uses each for the right
-      # job — see backend/docker-entrypoint.sh.
+      #
+      # Both are the **session pooler** on port 5432
+      # (aws-N-<region>.pooler.supabase.com): Supabase's direct host,
+      # db.<ref>.supabase.co, resolves to IPv6 only and Render has no IPv6
+      # egress, so it is unreachable from here and must not be used.
+      #
+      # The session pooler holds one backend per connection, so migrations
+      # are safe over it — unlike the transaction pooler on 6543, which
+      # reassigns a backend per transaction and breaks migration locks.
       - key: DATABASE_URL
         sync: false
       - key: MIGRATION_DATABASE_URL
         sync: false
 
-      # Required behind the transaction pooler. Both fail silently when
-      # wrong: persistent connections hold a backend the pooler has
+      # Sized for a pooler. Both fail silently when wrong against a
+      # transaction pooler: persistent connections hold a backend it has
       # already reassigned, and a server-side cursor opened on one backend
-      # and read from another raises InvalidCursorName.
+      # and read from another raises InvalidCursorName. On the session
+      # pooler they are merely conservative — a fresh connection per
+      # request — which is the right trade on a plan that sleeps anyway.
       - key: DB_CONN_MAX_AGE
         value: "0"
       - key: DB_DISABLE_SERVER_SIDE_CURSORS
@@ -86,3 +94,15 @@ services:
 
       - key: NURSERY_TIMEZONE
         value: Africa/Tunis
+
+      # gunicorn binds 8000 (backend/Dockerfile), Render probes 10000 by
+      # default and would report the service as unhealthy with a container
+      # that is serving perfectly well.
+      - key: PORT
+        value: "8000"
+
+      # Left to Render, which sets 1 on the free plan's 512 MB. Named here
+      # only so it is visible: raising it is how you add capacity on a
+      # paid plan, and three workers is what will not fit in 512 MB.
+      - key: WEB_CONCURRENCY
+        value: "1"

@@ -48,22 +48,37 @@ RUN mkdir -p /app/media /app/staticfiles \
 # actually contain. msgfmt directly rather than `manage.py
 # compilemessages`: that would import production settings, which demand
 # every runtime secret, and the build has no business holding those.
+
 RUN find /app/locale -name '*.po' \
         -exec sh -c 'msgfmt --check -o "${0%.po}.mo" "$0"' {} \;
+
+# Committed from Windows checkouts, so the entrypoint can arrive with CRLF
+# line endings or without its execute bit (git tracked it 100644). Either
+# one kills the container before Python starts, with a message that points
+# at the file rather than at the mode. Normalise both here: .gitattributes
+# keeps it from recurring, this keeps a stale checkout from mattering.
+RUN sed -i 's/\r$//' /app/docker-entrypoint.sh \
+    && chmod +x /app/docker-entrypoint.sh
 
 USER creche
 EXPOSE 8000
 
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+# Invoked through `sh` rather than relying on the shebang, so a lost
+# execute bit degrades to a working container instead of a failed deploy.
+ENTRYPOINT ["sh", "/app/docker-entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD curl -fsS http://127.0.0.1:8000/api/health/ || exit 1
 
 # Two threads per worker: the workload is IO-bound (Postgres, media), so
 # threads add concurrency more cheaply than extra processes.
+#
+# The worker count is left to gunicorn's WEB_CONCURRENCY, which Render
+# sets to 1 on the free plan's 512 MB. Hardcoding 3 put three Django
+# processes in that much memory, where the OOM killer reaps one and
+# Render reports a crash loop with no traceback to explain it.
 CMD ["gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
-     "--workers", "3", \
      "--threads", "2", \
      "--timeout", "60", \
      "--access-logfile", "-", \
