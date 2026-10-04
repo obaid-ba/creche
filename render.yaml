@@ -4,9 +4,16 @@
 # PostgREST, Auth, Storage and Deno Edge Functions, so there is nowhere
 # in it to run Python. The split ends up as:
 #
-#   Vercel     the React SPA   (static files)
-#   Render     this service    (Django + gunicorn)
-#   Supabase   Postgres        (the database only)
+#   Vercel     the React SPA, and a proxy for /api/*  (static + edge)
+#   Render     this service                           (Django + gunicorn)
+#   Supabase   Postgres                               (the database only)
+#
+# The browser only ever talks to the Vercel origin. frontend/vercel.json
+# rewrites /api/* to this service, so the session cookie is first-party.
+# Pointing the SPA straight at .onrender.com instead would make that
+# cookie third-party: Safari and iOS block those outright, and the access
+# token is held in memory only, so every page reload would log a parent
+# out. Keep the proxy.
 #
 # To use it: Render → New → Blueprint → point at this repository.
 # Render reads this file, builds backend/Dockerfile, and asks for the
@@ -57,8 +64,13 @@ services:
       - key: ACCESS_CODE_HMAC_KEY
         generateValue: true
 
-      # Render gives the service a .onrender.com hostname; add your own
-      # domain here too once you have one.
+      # DJANGO_ALLOWED_HOSTS is this service's own .onrender.com hostname:
+      # Vercel's proxy rewrites Host to the destination, so that is what
+      # Django sees. CSRF_TRUSTED_ORIGINS is the *browser's* origin, the
+      # vercel.app one, because the proxy forwards Origin unchanged.
+      # CORS_ALLOWED_ORIGINS is unused while the proxy is in place (no
+      # request is cross-origin from the browser's point of view) and is
+      # kept only so a direct-to-API setup still works.
       - key: DJANGO_ALLOWED_HOSTS
         sync: false
       - key: CORS_ALLOWED_ORIGINS
