@@ -27,15 +27,14 @@
     "discover": "Découvrir la crèche",
     "registration": "Dossier d'inscription",
     "hours": "Horaires",
-    "location": "Localisation",
-    "city": "Tunis, Tunisie"
+    "location": "Localisation"
   },
   "facts": {
     "kind": "Crèche privée",
     "ageFrom": "2 mois",
     "ageTo": "4 ans",
     "openingDays": "Du lundi au vendredi",
-    "city": "Tunis, Tunisie",
+    "city": "Bizerte, Tunisie",
     "meals": "Repas équilibrés",
     "activities": "Activités d'éveil"
   },
