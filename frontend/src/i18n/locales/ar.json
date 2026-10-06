@@ -112,11 +112,12 @@
     "title": "يوم في ماماتي",
     "cta": "اكتشف متابعة طفلي",
     "breakfast": "الفطور",
-    "painting": "ورشة رسم",
-    "nap": "القيلولة",
+    "snackMorning": "وجبة خفيفة",
+    "activitiesMorning": "أنشطة",
     "lunch": "الغداء",
-    "temperature": "الحرارة",
-    "snack": "وجبة خفيفة"
+    "nap": "القيلولة",
+    "snackAfternoon": "وجبة خفيفة",
+    "activitiesAfternoon": "أنشطة"
   },
   "portal": {
     "titleLine1": "تابع كل",

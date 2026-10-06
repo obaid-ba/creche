@@ -40,15 +40,16 @@ export const NURSERY = {
 } as const;
 
 /**
- * ⚠️  UNVERIFIED — CONFIRM BEFORE THE SITE GOES LIVE
+ * ⚠️  PARTLY UNVERIFIED — CHECK THE `verified: false` LINES BEFORE GOING LIVE
  *
- * These are placeholder claims written during development. They were NOT
- * supplied by the nursery. Publishing them unchecked would put wrong
- * information in front of parents — wrong opening hours in particular
- * send people to a locked door.
+ * Everything here is displayed publicly, and anything still marked
+ * unverified is a placeholder written during development rather than
+ * something the nursery supplied. Wrong opening hours in particular send
+ * people to a locked door.
  *
- * Everything below is displayed publicly. Correct each line, then delete
- * this warning.
+ * Opening hours and the city were confirmed by the nursery on 2026-10-06
+ * and are marked accordingly. Correct the rest, flip its flag, and delete
+ * this warning once nothing false is left.
  */
 export const NURSERY_FACTS = {
   /** Shown in the hero badge and on /about. The wording lives in the
@@ -57,13 +58,20 @@ export const NURSERY_FACTS = {
   ageRange: { fromKey: "facts.ageFrom", toKey: "facts.ageTo", verified: false },
 
   /** Shown on /about and in the services list. Clock times are the same
-   *  in both languages, so they are data rather than copy. */
+   *  in both languages, so they are data rather than copy. Confirmed by
+   *  the nursery as 7h–18h; kept in HH:MM so Arabic renders them without
+   *  a French "h" the reader would not expect. */
   openingHours: {
     daysKey: "facts.openingDays",
-    from: "07:30",
-    to: "18:30",
-    verified: false,
+    from: "07:00",
+    to: "18:00",
+    verified: true,
   },
+
+  /** Shown in the hero badge and the footer. The wording lives in the
+   *  locale files ("Tunis, Tunisie" / "تونس، تونس"); this records only
+   *  that the nursery has confirmed it. */
+  city: { labelKey: "facts.city", verified: true },
 
   /** "Crèche privée" in the hero badge. */
   kind: { labelKey: "facts.kind", verified: false },

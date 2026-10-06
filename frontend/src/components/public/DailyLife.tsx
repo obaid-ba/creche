@@ -12,14 +12,28 @@ import { Container, SectionHeading } from "@/components/ui";
  * mirror what the application actually stores, so it is a preview of a
  * real feature and not a decorative illustration.
  */
-const MOMENTS = [
-  { time: "08:15", icon: "🍼", key: "breakfast" },
-  { time: "09:00", icon: "🎨", key: "painting" },
-  { time: "10:30", icon: "🌙", key: "nap" },
-  { time: "12:00", icon: "🍽️", key: "lunch" },
-  { time: "14:30", icon: "🌡️", key: "temperature" },
-  { time: "16:00", icon: "🍼", key: "snack" },
-] as const;
+interface Moment {
+  /** Start, or the only time when `until` is absent. */
+  time: string;
+  /** Set only for the moments that occupy a span rather than an instant. */
+  until?: string;
+  icon: string;
+  key: string;
+}
+
+/** The nursery's actual timetable, confirmed 2026-10-06. Snack and
+ *  activities happen twice a day, so the keys are suffixed rather than
+ *  shared — the label reads the same, but a shared key would make the
+ *  two impossible to word differently later. */
+const MOMENTS: Moment[] = [
+  { time: "07:30", icon: "🍼", key: "breakfast" },
+  { time: "09:00", icon: "🍎", key: "snackMorning" },
+  { time: "09:30", until: "11:00", icon: "🎨", key: "activitiesMorning" },
+  { time: "11:15", icon: "🍽️", key: "lunch" },
+  { time: "12:00", until: "14:00", icon: "🌙", key: "nap" },
+  { time: "14:15", icon: "🍎", key: "snackAfternoon" },
+  { time: "15:00", until: "17:00", icon: "🧩", key: "activitiesAfternoon" },
+];
 
 export function DailyLife() {
   const { t } = useTranslation();
@@ -29,28 +43,41 @@ export function DailyLife() {
       <Container size="wide">
         <SectionHeading title={t("dailyLife.title")} />
 
-        <div className="mt-9 flex flex-col gap-4 lg:flex-row lg:items-stretch">
-          {/* The strip scrolls horizontally on narrow screens rather than
-              wrapping into an unreadable stack of six rows. */}
-          <ol className="flex flex-1 snap-x snap-mandatory gap-3 overflow-x-auto pb-2 lg:gap-2.5 lg:overflow-visible lg:pb-0">
+        {/* The CTA sits below the strip rather than beside it: seven
+            moments, three of them time spans, leave no room for a button
+            on the same row. */}
+        <div className="mt-9 flex flex-col gap-5">
+          {/* The strip scrolls horizontally until it genuinely fits —
+              at xl, not lg: seven cards plus their gaps need more than a
+              1024px viewport and would otherwise overflow the section. */}
+          <ol className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 xl:gap-2.5 xl:overflow-visible xl:pb-0">
             {MOMENTS.map((moment, index) => (
               <li
                 key={moment.time}
-                className="relative flex min-w-[8.5rem] flex-1 snap-start items-center gap-2.5 rounded-panel bg-shell px-3.5 py-3 shadow-soft"
+                className="relative flex min-w-[9.5rem] flex-1 snap-start items-center gap-2.5 rounded-panel bg-shell px-3.5 py-3 shadow-soft"
               >
                 <span aria-hidden="true" className="text-xl">
                   {moment.icon}
                 </span>
                 <span className="min-w-0">
-                  {/* A clock time is read left-to-right in Arabic too,
-                      so the isolate keeps "08:15" from being reordered
-                      by the bidi algorithm next to Arabic text. */}
-                  <time
+                  {/* A clock time is read left-to-right in Arabic too, so
+                      the isolate keeps "09:30" from being reordered by the
+                      bidi algorithm next to Arabic text. For a span it
+                      goes on the wrapper, not on each <time>: two
+                      separately isolated times would let the dash and the
+                      order between them flip in RTL. */}
+                  <span
                     dir="ltr"
-                    className="block font-display text-base font-bold text-primary-600"
+                    className="block font-display text-sm font-bold text-primary-600"
                   >
-                    {moment.time}
-                  </time>
+                    <time>{moment.time}</time>
+                    {moment.until ? (
+                      <>
+                        <span aria-hidden="true">–</span>
+                        <time>{moment.until}</time>
+                      </>
+                    ) : null}
+                  </span>
                   <span className="block truncate text-xs text-ink-500">
                     {t(`dailyLife.${moment.key}`)}
                   </span>
@@ -69,7 +96,7 @@ export function DailyLife() {
 
           <Link
             to="/parent/login"
-            className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-panel bg-secondary-600 px-6 py-4 text-center text-sm font-bold text-white shadow-soft transition-colors hover:bg-secondary-700 lg:max-w-[13rem]"
+            className="group inline-flex shrink-0 items-center justify-center gap-2 rounded-panel bg-secondary-600 px-6 py-4 text-center text-sm font-bold text-white shadow-soft transition-colors hover:bg-secondary-700 sm:self-center sm:px-8"
           >
             {t("dailyLife.cta")}
             <ArrowRight

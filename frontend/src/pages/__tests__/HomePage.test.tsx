@@ -85,8 +85,33 @@ describe("public site", () => {
     renderAt("/");
     const main = screen.getByRole("main");
 
-    expect(within(main).getAllByText("08:15").length).toBeGreaterThan(0);
+    expect(within(main).getAllByText("07:30").length).toBeGreaterThan(0);
     expect(within(main).getAllByText(/petit déjeuner/i).length).toBeGreaterThan(0);
+  });
+
+  it("shows the nursery's real timetable, spans included", () => {
+    renderAt("/");
+    const main = screen.getByRole("main");
+
+    // These are facts the nursery confirmed, so a silent edit back to a
+    // placeholder should fail rather than merely look different.
+    for (const time of ["07:30", "09:00", "09:30", "11:00", "11:15", "12:00",
+                        "14:00", "14:15", "15:00", "17:00"]) {
+      expect(
+        within(main).getAllByText(time).length,
+        `timetable is missing ${time}`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("states the confirmed opening hours", () => {
+    renderAt("/");
+
+    // 07:00-18:00, rendered with an en dash. Scoped to main: the footer
+    // repeats it, and it sits outside main as contentinfo.
+    expect(
+      within(screen.getByRole("main")).getAllByText(/07:00\s*–\s*18:00/).length,
+    ).toBeGreaterThan(0);
   });
 
   it("exposes a skip link before the navigation", () => {

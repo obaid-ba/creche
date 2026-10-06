@@ -112,11 +112,12 @@
     "title": "Une journée chez Mamati",
     "cta": "Découvrir le suivi de mon enfant",
     "breakfast": "Petit déjeuner",
-    "painting": "Atelier peinture",
-    "nap": "Sieste",
+    "snackMorning": "Goûter",
+    "activitiesMorning": "Activités",
     "lunch": "Déjeuner",
-    "temperature": "Température",
-    "snack": "Goûter"
+    "nap": "Sieste",
+    "snackAfternoon": "Goûter",
+    "activitiesAfternoon": "Activités"
   },
   "portal": {
     "titleLine1": "Gardez un œil sur",
