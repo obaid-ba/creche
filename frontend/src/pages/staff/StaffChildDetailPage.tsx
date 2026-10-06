@@ -205,36 +205,48 @@ export function StaffChildDetailPage() {
             {child.guardians.length === 0 ? (
               <p className="text-sm text-ink-500">{t("child.noGuardianYet")}</p>
             ) : (
-              <ul className="space-y-2">
-                {child.guardians.map((guardian) => (
-                  <li
-                    key={guardian.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-card bg-ink-50 px-3 py-2"
-                  >
-                    <span className="text-sm font-semibold text-ink-800">
-                      {guardian.first_name} {guardian.last_name}
-                    </span>
-                    {/* Reissue is per guardian: a mother and a father hold
-                        separate codes, so a lost paper revokes one only. */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      isLoading={
-                        issueCode.isPending &&
-                        issueCode.variables === guardian.id
-                      }
-                      leftIcon={<KeyRound className="size-4" />}
-                      onClick={() =>
-                        issueCode.mutate(guardian.id, {
-                          onSuccess: (data) => setIssued(data),
-                        })
-                      }
+              <>
+                {/* Without this the mutation failed in complete silence:
+                    the spinner stopped and no code appeared, which reads
+                    as a dead button rather than as an error. */}
+                {issueCode.isError && (
+                  <Alert tone="danger">{t("child.reissueFailed")}</Alert>
+                )}
+                <ul className="space-y-2">
+                  {child.guardians.map((guardian) => (
+                    <li
+                      key={guardian.id}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-card bg-ink-50 px-3 py-2"
                     >
-                      {t("child.reissueCode")}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+                      <span className="text-sm font-semibold text-ink-800">
+                        {guardian.first_name} {guardian.last_name}
+                      </span>
+                      {/* Reissue is per guardian: a mother and a father hold
+                        separate codes, so a lost paper revokes one only. */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        isLoading={
+                          issueCode.isPending &&
+                          issueCode.variables === guardian.parent_id
+                        }
+                        leftIcon={<KeyRound className="size-4" />}
+                        onClick={() =>
+                          // parent_id, not id: `id` is the guardianship row,
+                          // and the endpoint looks the guardianship up BY
+                          // parent. Both are UUID strings, so sending the
+                          // wrong one type-checks and 404s at runtime.
+                          issueCode.mutate(guardian.parent_id, {
+                            onSuccess: (data) => setIssued(data),
+                          })
+                        }
+                      >
+                        {t("child.reissueCode")}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </>
             )}
 
             <Button

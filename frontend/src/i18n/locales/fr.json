@@ -668,7 +668,8 @@
     "emailOptional": "Adresse e-mail (facultatif)",
     "emailOptionalHint": "Pour vous contacter seulement — ce n'est pas un identifiant.",
     "noGuardianYet": "Aucun parent enregistré. Ajoutez-en un pour générer son code.",
-    "reissueCode": "Nouveau code"
+    "reissueCode": "Nouveau code",
+    "reissueFailed": "Le nouveau code n'a pas pu être créé. Réessayez ; si cela persiste, rechargez la page."
   },
   "notifications": {
     "title": "Notifications",
