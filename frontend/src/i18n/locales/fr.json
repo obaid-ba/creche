@@ -424,6 +424,7 @@
     "meal": "Repas",
     "mood": "Humeur",
     "diaperState": "État",
+    "toiletResult": "Résultat",
     "choose": "Choisir…",
     "invalidValue": "Veuillez saisir une valeur valide.",
     "chooseSomething": "Veuillez faire un choix.",

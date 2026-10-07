@@ -26,7 +26,16 @@ const PROMPTS: Partial<
 const CHOICES: Partial<
   Record<
     TimelineEventType,
-    { field: string; labelKey: string; values: readonly string[]; group: string }
+    {
+      field: string;
+      labelKey: string;
+      values: readonly string[];
+      group: string;
+      /** For a type whose option labels are not `event.<group>.<VALUE>`. */
+      optionKeys?: Readonly<Record<string, string>>;
+      /** The stored payload is not always a string: see TOILET. */
+      cast?: (raw: string) => unknown;
+    }
   >
 > = {
   MEAL: {
@@ -46,6 +55,27 @@ const CHOICES: Partial<
     labelKey: "timeline.diaperState",
     group: "diaper",
     values: ["WET", "SOILED", "BOTH", "DRY"],
+  },
+  // The one quick-add chip with no way to record it: ToiletPayload makes
+  // `success` required, so tapping "Toilettes" posted an empty payload
+  // and the server answered 400 every time. The timeline could already
+  // *display* a toilet event -- emoji, "Réussi"/"Sans résultat" -- so
+  // only the input was missing.
+  //
+  // `success` is a boolean, not an enum, so the option values are the two
+  // booleans as strings and `cast` turns the chosen one back. The labels
+  // reuse the feed's own keys rather than duplicating the words under
+  // `event.toilet.*`, so the dialog and the timeline cannot drift apart.
+  TOILET: {
+    field: "success",
+    labelKey: "timeline.toiletResult",
+    group: "toilet",
+    values: ["true", "false"],
+    optionKeys: {
+      true: "event.toiletSuccess",
+      false: "event.toiletNoResult",
+    },
+    cast: (raw) => raw === "true",
   },
 };
 
@@ -183,22 +213,33 @@ export function QuickAddBar({
     const prompt = PROMPTS[active.key];
     const choice = CHOICES[active.key];
 
+    // Both branches go through submit() rather than record(): it awaits
+    // the server and closes only on success. Closing here unconditionally
+    // meant a rejected value vanished along with the dialog.
     if (prompt !== undefined) {
       const numeric = Number(value);
       if (value.trim() === "" || Number.isNaN(numeric)) {
         setError(t("timeline.invalidValue"));
         return;
       }
-      record(active, { [prompt.field]: numeric });
+      void submit({
+        type: active.key,
+        occurred_at: new Date().toISOString(),
+        data: { [prompt.field]: numeric },
+      });
     } else if (choice !== undefined) {
       if (value === "") {
         setError(t("timeline.chooseSomething"));
         return;
       }
-      record(active, { [choice.field]: value });
+      void submit({
+        type: active.key,
+        occurred_at: new Date().toISOString(),
+        data: {
+          [choice.field]: choice.cast === undefined ? value : choice.cast(value),
+        },
+      });
     }
-
-    setActive(null);
   }
 
   const prompt = active !== null ? PROMPTS[active.key] : undefined;
@@ -317,7 +358,10 @@ export function QuickAddBar({
             placeholder={t("timeline.choose")}
             options={choice.values.map((optionValue) => ({
               value: optionValue,
-              label: t(`event.${choice.group}.${optionValue}`),
+              label: t(
+                choice.optionKeys?.[optionValue] ??
+                  `event.${choice.group}.${optionValue}`,
+              ),
             }))}
             error={error ?? undefined}
             onChange={(event) => setValue(event.target.value)}
