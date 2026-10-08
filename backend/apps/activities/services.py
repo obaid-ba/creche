@@ -44,6 +44,11 @@ def sync_timeline_events(activity: Activity) -> None:
 
     Idempotent: safe to call after any change to the activity or its
     participant list.
+
+    A fixed number of queries regardless of class size. It used to run a
+    DailyRecord lookup and an INSERT per added child, so putting a group
+    of thirty into one activity cost sixty-odd round trips; the publish
+    check is now one query for the cohort and the writes are batched.
     """
     occurred_at = _occurred_at(activity)
     ended_at = _ended_at(activity)
@@ -64,30 +69,55 @@ def sync_timeline_events(activity: Activity) -> None:
             activity=activity, child_id__in=stale
         ).delete()
 
-    for child_id in participant_ids:
-        event = existing.get(child_id)
-        if event is None:
-            # A day already published stays published, so a late activity
-            # does not silently disappear from the parent's view.
-            published = DailyRecord.objects.filter(
-                child_id=child_id,
+    missing = participant_ids - set(existing)
+
+    if missing:
+        # One query for the whole cohort, not one per child. A day already
+        # published stays published, so a late activity does not silently
+        # disappear from the parent's view.
+        published = set(
+            DailyRecord.objects.filter(
+                child_id__in=missing,
                 date=local_date,
                 status=DailyRecordStatus.PUBLISHED,
-            ).exists()
+            ).values_list("child_id", flat=True)
+        )
+        TimelineEvent.objects.bulk_create(
+            [
+                TimelineEvent(
+                    child_id=child_id,
+                    activity=activity,
+                    type=TimelineEventType.ACTIVITY,
+                    occurred_at=occurred_at,
+                    ended_at=ended_at,
+                    # bulk_create does not call save(), which is what
+                    # normally derives this from occurred_at - so it is
+                    # set here from the same value. Leaving it out is a
+                    # NOT NULL violation, not a silent wrong date.
+                    local_date=local_date,
+                    is_published=child_id in published,
+                    created_by=activity.created_by,
+                )
+                for child_id in missing
+            ]
+        )
 
-            TimelineEvent.objects.create(
-                child_id=child_id,
-                activity=activity,
-                type=TimelineEventType.ACTIVITY,
-                occurred_at=occurred_at,
-                ended_at=ended_at,
-                is_published=published,
-                created_by=activity.created_by,
-            )
-        elif event.occurred_at != occurred_at or event.ended_at != ended_at:
-            # Only the timing is denormalised onto the row (it is what the
-            # timeline sorts by); title and description are never copied.
+    # Only the timing is denormalised onto the row (it is what the
+    # timeline sorts by); title and description are never copied.
+    moved = [
+        event
+        for event in existing.values()
+        if event.child_id in participant_ids
+        and (event.occurred_at != occurred_at or event.ended_at != ended_at)
+    ]
+    if moved:
+        now = timezone.now()
+        for event in moved:
             event.occurred_at = occurred_at
             event.ended_at = ended_at
-            event.save(update_fields=["occurred_at", "ended_at", "local_date",
-                                      "updated_at"])
+            event.local_date = local_date
+            # bulk_update bypasses auto_now too.
+            event.updated_at = now
+        TimelineEvent.objects.bulk_update(
+            moved, ["occurred_at", "ended_at", "local_date", "updated_at"]
+        )

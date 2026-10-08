@@ -189,7 +189,30 @@
       "EDUCATIONAL": "إيقاظ تربوي",
       "OTHER": "أخرى"
     },
-    "fieldTitle": "العنوان"
+    "fieldTitle": "العنوان",
+    "participantsTitle": "الأطفال المعنيون",
+    "noParticipantsWarning": "لا يوجد أي طفل في هذا النشاط، لذلك لا يظهر في أي يوم ولا تراه أي عائلة. أضف الأطفال أدناه.",
+    "addParticipants": "إضافة أطفال",
+    "searchChild": "ابحث عن اسم…",
+    "everyoneAdded": "جميع الأطفال المسجّلين يشاركون بالفعل.",
+    "removeParticipant": "إزالة {{name}}",
+    "addFailed": "لم تتم إضافة الأطفال. أعد المحاولة.",
+    "removeFailed": "لم تتم إزالة الطفل. أعد المحاولة.",
+    "addSelected_zero": "اختر طفلاً لإضافته",
+    "addSelected_one": "إضافة طفل واحد",
+    "addSelected_two": "إضافة طفلين",
+    "addSelected_few": "إضافة {{count}} أطفال",
+    "addSelected_many": "إضافة {{count}} طفلاً",
+    "addSelected_other": "إضافة {{count}} طفل",
+    "addSelectedNone": "اختر طفلاً",
+    "deleteTitle": "حذف هذا النشاط؟",
+    "deleteWarning_zero": "سيُحذف النشاط. لا يشارك فيه أي طفل. هذا الإجراء نهائي.",
+    "deleteWarning_one": "سيُحذف النشاط، وكذلك أثره في يوم طفل واحد. هذا الإجراء نهائي.",
+    "deleteWarning_two": "سيُحذف النشاط، وكذلك أثره في يوم طفلين. هذا الإجراء نهائي.",
+    "deleteWarning_few": "سيُحذف النشاط، وكذلك أثره في يوم {{count}} أطفال. هذا الإجراء نهائي.",
+    "deleteWarning_many": "سيُحذف النشاط، وكذلك أثره في يوم {{count}} طفلاً. هذا الإجراء نهائي.",
+    "deleteWarning_other": "سيُحذف النشاط، وكذلك أثره في يوم {{count}} طفل. هذا الإجراء نهائي.",
+    "deleteFailed": "لم يتم حذف النشاط. أعد المحاولة."
   },
   "gallery": {
     "title": "معرض الصور",
@@ -821,6 +844,8 @@
     "child_two": "طفلان",
     "child_few": "{{count}} أطفال",
     "child_many": "{{count}} طفلاً",
-    "child_other": "{{count}} طفل"
+    "child_other": "{{count}} طفل",
+    "edit": "تعديل",
+    "delete": "حذف"
   }
 }

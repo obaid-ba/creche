@@ -181,7 +181,22 @@
       "EDUCATIONAL": "Éveil éducatif",
       "OTHER": "Autre"
     },
-    "fieldTitle": "Titre"
+    "fieldTitle": "Titre",
+    "participantsTitle": "Enfants concernés",
+    "noParticipantsWarning": "Aucun enfant n'est inscrit à cette activité : elle n'apparaît donc sur aucune journée et aucune famille ne la voit. Ajoutez les enfants ci-dessous.",
+    "addParticipants": "Ajouter des enfants",
+    "searchChild": "Rechercher un prénom…",
+    "everyoneAdded": "Tous les enfants inscrits participent déjà.",
+    "removeParticipant": "Retirer {{name}}",
+    "addFailed": "Les enfants n'ont pas pu être ajoutés. Réessayez.",
+    "removeFailed": "L'enfant n'a pas pu être retiré. Réessayez.",
+    "addSelected_one": "Ajouter {{count}} enfant",
+    "addSelected_other": "Ajouter {{count}} enfants",
+    "addSelectedNone": "Sélectionnez un enfant",
+    "deleteTitle": "Supprimer cette activité ?",
+    "deleteWarning_one": "L'activité sera supprimée, ainsi que la trace qu'elle a laissée dans la journée de {{count}} enfant. C'est définitif.",
+    "deleteWarning_other": "L'activité sera supprimée, ainsi que la trace qu'elle a laissée dans la journée de {{count}} enfants. C'est définitif.",
+    "deleteFailed": "L'activité n'a pas pu être supprimée. Réessayez."
   },
   "gallery": {
     "title": "Galerie",
@@ -724,6 +739,8 @@
     "close": "Fermer",
     "back": "Retour",
     "child_one": "{{count}} enfant",
-    "child_other": "{{count}} enfants"
+    "child_other": "{{count}} enfants",
+    "edit": "Modifier",
+    "delete": "Supprimer"
   }
 }
