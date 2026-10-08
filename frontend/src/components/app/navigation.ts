@@ -7,6 +7,7 @@ import {
   Settings,
   UserRound,
   Users,
+  Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -41,6 +42,7 @@ export const NAVIGATION: Record<"parent" | "staff", readonly NavSection[]> = {
         { to: "/parent", key: "home", icon: LayoutDashboard, end: true },
         { to: "/parent/timeline", key: "timeline", icon: CalendarDays },
         { to: "/parent/activities", key: "activities", icon: Palette },
+        { to: "/parent/payments", key: "payments", icon: Wallet },
       ],
     },
     {
@@ -61,6 +63,7 @@ export const NAVIGATION: Record<"parent" | "staff", readonly NavSection[]> = {
       items: [
         { to: "/staff/children", key: "children", icon: Users },
         { to: "/staff/activities", key: "activities", icon: Palette },
+        { to: "/staff/payments", key: "payments", icon: Wallet },
       ],
     },
     {

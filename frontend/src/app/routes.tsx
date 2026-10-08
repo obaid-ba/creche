@@ -74,6 +74,16 @@ const ParentActivitiesPage = lazy(() =>
     default: m.ParentActivitiesPage,
   })),
 );
+const ParentPaymentsPage = lazy(() =>
+  import("@/pages/parent/ParentPaymentsPage").then((m) => ({
+    default: m.ParentPaymentsPage,
+  })),
+);
+const StaffPaymentsPage = lazy(() =>
+  import("@/pages/staff/StaffPaymentsPage").then((m) => ({
+    default: m.StaffPaymentsPage,
+  })),
+);
 const StaffActivitiesPage = lazy(() =>
   import("@/pages/staff/StaffActivitiesPage").then((m) => ({
     default: m.StaffActivitiesPage,
@@ -167,6 +177,7 @@ export const routeTable: RouteObject[] = [
           { index: true, element: withSuspense(<ParentHomePage />) },
           { path: "timeline", element: withSuspense(<ParentTimelinePage />) },
           { path: "activities", element: withSuspense(<ParentActivitiesPage />) },
+          { path: "payments", element: withSuspense(<ParentPaymentsPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "profile", element: withSuspense(<ParentProfilePage />) },
           { path: "notifications", element: withSuspense(<NotificationsPage />) },
@@ -200,6 +211,7 @@ export const routeTable: RouteObject[] = [
             element: withSuspense(<StaffChildTimelinePage />),
           },
           { path: "activities", element: withSuspense(<StaffActivitiesPage />) },
+          { path: "payments", element: withSuspense(<StaffPaymentsPage />) },
           { path: "complaints", element: withSuspense(<ComplaintsPage />) },
           { path: "parents", element: withSuspense(<StaffParentsPage />) },
           { path: "notifications", element: withSuspense(<NotificationsPage />) },

@@ -42,6 +42,16 @@ class AuditAction(models.TextChoices):
     # Complaints
     COMPLAINT_STATUS_CHANGED = "COMPLAINT_STATUS_CHANGED", "Statut de réclamation modifié"
 
+    # Money. Every write to the ledger is logged: these are the rows a
+    # family may one day dispute, so "who recorded this, and when" has to
+    # survive even if the payment is later voided.
+    FEE_SET = "FEE_SET", "Tarif mensuel défini"
+    INVOICE_ISSUED = "INVOICE_ISSUED", "Facture émise"
+    INVOICES_GENERATED = "INVOICES_GENERATED", "Factures du mois générées"
+    INVOICE_CANCELLED = "INVOICE_CANCELLED", "Facture annulée"
+    PAYMENT_RECORDED = "PAYMENT_RECORDED", "Paiement enregistré"
+    PAYMENT_VOIDED = "PAYMENT_VOIDED", "Paiement annulé"
+
 
 class AuditLog(UUIDModel):
     actor = models.ForeignKey(
