@@ -54,12 +54,29 @@ type RetriableConfig = AxiosRequestConfig & { _retried?: boolean };
  */
 let refreshPromise: Promise<string> | null = null;
 
+/**
+ * Longer than `apiClient`'s 20s, and deliberately so.
+ *
+ * This call is made with bare `axios` rather than `apiClient`, because
+ * running it through the instance whose response interceptor invoked it
+ * would recurse. That also loses the instance's timeout, and axios
+ * defaults to 0 — no timeout at all — so a refresh used to hang
+ * indefinitely. Since it is the first request on every page load (the
+ * access token is in memory only), a sleeping server meant the app sat on
+ * its boot spinner for as long as the wake took, with nothing said.
+ *
+ * 20s would be wrong in the other direction: a free-tier host takes
+ * ~50s to wake from idle, and failing a legitimately slow boot would
+ * bounce a signed-in parent to the login page.
+ */
+const REFRESH_TIMEOUT_MS = 75_000;
+
 async function refreshAccessToken(): Promise<string> {
   refreshPromise ??= axios
     .post<{ access: string }>(
       `${BASE_URL}/auth/refresh/`,
       {},
-      { withCredentials: true },
+      { withCredentials: true, timeout: REFRESH_TIMEOUT_MS },
     )
     .then((response) => {
       const token = response.data.access;

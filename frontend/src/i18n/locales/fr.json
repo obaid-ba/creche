@@ -723,7 +723,8 @@
   "network": {
     "offline": "Impossible de contacter le serveur. Vérifiez votre connexion.",
     "timeout": "Le serveur met trop de temps à répondre. Réessayez.",
-    "checkingSession": "Vérification de la session…"
+    "checkingSession": "Vérification de la session…",
+    "serverWaking": "Le serveur se réveille, cela peut prendre une minute…"
   },
   "video": {
     "unsupported": "Votre navigateur ne peut pas lire cette vidéo.",

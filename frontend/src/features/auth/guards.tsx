@@ -20,7 +20,13 @@ export function RequireAuth({ children }: { children?: ReactNode }) {
   const { isAuthenticated, isBootstrapping } = useAuth();
   const location = useLocation();
 
-  if (isBootstrapping) return <LoadingState label={t("network.checkingSession")} />;
+  if (isBootstrapping)
+    return (
+      <LoadingState
+        label={t("network.checkingSession")}
+        slowLabel={t("network.serverWaking")}
+      />
+    );
 
   if (!isAuthenticated) {
     const loginPath = location.pathname.startsWith("/staff")
@@ -44,7 +50,13 @@ export function RequireRole({
   const { role, isAuthenticated, isBootstrapping } = useAuth();
   const location = useLocation();
 
-  if (isBootstrapping) return <LoadingState label={t("network.checkingSession")} />;
+  if (isBootstrapping)
+    return (
+      <LoadingState
+        label={t("network.checkingSession")}
+        slowLabel={t("network.serverWaking")}
+      />
+    );
 
   if (!isAuthenticated) {
     return <Navigate to="/parent/login" state={{ from: location }} replace />;

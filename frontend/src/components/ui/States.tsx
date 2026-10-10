@@ -1,5 +1,5 @@
 import { AlertCircle, Inbox, Loader2 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/cn";
@@ -20,12 +20,27 @@ import { Button } from "./Button";
 
 export function LoadingState({
   label,
+  slowLabel,
+  slowAfterMs = 6000,
   className,
 }: {
   label?: string;
+  /** Replaces `label` once the wait stops looking normal. */
+  slowLabel?: string;
+  slowAfterMs?: number;
   className?: string;
 }) {
   const { t } = useTranslation();
+  const [isSlow, setIsSlow] = useState(false);
+
+  // A spinner that has been turning for a minute with no explanation
+  // reads as broken. This does not make anything faster; it makes the
+  // wait legible, which is the part the user can act on.
+  useEffect(() => {
+    if (slowLabel === undefined) return;
+    const timer = setTimeout(() => setIsSlow(true), slowAfterMs);
+    return () => clearTimeout(timer);
+  }, [slowLabel, slowAfterMs]);
 
   return (
     <div
@@ -37,7 +52,11 @@ export function LoadingState({
       )}
     >
       <Loader2 aria-hidden="true" className="size-6 animate-spin text-primary-500" />
-      <p className="text-sm">{label ?? t("common.loading")}</p>
+      <p className="text-sm">
+        {isSlow && slowLabel !== undefined
+          ? slowLabel
+          : (label ?? t("common.loading"))}
+      </p>
     </div>
   );
 }
