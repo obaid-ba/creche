@@ -31,6 +31,14 @@ services:
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /api/health/
+
+    # Spelled out rather than left to the dashboard default. A service
+    # that silently stops tracking the branch looks exactly like a broken
+    # feature: the code is on GitHub, the route 404s in production, and
+    # nothing anywhere says the two are different versions. /api/health/
+    # now reports the running commit so that question has an answer.
+    branch: main
+    autoDeploy: true
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
