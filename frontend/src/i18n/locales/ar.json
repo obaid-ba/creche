@@ -909,6 +909,16 @@
     "statusPartial": "مدفوعة جزئياً",
     "statusPaid": "مدفوعة",
     "statusOverdue": "متأخرة",
-    "statusCancelled": "ملغاة"
+    "statusCancelled": "ملغاة",
+    "feeTitle": "التعريفة الشهرية",
+    "feeHint": "تُنقل من ملف التسجيل. بدون تعريفة، يُستثنى الطفل من إنشاء الفواتير.",
+    "noFeeYet": "لا توجد تعريفة لهذا الطفل، لذلك لن تُصدر له فاتورة. أدخل المبلغ الشهري أدناه.",
+    "currentFee": "التعريفة الحالية:",
+    "since": "منذ {{month}}",
+    "scheduledFee": "بدءاً من {{month}}:",
+    "effectiveFrom": "بدءاً من",
+    "setFee": "حفظ التعريفة",
+    "setFeeFailed": "لم يتم حفظ التعريفة. أعد المحاولة.",
+    "feeLoadError": "تعذّر تحميل التعريفات."
   }
 }

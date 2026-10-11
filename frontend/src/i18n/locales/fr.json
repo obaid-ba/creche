@@ -792,6 +792,16 @@
     "statusPartial": "Partiellement payée",
     "statusPaid": "Payée",
     "statusOverdue": "En retard",
-    "statusCancelled": "Annulée"
+    "statusCancelled": "Annulée",
+    "feeTitle": "Tarif mensuel",
+    "feeHint": "Recopié du dossier d'inscription. Sans tarif, l'enfant est ignoré par la génération des factures.",
+    "noFeeYet": "Aucun tarif n'est défini pour cet enfant : il ne sera pas facturé. Indiquez le montant mensuel ci-dessous.",
+    "currentFee": "Tarif actuel :",
+    "since": "depuis {{month}}",
+    "scheduledFee": "À partir de {{month}} :",
+    "effectiveFrom": "À partir de",
+    "setFee": "Enregistrer le tarif",
+    "setFeeFailed": "Le tarif n'a pas pu être enregistré. Réessayez.",
+    "feeLoadError": "Impossible de charger les tarifs."
   }
 }

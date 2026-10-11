@@ -36,6 +36,7 @@ import {
 import type { IssuedAccessCode } from "@/features/children/types";
 import { useAuth } from "@/features/auth/useAuth";
 import { relationshipKey } from "@/features/children/relationships";
+import { ChildFeeCard } from "@/features/payments/components/ChildFeeCard";
 import { useLocale } from "@/i18n/useLocale";
 
 export function StaffChildDetailPage() {
@@ -258,6 +259,13 @@ export function StaffChildDetailPage() {
             </Button>
           </CardBody>
         </Card>
+      </div>
+
+      {/* Pricing sits beside the access code: both are things staff set
+          once from the enrolment paperwork. Until a fee exists here, the
+          child is skipped by invoice generation entirely. */}
+      <div className="mt-5">
+        <ChildFeeCard childId={child.id} />
       </div>
 
       <Card className="mt-5">

@@ -132,6 +132,10 @@ describe("reissuing an access code", () => {
     renderPage();
     await clickReissue();
 
-    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    // Matched on its own wording: the fee card on this page carries its
+    // own role="alert" when the child has no fee set yet.
+    expect(
+      await screen.findByText(/nouveau code n'a pas pu être créé/i),
+    ).toBeInTheDocument();
   });
 });
